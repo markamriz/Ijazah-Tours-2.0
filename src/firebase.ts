@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAtHDPqBzmAsrtPSSe6t6wHw-C7VOQRZrU',
-  authDomain: 'ijazah-tours.firebaseapp.com',
-  projectId: 'ijazah-tours',
-  storageBucket: 'ijazah-tours.appspot.com',
-  messagingSenderId: '651209735843',
-  appId: '1:651209735843:web:8d8e87aa1f95b8f1b38916',
+  apiKey: 'AIzaSyB_DJ3-vWQuSzbMo_r3Uci7Mxfu4yENwIk',
+  authDomain: 'ijazah-tours-2.firebaseapp.com',
+  projectId: 'ijazah-tours-2',
+  storageBucket: 'ijazah-tours-2.appspot.com',
+  messagingSenderId: '588578726216',
+  appId: '1:588578726216:web:aedd95334d7493e36c537d',
 };
 
 initializeApp(firebaseConfig);
