@@ -1,0 +1,21 @@
+curl --request POST \
+    --url 'https://api.makcorps.com/auth' \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "username":"ijazah",
+        "password":"Fdm5dR"
+}'
+
+curl --request GET \
+    --url 'https://api.makcorps.com/dataapi/Taj Samudra' \
+    --header 'Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA1NjE3MzcsImlhdCI6MTY1MDU1OTkzNywibmJmIjoxNjUwNTU5OTM3LCJpZGVudGl0eSI6MTI1NH0.1vgByPyQV8IxSGwvqFZu8CAUFTU5ekTnkq5TZLdum4s'
+}'
+
+curl --request GET \
+    --url 'https://unsold.makcorps.com/droplet1/server3/Taj Samudra/304700/1/1/2022-05-01/2022-05-04?api_key=607c3f575d%rtEf6c6980838b'
+}'
+
+
+curl --request GET \
+    --url https://api.makcorps.com/2022-04-15/2022-04-16/1/3/Galadari/Colombo \
+    --header 'Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA2MjUyMTgsImlhdCI6MTY1MDYyMzQxOCwibmJmIjoxNjUwNjIzNDE4LCJpZGVudGl0eSI6MTI1NH0.HMp89Tg87V5ZBjTLyVPN83WgCupjsTKQp1Xb3mKhYHk'
