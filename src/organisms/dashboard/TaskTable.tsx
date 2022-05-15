@@ -168,7 +168,7 @@ function Row({
                         onClick={() => null}
                         align="left"
                         btnWidth="8rem"
-                        btnSize="medium"
+                        btnSize="small"
                         btnBorderRadius="0.5rem"
                         btnText={task.stage}
                         btnColors={['#29CC97', '#ffffff']}
