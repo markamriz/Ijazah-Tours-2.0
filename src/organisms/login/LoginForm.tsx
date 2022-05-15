@@ -41,7 +41,7 @@ function LoginForm({
         placeholder="Email"
         adornmentPosition="start"
         type="email"
-        fullWidth={width < 768}
+        fullWidth={width < 760}
         value={email}
         plain="false"
         onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
@@ -52,7 +52,7 @@ function LoginForm({
         placeholder="Password"
         adornmentPosition="start"
         type="password"
-        fullWidth={width < 768}
+        fullWidth={width < 760}
         value={password}
         plain="false"
         onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
@@ -69,7 +69,7 @@ function LoginForm({
         <ParagraphAtom style={loginStyles.errorMsg} text={invalidLoginMessage} />
       )}
       <ButtonAtom
-        size="large"
+        size="medium"
         endIcon={isLoggingIn && <CircularProgress size={20} color="inherit" />}
         disabled={isLoggingIn}
         style={loginStyles.loginBtn}
