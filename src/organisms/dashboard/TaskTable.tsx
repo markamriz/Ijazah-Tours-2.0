@@ -125,7 +125,7 @@ function Row({
           onClick={() => null}
           align="left"
           btnWidth="8rem"
-          btnSize="medium"
+          btnSize="small"
           btnBorderRadius="0.5rem"
           btnText={getOverallRowStatus()}
           btnColors={getStatusBtnColors()}
