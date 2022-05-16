@@ -12,7 +12,7 @@ import {
 import { getStorage } from 'firebase/storage';
 import JSPDF from 'jspdf';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
 import ButtonAtom from '../../../../atoms/ButtonAtom';
@@ -88,6 +88,7 @@ function Approval({ setCreated }: ApprovalProps) {
   const [showRateContainer, setShowRateContainer] = useState(true);
   const [isSavingQuote, setIsSavingQuote] = useState(false);
 
+  const { id: quoteId } = useParams<{ id: string }>();
   const history = useHistory();
 
   useEffect(() => {
@@ -112,6 +113,7 @@ function Approval({ setCreated }: ApprovalProps) {
     const accomodationDetails: UserAccomodation[] = JSON.parse(
       localStorage.getItem('New Quote Accomodation')!,
     ).selectedAccomodations;
+    const { thisQuote } = JSON.parse(localStorage.getItem('Editing Quote')!);
 
     setAccomodationData(accomodationDetails);
 
@@ -129,6 +131,11 @@ function Approval({ setCreated }: ApprovalProps) {
     setChildren(customerDetails[10]);
     setUserId(customerDetails[11]);
     setEmail(customerDetails[18]);
+
+    setRoomAndBreakfast(thisQuote.roomAndBreakfast);
+    setReceptionAtAirport(thisQuote.receptionAtAirport);
+    setAllGovernmentTaxes(thisQuote.allGovernmentTaxes);
+    setGuideAndCar(thisQuote.guideAndCar);
 
     const costDetails = JSON.parse(localStorage.getItem('New Quote Costing')!);
     setSellingPrice(costDetails.sellingPrice);
@@ -225,9 +232,8 @@ function Approval({ setCreated }: ApprovalProps) {
       status: 'IN PROGRESS',
     };
 
-    await setDoc(doc(db, 'Approval Quotations', uuid()), {
+    await setDoc(doc(db, 'Approval Quotations', quoteId), {
       ...guestDetails,
-      createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
 
@@ -296,7 +302,6 @@ function Approval({ setCreated }: ApprovalProps) {
         localStorage.getItem('New Quote Accomodation')!,
       ).selectedAccomodations,
       completed: false,
-      createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
   };

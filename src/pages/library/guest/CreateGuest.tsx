@@ -157,6 +157,10 @@ function CreateGuest({
     });
 
     request.execute(() => setCreatingReminder(false));
+<<<<<<< HEAD
+=======
+    history.replace('/dashboard');
+>>>>>>> main
   };
 
   return (

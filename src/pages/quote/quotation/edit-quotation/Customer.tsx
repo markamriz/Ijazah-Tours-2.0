@@ -9,7 +9,7 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import DivAtom from '../../../../atoms/DivAtom';
 import H2Atom from '../../../../atoms/H2Atom';
@@ -58,6 +58,7 @@ function Customer() {
   const [dateType, setDateType] = useState(dateTypeOptions[0].value);
   const [notSpecificDays, setNotSpecificDays] = useState(0);
 
+  const { id: quoteId } = useParams<{ id: string }>();
   const history = useHistory();
 
   useEffect(() => {
@@ -90,8 +91,6 @@ function Customer() {
         locData[i].id = id;
       });
 
-      setQuoteNum(aqData.length + 1);
-
       const refNums = rfData.map((cus) => ({
         value: cus.refNum,
         label: cus.refNum,
@@ -101,16 +100,32 @@ function Customer() {
         label: hol.val,
       }));
 
-      setAccomodationLocationData(locData as SettingsLocation[]);
+      const thisQuote = aqData.find((q) => q.id === quoteId) as any;
+      localStorage.setItem('Editing Quote', JSON.stringify({ thisQuote }));
+      setQuoteNum(thisQuote.quoteNo);
+      setRefNum(thisQuote.refNum);
+      setTitle(thisQuote.quoteTitle);
+      setAdditionalBed(thisQuote.additionalBed);
+      setMealPlan(thisQuote.mealPlan);
+      setDateType(thisQuote.dateType);
+      if (thisQuote.dateType === dateTypeOptions[0].value) {
+        setCheckin(thisQuote.saveCheckin);
+        setCheckout(thisQuote.saveCheckout);
+      } else {
+        const storedCheckin = thisQuote.saveCheckin.split('-');
+        const storedCheckout = thisQuote.saveCheckout.split('-');
+        storedCheckin.pop();
+        storedCheckout.pop();
+        setCheckin(storedCheckin.join('-'));
+        setCheckout(storedCheckout.join('-'));
+        setNotSpecificDays(thisQuote.notSpecificDays);
+      }
+      setHolidayType(thisQuote.holidayType);
+      setToStoreDestinations(thisQuote.toStoreDestinations);
+      onRefNumChange(rfData as LibraryGuest[], thisQuote.refNum);
 
+      setAccomodationLocationData(locData as SettingsLocation[]);
       setCustomerData(rfData as LibraryGuest[]);
-      onRefNumChange(rfData as LibraryGuest[], localStorage.getItem('New Guest Ref Num') || refNums[0].value);
-      setRefNum(
-        refNums.find((r) => r.value === localStorage.getItem('New Guest Ref Num'))
-          ? localStorage.getItem('New Guest Ref Num')
-          : refNums[0].value,
-      );
-      setHolidayType(holidays[0].value);
       setRefData(refNums);
       setHolidayTypeData(holidays);
 
@@ -205,7 +220,7 @@ function Customer() {
       }),
     );
 
-    history.replace('/quote/quotations/create/accomodation');
+    history.replace(`/quote/quotations/edit/${quoteId}/accomodation`);
   };
 
   return (
@@ -217,7 +232,7 @@ function Customer() {
           style={quoteCreateQuoteStyles.backBtn}
           onClick={() => history.replace('/quote/quotations')}
         />
-        <H2Atom style={quoteCreateQuoteStyles.title} text="Create Quotation" />
+        <H2Atom style={quoteCreateQuoteStyles.title} text="Edit Quotation" />
       </DivAtom>
 
       {customerData && refData && holidayTypeData && accomodationLocationData ? (

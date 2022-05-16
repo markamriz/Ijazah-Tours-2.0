@@ -19,10 +19,14 @@ import { selectUser } from '../../../redux/userSlice';
 import { fetchingDataIndicatorStyles, libraryStyles, quotationsStyles } from '../../../styles';
 import { roleOptions, searchData, widthHeightDynamicStyle } from '../../../utils/helpers';
 import { CustomerQuotation, FlexDirection, JustifyContent } from '../../../utils/types';
-import Accomodation from './create-quotation/Accomodation';
-import Approval from './create-quotation/Approval';
-import Costing from './create-quotation/Costing';
-import Customer from './create-quotation/Customer';
+import CreateAccomodation from './create-quotation/Accomodation';
+import CreateApproval from './create-quotation/Approval';
+import CreateCosting from './create-quotation/Costing';
+import CreateCustomer from './create-quotation/Customer';
+import EditAccomodation from './edit-quotation/Accomodation';
+import EditApproval from './edit-quotation/Approval';
+import EditCosting from './edit-quotation/Costing';
+import EditCustomer from './edit-quotation/Customer';
 import PresetAccomodation from './preset-qoutes/PresetAccomodation';
 import PresetQuote from './preset-qoutes/PresetQuote';
 
@@ -48,6 +52,7 @@ function Quotations() {
 
   const [search, setSearch] = useState('');
   const [created, setCreated] = useState(false);
+  const [cloned, setCloned] = useState(false);
 
   useEffect(() => {
     searchData(search, initialQuotationSearchData, setQuotationsData);
@@ -86,7 +91,7 @@ function Quotations() {
     };
 
     getIntialQuotationsData();
-  }, [created]);
+  }, [cloned, created]);
 
   const filterApproved = () => {
     const approvedData = initialQuotationFilteredData.filter((quote) => (
@@ -135,23 +140,52 @@ function Quotations() {
               height: `${height}px`,
             }}
           >
-            <Route path="/quote/quotations/create/customer">
-              <Customer />
-            </Route>
             <Route path="/quote/quotations/create/preset/holiday">
               <PresetQuote />
-            </Route>
-            <Route path="/quote/quotations/create/accomodation">
-              <Accomodation />
             </Route>
             <Route path="/quote/quotations/create/preset/accomodation">
               <PresetAccomodation />
             </Route>
+            <Route path="/quote/quotations/create/customer">
+              <CreateCustomer />
+            </Route>
+            <Route path="/quote/quotations/create/accomodation">
+              <CreateAccomodation />
+            </Route>
             <Route path="/quote/quotations/create/costing">
-              <Costing />
+              <CreateCosting />
             </Route>
             <Route path="/quote/quotations/create/approval">
-              <Approval setCreated={setCreated} />
+              <CreateApproval setCreated={setCreated} />
+            </Route>
+          </DivAtom>
+        </DivAtom>
+      </Route>
+
+      <Route path="/quote/quotations/edit">
+        <DivAtom
+          style={{ ...quotationsStyles.container, flexDirection: 'column' }}
+        >
+          <DivAtom>
+            <CreateQuotationNavbar />
+          </DivAtom>
+          <DivAtom
+            style={{
+              ...quotationsStyles.innerContainer,
+              height: `${height}px`,
+            }}
+          >
+            <Route path="/quote/quotations/edit/:id/customer">
+              <EditCustomer />
+            </Route>
+            <Route path="/quote/quotations/edit/:id/accomodation">
+              <EditAccomodation />
+            </Route>
+            <Route path="/quote/quotations/edit/:id/costing">
+              <EditCosting />
+            </Route>
+            <Route path="/quote/quotations/edit/:id/approval">
+              <EditApproval setCreated={setCreated} />
             </Route>
           </DivAtom>
         </DivAtom>
@@ -309,6 +343,8 @@ function Quotations() {
                 </DivAtom>
                 <QuotationsTable
                   rowdata={quotationsData}
+                  setCloned={setCloned}
+                  cloned={cloned}
                 />
               </>
             ) : (

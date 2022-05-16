@@ -80,9 +80,12 @@ function App() {
       if (location.pathname !== '/quote/quotations/create/customer'
         && location.pathname !== '/quote/quotations/create/accomodation'
         && location.pathname !== '/quote/quotations/create/costing'
-        && location.pathname !== '/quote/quotations/create/approval') {
+        && location.pathname !== '/quote/quotations/create/approval'
+        && !location.pathname.includes('/quote/quotations/edit')) {
         localStorage.removeItem('New Quote Customer');
+        localStorage.removeItem('New Quote Costing');
         localStorage.removeItem('New Quote Accomodation');
+        localStorage.removeItem('Editing Quote');
       }
 
       if (location.pathname !== '/quote/quotations/create/preset/holiday'
