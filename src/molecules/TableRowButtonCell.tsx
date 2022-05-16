@@ -1,6 +1,6 @@
 import { MouseEventHandler } from 'react';
 
-import { TableCell } from '@material-ui/core';
+import { CircularProgress, TableCell } from '@material-ui/core';
 
 import ButtonAtom from '../atoms/ButtonAtom';
 import { CustomerQuoteStatus } from '../utils/types';
@@ -12,6 +12,7 @@ interface TableRowButtonCellProps {
   btnSize: 'small' | 'medium';
   onClick: MouseEventHandler<HTMLButtonElement>;
   btnDisabled?: boolean;
+  loading?: boolean;
   btnText?: string;
   btnColors?: string[];
   cell?: { status: CustomerQuoteStatus };
@@ -24,6 +25,7 @@ function TableRowButtonCell({
   btnWidth,
   btnBorderRadius,
   btnDisabled,
+  loading,
   cell,
   btnText,
   btnColors,
@@ -54,6 +56,7 @@ function TableRowButtonCell({
         }}
         size={btnSize}
         onClick={onClick}
+        endIcon={loading && <CircularProgress size={20} color="inherit" />}
         text={btnText || cell!.status}
         disabled={btnDisabled}
       />

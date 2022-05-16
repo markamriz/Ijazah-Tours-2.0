@@ -11,9 +11,16 @@ import {
   TableRow,
   Theme,
 } from '@material-ui/core';
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+} from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { v4 as uuid } from 'uuid';
 
 import { db } from '../../../firebase';
 import GuestProfile from '../../../molecules/GuestProfile';
@@ -22,8 +29,8 @@ import TableHead from '../../../molecules/TableHead';
 import TableRowButtonCell from '../../../molecules/TableRowButtonCell';
 import TableRowTextCell from '../../../molecules/TableRowTextCell';
 import { selectUser } from '../../../redux/userSlice';
-import { getComparator, stableSort } from '../../../utils/helpers';
-import { CustomerQuotation, Order } from '../../../utils/types';
+import { getComparator, stableSort, tourTypeOptions } from '../../../utils/helpers';
+import { Order, UserAccomodation } from '../../../utils/types';
 
 const headCells = [
   { id: 'name', label: 'GUEST' },
@@ -37,10 +44,14 @@ const headCells = [
   { id: '...1', label: '' },
   { id: '...2', label: '' },
   { id: '...3', label: '' },
+  { id: '...4', label: '' },
+  { id: '...5', label: '' },
 ];
 
 interface QuotationsTableProps {
-  rowdata: CustomerQuotation[];
+  rowdata: any[];
+  cloned: boolean;
+  setCloned: any;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -67,13 +78,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function QuotationsTable({ rowdata }: QuotationsTableProps) {
+function QuotationsTable({
+  rowdata,
+  cloned,
+  setCloned,
+}: QuotationsTableProps) {
   const user = useSelector(selectUser);
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [cloningRow, setCloningRow] = useState('');
 
   const history = useHistory();
 
@@ -95,7 +112,7 @@ function QuotationsTable({ rowdata }: QuotationsTableProps) {
     setPage(0);
   };
 
-  const shareAndAddReminder = async (row: CustomerQuotation) => {
+  const shareAndAddReminder = async (row: any) => {
     await setDoc(doc(db, 'Dashboard Tasks', String(`${row.quoteNo}-create-quote`)), {
       status: 'Creation of Quote',
       title: row.quoteTitle,
@@ -130,6 +147,113 @@ function QuotationsTable({ rowdata }: QuotationsTableProps) {
     window.open('mailto:');
   };
 
+  const cloneQuote = async (row: any) => {
+    setCloned(true);
+    setCloningRow(row.id);
+    const qData = (await getDocs(collection(db, 'Approval Quotations'))).docs;
+    const aqData = qData.map((dc) => dc.data());
+    const quoteNo = aqData.length + 1;
+
+    const guestDetails = {
+      ...row,
+      quoteNo,
+      creator: user,
+      quoteTitle: `${row.quoteTitle} COPY`,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      status: 'IN PROGRESS',
+    };
+
+    await setDoc(doc(db, 'Approval Quotations', uuid()), {
+      ...guestDetails,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    await cloneVouchers(guestDetails);
+    setCloned(false);
+    setCloningRow('');
+  };
+
+  const cloneVouchers = async (guestDetails: any) => {
+    await cloneVoucher(guestDetails, 'Driver Voucher', 'Driver');
+    await cloneVoucher(guestDetails, 'Itinerary Voucher', 'Itinerary');
+    await cloneVoucher(guestDetails, 'Tour Confirmation Voucher', 'Proforma Invoice');
+    await cloneVoucher(guestDetails, 'Cash Receipt', 'Cash Receipt');
+
+    if (guestDetails.tourType === tourTypeOptions[0].value) {
+      await cloneAccomodationVouchers(guestDetails, 'Supplier Voucher');
+    }
+  };
+
+  const cloneVoucher = async (guestDetails: any, type: string, title: string) => {
+    let vId = '';
+    switch (title) {
+    case 'Driver':
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} DV`;
+      break;
+    case 'Itinerary':
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} IV`;
+      break;
+    case 'Proforma Invoice':
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} PIV`;
+      break;
+    case 'Cash Receipt':
+    default:
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} CRV`;
+      break;
+    }
+
+    await setDoc(doc(
+      db,
+      'Vouchers',
+      String(guestDetails.quoteNo),
+      'Vouchers',
+      `${String(guestDetails.quoteNo)}-${type}-${title}`,
+    ), {
+      vId,
+      guestDetails,
+      type,
+      title,
+      quoteNo: String(guestDetails.quoteNo),
+      quotationTitle: guestDetails.quoteTitle,
+      mainVId: `${guestDetails.quoteTitle.slice(0, 5)} V`,
+      driverDetails: guestDetails.driverChoice,
+      accomodationDetails: guestDetails.accDetails.selectedAccomodations,
+      completed: false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+  };
+
+  const cloneAccomodationVouchers = async (guestDetails: any, type: string) => {
+    (guestDetails.accDetails.selectedAccomodations as UserAccomodation[]).forEach(async (acc) => {
+      const accVName = acc.name.toUpperCase().split(' ').map((w) => w[0]).join('');
+      const vId = `${guestDetails.quoteTitle.slice(0, 5)} HV${accVName}`;
+
+      await setDoc(doc(
+        db,
+        'Vouchers',
+        String(guestDetails.quoteNo),
+        'Vouchers',
+        `${String(guestDetails.quoteNo)}-${type}-${acc.name}`,
+      ), {
+        vId,
+        guestDetails,
+        type,
+        title: acc.name,
+        mainVId: `${guestDetails.quoteTitle.slice(0, 5)} V`,
+        quoteNo: String(guestDetails.quoteNo),
+        quotationTitle: guestDetails.quoteTitle,
+        driverDetails: guestDetails.driverChoice,
+        accomodationDetails: acc,
+        completed: false,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    });
+  };
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -153,7 +277,7 @@ function QuotationsTable({ rowdata }: QuotationsTableProps) {
             <TableBody>
               {stableSort(rowdata, getComparator(order as Order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: CustomerQuotation) => (
+                .map((row: any) => (
                   <TableRow
                     hover
                     tabIndex={-1}
@@ -233,6 +357,38 @@ function QuotationsTable({ rowdata }: QuotationsTableProps) {
                       btnText="View Quote"
                       btnColors={['#C9F7F5', '#1BC5BD']}
                     />
+                    <TableRowButtonCell
+                      onClick={() => history.replace(`/quote/quotations/edit/${row.id}/customer`)}
+                      align="right"
+                      btnWidth="8rem"
+                      btnSize="medium"
+                      btnBorderRadius="0.5rem"
+                      btnText="Edit Quote"
+                      btnColors={['#e0ca51', '#464E5F']}
+                    />
+                    {row.id === cloningRow ? (
+                      <TableRowButtonCell
+                        onClick={() => cloneQuote(row)}
+                        align="right"
+                        btnWidth={cloned ? '10rem' : '8rem'}
+                        btnSize="medium"
+                        btnBorderRadius="0.5rem"
+                        btnText="Clone Quote"
+                        btnColors={['#4dda31', '#ffffff']}
+                        loading={cloned}
+                        btnDisabled={cloned}
+                      />
+                    ) : (
+                      <TableRowButtonCell
+                        onClick={() => cloneQuote(row)}
+                        align="right"
+                        btnWidth={cloned ? '10rem' : '8rem'}
+                        btnSize="medium"
+                        btnBorderRadius="0.5rem"
+                        btnText="Clone Quote"
+                        btnColors={['#4dda31', '#ffffff']}
+                      />
+                    )}
                     {row.status === 'COMPLETE' ? (
                       <TableRowButtonCell
                         onClick={() => history.replace(`/quote/summary/${row.id}`)}
