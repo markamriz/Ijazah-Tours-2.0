@@ -49,19 +49,50 @@ function Costing() {
 
   // comparison
   const [comparisonData, setComparisonData] = useState<QuotationCostingRate[]>();
+  const [calculateComparison, setCalculateComparison] = useState(false);
 
   const { id: quoteId } = useParams<{ id: string }>();
   const history = useHistory();
 
   useEffect(() => {
-    const customerDetails = JSON.parse(
-      localStorage.getItem('New Quote Customer')!,
-    ).data[0];
-    const accomodations: UserAccomodation[] = JSON.parse(
+    const data: UserAccomodation[] = JSON.parse(
       localStorage.getItem('New Quote Accomodation')!,
     ).selectedAccomodations;
 
-    const getComparisonRates = async () => {
+    let accTotal = 0;
+    let transportDays = 0;
+    data.forEach((acc) => {
+      transportDays += Number(acc.nights);
+      accTotal += Number(acc.total.slice(1, acc.total.length));
+    });
+
+    const transportTotal = Number(rate) * Number(days);
+    const expenseTotal = Number(accTotal + transportTotal);
+    const priceTotal = ((Number(commission.slice(0, commission.length - 1)) + 100) / 100)
+      * expenseTotal;
+
+    const netTotal = Number(sellingPrice) - Number(discount);
+
+    setDays(String(transportDays + 1));
+    setAccomodationTotal(String(accTotal));
+    setTransport(String(transportTotal));
+    setTotalExpense(String(expenseTotal));
+    setTotalPrice(String(priceTotal));
+    setNetPrice(String(netTotal));
+    setAccomodationData(data);
+  }, [rate, transport, totalExpense, commission, sellingPrice, discount]);
+
+  const getComparisonRates = async (display: boolean) => {
+    if (display) {
+      setCalculateComparison(true);
+
+      const customerDetails = JSON.parse(
+        localStorage.getItem('New Quote Customer')!,
+      ).data[0];
+      const accomodations: UserAccomodation[] = JSON.parse(
+        localStorage.getItem('New Quote Accomodation')!,
+      ).selectedAccomodations;
+
       const rates: QuotationCostingRate[] = [];
       await Promise.all(accomodations.map(async (acc) => {
         const totalGuests = customerDetails[10].length + Number(customerDetails[9]);
@@ -92,40 +123,17 @@ function Costing() {
       }));
 
       setComparisonData(rates);
-    };
-
-    getComparisonRates();
-  }, []);
-
-  useEffect(() => {
-    const data: UserAccomodation[] = JSON.parse(
-      localStorage.getItem('New Quote Accomodation')!,
-    ).selectedAccomodations;
-
-    let accTotal = 0;
-    let transportDays = 0;
-    data.forEach((acc) => {
-      transportDays += Number(acc.nights);
-      accTotal += Number(acc.total.slice(1, acc.total.length));
-    });
-
-    const transportTotal = Number(rate) * Number(days);
-    const expenseTotal = Number(accTotal + transportTotal);
-    const priceTotal = ((Number(commission.slice(0, commission.length - 1)) + 100) / 100)
-      * expenseTotal;
-
-    const netTotal = Number(sellingPrice) - Number(discount);
-
-    setDays(String(transportDays + 1));
-    setAccomodationTotal(String(accTotal));
-    setTransport(String(transportTotal));
-    setTotalExpense(String(expenseTotal));
-    setTotalPrice(String(priceTotal));
-    setNetPrice(String(netTotal));
-    setAccomodationData(data);
-  }, [rate, transport, totalExpense, commission, sellingPrice, discount]);
+    } else {
+      setCalculateComparison(false);
+      setComparisonData(undefined);
+    }
+  };
 
   const saveCost = () => {
+    if (!comparisonData) {
+      setComparisonData([]);
+    }
+
     localStorage.setItem(
       'New Quote Costing',
       JSON.stringify({
@@ -157,7 +165,7 @@ function Costing() {
         <H2Atom style={quoteCreateQuoteStyles.title} text="Costing" />
       </DivAtom>
 
-      {accomodationData && comparisonData ? (
+      {accomodationData ? (
         <>
           <ParagraphAtom
             style={{
@@ -167,7 +175,7 @@ function Costing() {
             text="Rate Comparison"
           />
           <DivAtom style={quoteCreateQuoteStyles.tableContainer}>
-            {comparisonData.length > 0 && (
+            {calculateComparison && comparisonData && comparisonData.length > 0 && (
               <CostingRateComparisonTable
                 columns={[
                   'Accomodation',
@@ -177,6 +185,25 @@ function Costing() {
                 data={comparisonData}
               />
             )}
+            {calculateComparison && !comparisonData && (
+              <DivAtom style={fetchingDataIndicatorStyles.container}>
+                <CircularProgress size={20} color="primary" />
+              </DivAtom>
+            )}
+          </DivAtom>
+          <DivAtom>
+            <ButtonAtom
+              size="large"
+              text={!calculateComparison ? 'Show Comparison Results' : 'Hide Comparison Results'}
+              // eslint-disable-next-line max-len
+              onClick={() => (!calculateComparison ? getComparisonRates(true) : getComparisonRates(false))}
+              style={{
+                ...quoteCreateQuoteStyles.addBtn,
+                width: widthHeightDynamicStyle(width, 768, '100%', '30%'),
+                margin: '1rem 0 1rem 1rem',
+              }}
+              disabled={calculateComparison && !comparisonData}
+            />
           </DivAtom>
           <ParagraphAtom
             style={{
