@@ -47,8 +47,20 @@ function Voucher() {
         vouchData[i].id = id;
       });
 
+      const qData = (await getDocs(collection(db, 'Approval Quotations'))).docs;
+      const quoteData = qData.map((dc) => dc.data());
+
+      // Show only vouchers of approved quotes
+      const aprovedQuoteVouchers: any[] = [];
+      vouchData.forEach((v) => {
+        const quote = quoteData.find((q) => String(q.quoteNo) === String(v.quoteNo));
+        if (quote!.status === 'APPROVED') {
+          aprovedQuoteVouchers.push(v);
+        }
+      });
+
       const groupedVouchData = _.groupBy(
-        vouchData,
+        aprovedQuoteVouchers,
         (voucher: { quoteNo: string }) => voucher.quoteNo,
       );
 

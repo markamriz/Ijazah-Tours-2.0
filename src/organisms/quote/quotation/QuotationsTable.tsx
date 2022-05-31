@@ -52,6 +52,7 @@ interface QuotationsTableProps {
   rowdata: any[];
   cloned: boolean;
   setCloned: any;
+  setShared: any;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -82,6 +83,7 @@ function QuotationsTable({
   rowdata,
   cloned,
   setCloned,
+  setShared,
 }: QuotationsTableProps) {
   const user = useSelector(selectUser);
   const classes = useStyles();
@@ -113,6 +115,7 @@ function QuotationsTable({
   };
 
   const shareAndAddReminder = async (row: any) => {
+    setShared(true);
     await setDoc(doc(db, 'Dashboard Tasks', String(`${row.quoteNo}-create-quote`)), {
       status: 'Creation of Quote',
       title: row.quoteTitle,
@@ -122,6 +125,12 @@ function QuotationsTable({
       completed: false,
       creator: user,
       refNum: row.refNum,
+    });
+
+    await setDoc(doc(db, 'Approval Quotations', row.id), {
+      ...row,
+      status: 'SHARED',
+      updatedAt: serverTimestamp(),
     });
 
     const startDate = new Date();
@@ -145,6 +154,7 @@ function QuotationsTable({
     request.execute(() => { });
 
     window.open('mailto:');
+    setShared(false);
   };
 
   const cloneQuote = async (row: any) => {
@@ -189,19 +199,19 @@ function QuotationsTable({
   const cloneVoucher = async (guestDetails: any, type: string, title: string) => {
     let vId = '';
     switch (title) {
-    case 'Driver':
-      vId = `${guestDetails.quoteTitle.slice(0, 5)} DV`;
-      break;
-    case 'Itinerary':
-      vId = `${guestDetails.quoteTitle.slice(0, 5)} IV`;
-      break;
-    case 'Proforma Invoice':
-      vId = `${guestDetails.quoteTitle.slice(0, 5)} PIV`;
-      break;
-    case 'Cash Receipt':
-    default:
-      vId = `${guestDetails.quoteTitle.slice(0, 5)} CRV`;
-      break;
+      case 'Driver':
+        vId = `${guestDetails.quoteTitle.slice(0, 5)} DV`;
+        break;
+      case 'Itinerary':
+        vId = `${guestDetails.quoteTitle.slice(0, 5)} IV`;
+        break;
+      case 'Proforma Invoice':
+        vId = `${guestDetails.quoteTitle.slice(0, 5)} PIV`;
+        break;
+      case 'Cash Receipt':
+      default:
+        vId = `${guestDetails.quoteTitle.slice(0, 5)} CRV`;
+        break;
     }
 
     await setDoc(doc(
@@ -389,26 +399,15 @@ function QuotationsTable({
                         btnColors={['#4dda31', '#ffffff']}
                       />
                     )}
-                    {row.status === 'COMPLETE' ? (
-                      <TableRowButtonCell
-                        onClick={() => history.replace(`/quote/summary/${row.id}`)}
-                        align="right"
-                        btnWidth="8rem"
-                        btnSize="medium"
-                        btnBorderRadius="0.5rem"
-                        btnText="Summary"
-                        btnColors={['#7595EC', '#333333']}
-                      />
-                    ) : (
-                      <TableRowTextCell
-                        cell={{
-                          align: 'right',
-                          title: '',
-                          colors: ['#464E5F', '#B5B5C3'],
-                          weight: 600,
-                        }}
-                      />
-                    )}
+                    <TableRowButtonCell
+                      onClick={() => history.replace(`/quote/summary/${row.id}`)}
+                      align="right"
+                      btnWidth="8rem"
+                      btnSize="medium"
+                      btnBorderRadius="0.5rem"
+                      btnText="Summary"
+                      btnColors={['#7595EC', '#333333']}
+                    />
                     <TableRowButtonCell
                       onClick={() => shareAndAddReminder(row)}
                       align="left"

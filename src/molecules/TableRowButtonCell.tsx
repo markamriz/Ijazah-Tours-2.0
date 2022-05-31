@@ -40,6 +40,9 @@ function TableRowButtonCell({
   } else if (cell!.status === 'COMPLETE') {
     backgroundColor = '#7595EC';
     color = '#0847A5';
+  } else if (cell!.status === 'SHARED') {
+    backgroundColor = '#dce223';
+    color = '#0a0f16';
   } else {
     backgroundColor = '#C1BFBF';
     color = '#464E5F';

@@ -3,7 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 export type Order = 'asc' | 'desc';
 export type Role = 'Admin' | 'Travel Agent';
 export type Status = 'ACTIVE' | 'INACTIVE';
-export type CustomerQuoteStatus = 'APPROVED' | 'IN PROGRESS' | 'COMPLETE';
+export type CustomerQuoteStatus = 'APPROVED' | 'IN PROGRESS' | 'COMPLETE' | 'SHARED' | 'CLOSED';
 export type NavbarType = 'quote' | 'library' | 'settings';
 export type FlexDirection = 'column' | 'row' | 'row-reverse' | 'column-reverse';
 export type JustifyContent = 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';

@@ -279,6 +279,12 @@ function Summary() {
       updatedAt: serverTimestamp(),
     });
 
+    await setDoc(doc(db, 'Approval Quotations', quotation.id), {
+      ...quotation,
+      status: 'COMPLETED',
+      updatedAt: serverTimestamp(),
+    });
+
     setSavingSummary(false);
     history.replace('/quote/quotations');
   };

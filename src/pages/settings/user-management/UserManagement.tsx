@@ -97,6 +97,7 @@ function UserManagement() {
       await createUserWithEmailAndPassword(auth, newEmail, newPassword);
       clearInputs();
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log('');
     } finally {
       setIsCreating(false);

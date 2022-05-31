@@ -222,8 +222,25 @@ function Approval({ setCreated }: ApprovalProps) {
       user: userId,
       creator: user,
       name: `${firstName} ${lastName}`,
-      status: 'IN PROGRESS',
+      status: 'APPROVED',
     };
+
+    // Close any existing quote of same ref num
+    const eqData = (await getDocs(collection(db, 'Approval Quotations'))).docs;
+    const existingQuotations = eqData.map((dc) => dc.data());
+    const existingQuotationsIds = eqData.map((dc) => dc.id);
+    existingQuotationsIds.forEach((id, i) => {
+      existingQuotations[i].id = id;
+    });
+    const existingQuote = existingQuotations.find((q) => q.refNum === refNum);
+    if (existingQuote && existingQuote.status !== 'APPROVED') {
+      await setDoc(doc(db, 'Approval Quotations', existingQuote.id), {
+        ...existingQuote,
+        status: 'CLOSED',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
 
     await setDoc(doc(db, 'Approval Quotations', uuid()), {
       ...guestDetails,
