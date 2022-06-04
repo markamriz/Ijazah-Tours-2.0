@@ -31,7 +31,7 @@ const formCreateMemberStyles = {
   title: {
     margin: '0px',
     color: '#0A65FF',
-    fontSize: '1.5rem',
+    fontSize: '1rem',
   },
   subtitle: {
     margin: '0px',
