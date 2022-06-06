@@ -27,7 +27,6 @@ import Quotations from './pages/quote/quotation/Quotations';
 import Summary from './pages/quote/summary/Summary';
 import Voucher from './pages/quote/voucher/Voucher';
 import SettingsAccomodation from './pages/settings/accomodation/SettingsAccomodation';
-import General from './pages/settings/general/General';
 import Tour from './pages/settings/tour/Tour';
 import UserManagement from './pages/settings/user-management/UserManagement';
 import { onSizeChange } from './redux/containerSizeSlice';
@@ -255,9 +254,6 @@ function App() {
                 </ProtectedRoute>
                 <ProtectedRoute path="/settings/user-management">
                   <UserManagement />
-                </ProtectedRoute>
-                <ProtectedRoute path="/settings/general">
-                  <General />
                 </ProtectedRoute>
                 <Route exact path="/settings">
                   <Redirect to="/settings/user-management" />

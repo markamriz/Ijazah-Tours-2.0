@@ -6,7 +6,6 @@ import Quotations from './pages/quote/quotation/Quotations';
 import Summary from './pages/quote/summary/Summary';
 import Voucher from './pages/quote/voucher/Voucher';
 import SettingsAccomodation from './pages/settings/accomodation/SettingsAccomodation';
-import General from './pages/settings/general/General';
 import Tour from './pages/settings/tour/Tour';
 import UserManagement from './pages/settings/user-management/UserManagement';
 
@@ -89,12 +88,6 @@ export const GetRoutes = () => ([
         path: RoutePaths.settings.UserManagement,
         exact: true,
         component: UserManagement,
-        protected: true,
-      },
-      {
-        path: RoutePaths.settings.General,
-        exact: true,
-        component: General,
         protected: true,
       },
     ],
