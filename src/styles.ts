@@ -640,7 +640,7 @@ export const DataCardStyles = {
   },
   total: {
     fontWeight: 'bold',
-    fontSize: '3rem',
+    fontSize: '2.5rem',
     margin: '0',
     textAlign: 'center' as const,
   },
