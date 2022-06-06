@@ -31,11 +31,6 @@ const INPUT_TYPES = [
     btnEditText: 'Edit Holiday Type',
   },
   {
-    h2Text: 'Status',
-    btnNewText: 'Add status',
-    btnEditText: 'Edit status',
-  },
-  {
     h2Text: 'Comments',
     btnNewText: 'Add Comment',
     btnEditText: 'Edit Comment',

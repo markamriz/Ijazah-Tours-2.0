@@ -201,7 +201,7 @@ export const quotationsStyles = {
   },
   btn: {
     ...shadowButtonStyles,
-    width: '11rem',
+    width: '10rem',
   },
 };
 
@@ -459,7 +459,7 @@ export const libraryStyles = {
   ...mainContainerStyles,
   btn: {
     ...shadowButtonStyles,
-    width: '11rem',
+    width: '10rem',
   },
   textField: {
     width: '11rem',
