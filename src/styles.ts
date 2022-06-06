@@ -590,13 +590,13 @@ export const headerStyles = {
     marginRight: '12px',
     fontWeight: 500,
     color: '#1C5BBA',
-    fontSize: '40px',
+    fontSize: '35px',
   },
   spanT: {
     margin: '0px',
     fontWeight: 500,
     color: '#41E93E',
-    fontSize: '32px',
+    fontSize: '28px',
   },
 };
 
