@@ -35,7 +35,6 @@ const LINKS = [
       { key: '1', text: 'User Management', link: '/settings/user-management' },
       { key: '2', text: 'Tour', link: '/settings/tour' },
       { key: '3', text: 'Accomodation', link: '/settings/accomodation' },
-      { key: '4', text: 'General', link: '/settings/general' },
     ],
   },
 ];
