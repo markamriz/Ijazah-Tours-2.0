@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from 'react';
 
 import { CircularProgress } from '@material-ui/core';
+import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import {
@@ -34,11 +35,9 @@ import { login, logout } from './redux/userSlice';
 import { fetchingDataIndicatorStyles } from './styles';
 import { getUserOnLogin, handleClientLoad, widthHeightDynamicStyle } from './utils/helpers';
 import ProtectedRoute from './utils/ProtectedRoute';
-import { ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
 
-const theme = createMuiTheme();
 const useStyles = makeStyles((theme) => {
-  root: {
+  {
     // some CSS that access to theme
   }
 });
@@ -46,8 +45,6 @@ const useStyles = makeStyles((theme) => {
 const rememberMe = localStorage.getItem('Ijazah Remember Me') !== 'false';
 
 function App() {
-  const classes = useStyles();
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [getInitialUser, setGetInitialUser] = useState(false);
 

@@ -199,19 +199,19 @@ function QuotationsTable({
   const cloneVoucher = async (guestDetails: any, type: string, title: string) => {
     let vId = '';
     switch (title) {
-      case 'Driver':
-        vId = `${guestDetails.quoteTitle.slice(0, 5)} DV`;
-        break;
-      case 'Itinerary':
-        vId = `${guestDetails.quoteTitle.slice(0, 5)} IV`;
-        break;
-      case 'Proforma Invoice':
-        vId = `${guestDetails.quoteTitle.slice(0, 5)} PIV`;
-        break;
-      case 'Cash Receipt':
-      default:
-        vId = `${guestDetails.quoteTitle.slice(0, 5)} CRV`;
-        break;
+    case 'Driver':
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} DV`;
+      break;
+    case 'Itinerary':
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} IV`;
+      break;
+    case 'Proforma Invoice':
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} PIV`;
+      break;
+    case 'Cash Receipt':
+    default:
+      vId = `${guestDetails.quoteTitle.slice(0, 5)} CRV`;
+      break;
     }
 
     await setDoc(doc(
