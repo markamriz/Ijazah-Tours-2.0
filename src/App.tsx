@@ -36,12 +36,6 @@ import { fetchingDataIndicatorStyles } from './styles';
 import { getUserOnLogin, handleClientLoad, widthHeightDynamicStyle } from './utils/helpers';
 import ProtectedRoute from './utils/ProtectedRoute';
 
-const useStyles = makeStyles((theme) => {
-  {
-    // some CSS that access to theme
-  }
-});
-
 const rememberMe = localStorage.getItem('Ijazah Remember Me') !== 'false';
 
 function App() {
