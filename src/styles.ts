@@ -31,7 +31,7 @@ const formCreateMemberStyles = {
   title: {
     margin: '0px',
     color: '#0A65FF',
-    fontSize: '1.5rem',
+    fontSize: '1rem',
   },
   subtitle: {
     margin: '0px',
@@ -201,7 +201,7 @@ export const quotationsStyles = {
   },
   btn: {
     ...shadowButtonStyles,
-    width: '11rem',
+    width: '10rem',
   },
 };
 
@@ -466,7 +466,7 @@ export const libraryStyles = {
   ...mainContainerStyles,
   btn: {
     ...shadowButtonStyles,
-    width: '11rem',
+    width: '10rem',
   },
   textField: {
     width: '11rem',
@@ -597,13 +597,13 @@ export const headerStyles = {
     marginRight: '12px',
     fontWeight: 500,
     color: '#1C5BBA',
-    fontSize: '40px',
+    fontSize: '35px',
   },
   spanT: {
     margin: '0px',
     fontWeight: 500,
     color: '#41E93E',
-    fontSize: '32px',
+    fontSize: '28px',
   },
 };
 
@@ -647,7 +647,7 @@ export const DataCardStyles = {
   },
   total: {
     fontWeight: 'bold',
-    fontSize: '3rem',
+    fontSize: '2.5rem',
     margin: '0',
     textAlign: 'center' as const,
   },

@@ -21,7 +21,7 @@ import { logout, selectUser } from '../redux/userSlice';
 import { navbarStyles } from '../styles';
 import { roleOptions } from '../utils/helpers';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const useStyles = makeStyles((theme: Theme) => ({
   drawer: {
@@ -46,9 +46,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: 'hidden',
-    width: theme.spacing(7) + 1,
+    width: theme.spacing(6) + 1,
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(7) + 1,
+      width: theme.spacing(6) + 1,
     },
   },
 }));
