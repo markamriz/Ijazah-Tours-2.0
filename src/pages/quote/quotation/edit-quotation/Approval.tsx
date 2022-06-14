@@ -16,7 +16,6 @@ import { useHistory } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
 import ButtonAtom from '../../../../atoms/ButtonAtom';
-import CheckboxAtom from '../../../../atoms/CheckboxAtom';
 import DivAtom from '../../../../atoms/DivAtom';
 import IconAtom from '../../../../atoms/IconAtom';
 import ParagraphAtom from '../../../../atoms/ParagraphAtom';
@@ -25,6 +24,7 @@ import ApprovalAccomodationTable from '../../../../organisms/quote/quotation/cre
 import ApprovalOverallCost from '../../../../organisms/quote/quotation/create-quotation/approval/ApprovalOverallCost';
 import ApprovalRateComparisonTable from '../../../../organisms/quote/quotation/create-quotation/approval/ApprovalRateComparisonTable';
 import Banner from '../../../../organisms/quote/quotation/create-quotation/approval/Banner';
+import Comments from '../../../../organisms/quote/quotation/create-quotation/approval/Comments';
 import GuestDetails from '../../../../organisms/quote/quotation/create-quotation/approval/GuestDetails';
 import Offers from '../../../../organisms/quote/quotation/create-quotation/approval/Offers';
 import TourTypeDialog from '../../../../organisms/quote/quotation/create-quotation/approval/TourTypeDialog';
@@ -80,7 +80,7 @@ function Approval({ setCreated }: ApprovalProps) {
   const [guideAndCar, setGuideAndCar] = useState(false);
 
   const [comments, setComments] = useState<any>();
-  const [includeComments, setIncludeComments] = useState(false);
+  const [commentsChecked, setCommentsChecked] = useState<boolean[]>([]);
 
   // Tour Type
   const [driverChoice, setDriverChoice] = useState<LibraryDriver>();
@@ -111,6 +111,7 @@ function Approval({ setCreated }: ApprovalProps) {
       });
 
       setComments(cData);
+      setCommentsChecked(new Array(cData.length).fill(false));
       setDriverData(dData as LibraryDriver[]);
     };
 
@@ -374,16 +375,25 @@ function Approval({ setCreated }: ApprovalProps) {
   const getSaveQuoteOffers = (val: boolean) => (val ? 'Yes' : 'No');
 
   const OffersContainer = () => (!isSavingQuote && !isApprovingQuote ? (
-    <Offers
-      roomAndBreakfast={roomAndBreakfast}
-      receptionAtAirport={receptionAtAirport}
-      allGovernmentTaxes={allGovernmentTaxes}
-      guideAndCar={guideAndCar}
-      setRoomAndBreakfast={setRoomAndBreakfast}
-      setReceptionAtAirport={setReceptionAtAirport}
-      setAllGovernmentTaxes={setAllGovernmentTaxes}
-      setGuideAndCar={setGuideAndCar}
-    />
+    <DivAtom
+      style={{ borderBottom: '2px solid #41E93E' }}
+    >
+      <Offers
+        roomAndBreakfast={roomAndBreakfast}
+        receptionAtAirport={receptionAtAirport}
+        allGovernmentTaxes={allGovernmentTaxes}
+        guideAndCar={guideAndCar}
+        setRoomAndBreakfast={setRoomAndBreakfast}
+        setReceptionAtAirport={setReceptionAtAirport}
+        setAllGovernmentTaxes={setAllGovernmentTaxes}
+        setGuideAndCar={setGuideAndCar}
+      />
+      <Comments
+        comments={comments}
+        setCommentsChecked={setCommentsChecked}
+        commentsChecked={commentsChecked}
+      />
+    </DivAtom>
   ) : (
     <DivAtom style={approvalStyles.offers.container}>
       <ParagraphAtom style={approvalStyles.titleText} text="This offer includes:" />
@@ -394,6 +404,17 @@ function Approval({ setCreated }: ApprovalProps) {
         { /* eslint-disable-next-line max-len */ }
         <li>Guide and the Car. Transportation from Reception to Fairwell, (Throught the Trip): {getSaveQuoteOffers(guideAndCar)}</li>
       </ul>
+
+      {!commentsChecked.every((a) => !a) && (
+        <>
+          <ParagraphAtom style={approvalStyles.titleText} text="Comments:" />
+          <ul>
+            {comments.map((c: { val: string }, i: number) => commentsChecked[i] && (
+              <li key={i}>{c.val}</li>
+            ))}
+          </ul>
+        </>
+      )}
     </DivAtom>
   ));
 
@@ -463,26 +484,6 @@ function Approval({ setCreated }: ApprovalProps) {
               />
               <OffersContainer />
             </DivAtom>
-            <DivAtom style={{ padding: '0 2rem' }}>
-              {!isSavingQuote && !isApprovingQuote && (
-                <CheckboxAtom
-                  checked={includeComments}
-                  onChange={() => setIncludeComments(!includeComments)}
-                  label="Include comments"
-                  name="comments"
-                />
-              )}
-              {includeComments && (
-                <>
-                  <ParagraphAtom style={approvalStyles.titleText} text="Comments:" />
-                  <ul>
-                    {comments.map((c: { val: string }, i: number) => (
-                      <li key={i}>{c.val}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </DivAtom>
           </div>
 
           <DivAtom style={{ padding: '2rem' }}>
@@ -496,13 +497,24 @@ function Approval({ setCreated }: ApprovalProps) {
                 margin: widthHeightDynamicStyle(width, 768, '100%', '18%') ? '0 1rem 1rem 0' : '0 0 1rem 2rem',
               }}
             />
-
+            <ButtonAtom
+              size="large"
+              text="Save"
+              endIcon={isSavingQuote && <CircularProgress size={20} color="inherit" />}
+              disabled={isSavingQuote}
+              onClick={saveUserQuotation}
+              style={{
+                ...quoteCreateQuoteStyles.addBtn,
+                width: widthHeightDynamicStyle(width, 768, '100%', '18%'),
+                margin: widthHeightDynamicStyle(width, 768, '100%', '18%') ? '0 1rem 1rem 0' : '0 0 1rem 2rem',
+              }}
+            />
             <ButtonAtom
               size="large"
               text="Approve"
-              endIcon={isSavingQuote && <CircularProgress size={20} color="inherit" />}
-              disabled={isSavingQuote || tourType === '' || !driverChoice}
-              onClick={saveUserQuotation}
+              endIcon={isApprovingQuote && <CircularProgress size={20} color="inherit" />}
+              disabled={isApprovingQuote || tourType === '' || !driverChoice}
+              onClick={approveUserQuotation}
               style={{
                 ...quoteCreateQuoteStyles.addBtn,
                 width: widthHeightDynamicStyle(width, 768, '100%', '18%'),

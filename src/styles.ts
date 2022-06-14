@@ -456,7 +456,6 @@ export const approvalStyles = {
       padding: '1rem',
       display: 'flex',
       flexDirection: 'column' as const,
-      borderBottom: '2px solid #41E93E',
     },
   },
 };
