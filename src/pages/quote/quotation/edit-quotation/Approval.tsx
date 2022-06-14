@@ -12,10 +12,11 @@ import {
 import { getStorage } from 'firebase/storage';
 import JSPDF from 'jspdf';
 import { useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
 import ButtonAtom from '../../../../atoms/ButtonAtom';
+import CheckboxAtom from '../../../../atoms/CheckboxAtom';
 import DivAtom from '../../../../atoms/DivAtom';
 import IconAtom from '../../../../atoms/IconAtom';
 import ParagraphAtom from '../../../../atoms/ParagraphAtom';
@@ -78,6 +79,9 @@ function Approval({ setCreated }: ApprovalProps) {
   const [allGovernmentTaxes, setAllGovernmentTaxes] = useState(false);
   const [guideAndCar, setGuideAndCar] = useState(false);
 
+  const [comments, setComments] = useState<any>();
+  const [includeComments, setIncludeComments] = useState(false);
+
   // Tour Type
   const [driverChoice, setDriverChoice] = useState<LibraryDriver>();
   const [driverData, setDriverData] = useState<LibraryDriver[]>();
@@ -86,21 +90,28 @@ function Approval({ setCreated }: ApprovalProps) {
   const [showTourTypeValidationErrorMsg, setShowTourTypeValidationErrorMsg] = useState(false);
 
   const [showRateContainer, setShowRateContainer] = useState(true);
+  const [isApprovingQuote, setIsApprovingQuote] = useState(false);
   const [isSavingQuote, setIsSavingQuote] = useState(false);
 
-  const { id: quoteId } = useParams<{ id: string }>();
   const history = useHistory();
 
   useEffect(() => {
     const getInitialData = async () => {
-      const dData = (await getDocs(collection(db, 'Library Drivers'))).docs;
-      const data = dData.map((dc) => dc.data());
-      const ids = dData.map((dc) => dc.id);
-      ids.forEach((id, i) => {
-        data[i].id = id;
+      const ldData = (await getDocs(collection(db, 'Library Drivers'))).docs;
+      const scData = (await getDocs(collection(db, 'Settings Comments'))).docs;
+      const dData = ldData.map((dc) => dc.data());
+      const cData = scData.map((dc) => dc.data());
+      const dIds = ldData.map((dc) => dc.id);
+      const cIds = scData.map((dc) => dc.id);
+      dIds.forEach((id, i) => {
+        dData[i].id = id;
+      });
+      cIds.forEach((id, i) => {
+        cData[i].id = id;
       });
 
-      setDriverData(data as LibraryDriver[]);
+      setComments(cData);
+      setDriverData(dData as LibraryDriver[]);
     };
 
     getInitialData();
@@ -174,7 +185,42 @@ function Approval({ setCreated }: ApprovalProps) {
     });
   };
 
+  const approveUserQuotation = async () => {
+    const guestDetails = createQuote(driverChoice!, 'APPROVED', setIsApprovingQuote);
+
+    // Close any existing quote of same ref num
+    const eqData = (await getDocs(collection(db, 'Approval Quotations'))).docs;
+    const existingQuotations = eqData.map((dc) => dc.data());
+    const existingQuotationsIds = eqData.map((dc) => dc.id);
+    existingQuotationsIds.forEach((id, i) => {
+      existingQuotations[i].id = id;
+    });
+    const existingQuote = existingQuotations.find((q) => q.refNum === refNum);
+    if (existingQuote && existingQuote.status !== 'APPROVED') {
+      await setDoc(doc(db, 'Approval Quotations', existingQuote.id), {
+        ...existingQuote,
+        status: 'CLOSED',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+
+    await createVouchers(guestDetails);
+    clearLocalStorage();
+    setIsApprovingQuote(false);
+    setCreated(true);
+    history.replace('/quote/voucher');
+  };
+
   const saveUserQuotation = async () => {
+    await createQuote(null, 'IN PROGRESS', setIsSavingQuote);
+    clearLocalStorage();
+    setIsSavingQuote(false);
+    setCreated(true);
+    history.replace('/dashboard');
+  };
+
+  const createQuote = async (dc: LibraryDriver | null, status: string, updater: any) => {
     const customerDetails = JSON.parse(
       localStorage.getItem('New Quote Customer')!,
     ).data[0];
@@ -182,7 +228,7 @@ function Approval({ setCreated }: ApprovalProps) {
       localStorage.getItem('New Quote Accomodation')!,
     );
 
-    setIsSavingQuote(true);
+    updater(true);
     setCreated(false);
     const pdfURL = await generatePDF();
 
@@ -211,7 +257,8 @@ function Approval({ setCreated }: ApprovalProps) {
       costings,
       email,
       tourType,
-      driverChoice,
+      status,
+      driverChoice: dc,
       saveCheckin: customerDetails[7],
       saveCheckout: customerDetails[8],
       holidayType: customerDetails[12],
@@ -229,36 +276,15 @@ function Approval({ setCreated }: ApprovalProps) {
       user: userId,
       creator: user,
       name: `${firstName} ${lastName}`,
-      status: 'APPROVED',
     };
 
-    // Close any existing quote of same ref num
-    const eqData = (await getDocs(collection(db, 'Approval Quotations'))).docs;
-    const existingQuotations = eqData.map((dc) => dc.data());
-    const existingQuotationsIds = eqData.map((dc) => dc.id);
-    existingQuotationsIds.forEach((id, i) => {
-      existingQuotations[i].id = id;
-    });
-    const existingQuote = existingQuotations.find((q) => q.refNum === refNum);
-    if (existingQuote && existingQuote.status !== 'APPROVED') {
-      await setDoc(doc(db, 'Approval Quotations', existingQuote.id), {
-        ...existingQuote,
-        status: 'CLOSED',
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-    }
-
-    await setDoc(doc(db, 'Approval Quotations', quoteId), {
+    await setDoc(doc(db, 'Approval Quotations', uuid()), {
       ...guestDetails,
+      createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
 
-    await createVouchers(guestDetails);
-    clearLocalStorage();
-    setIsSavingQuote(false);
-    setCreated(true);
-    history.replace('/quote/voucher');
+    return guestDetails;
   };
 
   const onTourTypeConfirm = () => {
@@ -347,7 +373,7 @@ function Approval({ setCreated }: ApprovalProps) {
 
   const getSaveQuoteOffers = (val: boolean) => (val ? 'Yes' : 'No');
 
-  const OffersContainer = () => (!isSavingQuote ? (
+  const OffersContainer = () => (!isSavingQuote && !isApprovingQuote ? (
     <Offers
       roomAndBreakfast={roomAndBreakfast}
       receptionAtAirport={receptionAtAirport}
@@ -373,7 +399,7 @@ function Approval({ setCreated }: ApprovalProps) {
 
   return (
     <DivAtom style={{ height: `${height}px` }}>
-      {(accomodationData && rateData && driverData) ? (
+      {(accomodationData && rateData && driverData && comments) ? (
         <>
           <div id="report">
             <DivAtom style={{ padding: '2rem' }}>
@@ -436,6 +462,26 @@ function Approval({ setCreated }: ApprovalProps) {
                 netPrice={netPrice}
               />
               <OffersContainer />
+            </DivAtom>
+            <DivAtom style={{ padding: '0 2rem' }}>
+              {!isSavingQuote && !isApprovingQuote && (
+                <CheckboxAtom
+                  checked={includeComments}
+                  onChange={() => setIncludeComments(!includeComments)}
+                  label="Include comments"
+                  name="comments"
+                />
+              )}
+              {includeComments && (
+                <>
+                  <ParagraphAtom style={approvalStyles.titleText} text="Comments:" />
+                  <ul>
+                    {comments.map((c: { val: string }, i: number) => (
+                      <li key={i}>{c.val}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </DivAtom>
           </div>
 

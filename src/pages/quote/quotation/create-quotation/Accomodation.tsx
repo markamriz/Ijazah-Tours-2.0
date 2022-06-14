@@ -7,8 +7,14 @@ import {
 import { CircularProgress } from '@material-ui/core';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
 import CloseIcon from '@material-ui/icons/Close';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import SearchIcon from '@material-ui/icons/Search';
-import { collection, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+} from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -61,6 +67,8 @@ function Accomodation() {
   const [search, setSearch] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
 
+  const [deletingPresetQuote, setDeletingPresetQuote] = useState(false);
+
   const [showValidationErrorMessage, setShowValidationErrorMessage] = useState(false);
   const [validationNightsRequired, setValidationNightsRequired] = useState(0);
 
@@ -73,21 +81,18 @@ function Accomodation() {
       const rtData = (await getDocs(collection(db, 'Settings Room Types'))).docs;
       const vData = (await getDocs(collection(db, 'Settings Room Views'))).docs;
       const gData = (await getDocs(collection(db, 'Settings Room Gradings'))).docs;
-      const pqData = (await getDocs(collection(db, 'Preset Quotes'))).docs;
 
       const accData = aData.map((dc) => dc.data());
       const accTypesData = atData.map((dc) => dc.data());
       const rTypesData = rtData.map((dc) => dc.data());
       const viewsData = vData.map((dc) => dc.data());
       const gradingsData = gData.map((dc) => dc.data());
-      const presetData = pqData.map((dc) => dc.data());
 
       const accIds = aData.map((dc) => dc.id);
       const accTypesIds = atData.map((dc) => dc.id);
       const roomTypesIds = rtData.map((dc) => dc.id);
       const viewsIds = vData.map((dc) => dc.id);
       const gradingsIds = gData.map((dc) => dc.id);
-      const presetIds = pqData.map((dc) => dc.id);
 
       accIds.forEach((id, i) => {
         accData[i].id = id;
@@ -103,9 +108,6 @@ function Accomodation() {
       });
       gradingsIds.forEach((id, i) => {
         gradingsData[i].id = id;
-      });
-      presetIds.forEach((id, i) => {
-        presetData[i].id = id;
       });
 
       if (localStorage.getItem('New Quote Accomodation')) {
@@ -124,11 +126,26 @@ function Accomodation() {
       setRoomTypesData(rTypesData as SettingsSingleInput[]);
       setRoomViewsData(viewsData as SettingsSingleInput[]);
       setRoomGradingsData(gradingsData as SettingsSingleInput[]);
-      setPresetQuotesData(presetData);
     };
 
     getInitialData();
   }, []);
+
+  useEffect(() => {
+    const getInitialData = async () => {
+      const pqData = (await getDocs(collection(db, 'Preset Quotes'))).docs;
+      const presetData = pqData.map((dc) => dc.data());
+      const presetIds = pqData.map((dc) => dc.id);
+
+      presetIds.forEach((id, i) => {
+        presetData[i].id = id;
+      });
+
+      setPresetQuotesData(presetData);
+    };
+
+    getInitialData();
+  }, [deletingPresetQuote]);
 
   const addAccomodation = (acc: UserAccomodation) => {
     const customerDetails = JSON.parse(
@@ -311,6 +328,15 @@ function Accomodation() {
     }
   };
 
+  const deletePresetQuote = async (quote: any) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this Preset Quote?');
+    if (confirmDelete) {
+      setDeletingPresetQuote(false);
+      await deleteDoc(doc(db, 'Preset Quotes', quote.id));
+      setDeletingPresetQuote(true);
+    }
+  };
+
   return (
     <DivAtom style={{ height: `${height}px` }}>
       <DivAtom style={quoteCreateQuoteStyles.header}>
@@ -341,23 +367,42 @@ function Accomodation() {
                 }}
               >
                 {presetQuotesData.map((quote, index) => (
-                  <ButtonAtom
-                    text={quote.title}
-                    key={index}
-                    style={{
-                      ...quoteCreateQuoteStyles.btn,
-                      marginRight: '16px',
-                      marginBottom: widthHeightDynamicStyle(width, 768, '1rem', 0),
-                      width: widthHeightDynamicStyle(width, 768, '100%', '11rem'),
-                    }}
-                    onClick={() => {
-                      setSelectedAccomodations(quote.selectedAccomodations);
-                      setPresetPax(quote.selectedAccomodations);
-                      setSelectedAccomodationsMealPlans(quote.selectedAccomodationsMealPlans);
-                      setSelectedAccomodationsRoomTypes(quote.selectedAccomodationsRoomTypes);
-                    }}
-                    size="large"
-                  />
+                  <DivAtom style={quoteCreateQuoteStyles.presetQuoteButtonContainer}>
+                    <ButtonAtom
+                      text={quote.title}
+                      key={index}
+                      style={{
+                        ...quoteCreateQuoteStyles.btn,
+                        background: 'none',
+                        flex: 1,
+                        width: 'auto',
+                        minWidth: widthHeightDynamicStyle(width, 768, '100%', '9rem'),
+                      }}
+                      onClick={() => {
+                        setSelectedAccomodations(quote.selectedAccomodations);
+                        setPresetPax(quote.selectedAccomodations);
+                        setSelectedAccomodationsMealPlans(quote.selectedAccomodationsMealPlans);
+                        setSelectedAccomodationsRoomTypes(quote.selectedAccomodationsRoomTypes);
+                      }}
+                      size="large"
+                    />
+                    <DivAtom
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '3rem',
+                      }}
+                    >
+                      <IconAtom
+                        size="small"
+                        style={{ color: 'red' }}
+                        onClick={() => deletePresetQuote(quote)}
+                      >
+                        <DeleteOutlinedIcon />
+                      </IconAtom>
+                    </DivAtom>
+                  </DivAtom>
                 ))}
               </DivAtom>
               <DivAtom style={quoteCreateQuoteStyles.searchContainer}>

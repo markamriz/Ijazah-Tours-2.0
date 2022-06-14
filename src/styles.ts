@@ -208,6 +208,13 @@ export const quotationsStyles = {
 export const quoteCreateQuoteStyles = {
   ...formCreateMemberStyles,
   ...quotationsStyles,
+  presetQuoteButtonContainer: {
+    display: 'flex',
+    marginRight: '16px',
+    borderRadius: '0.5rem',
+    marginBottom: '1rem',
+    backgroundColor: 'rgb(98, 150, 228)',
+  },
   searchBar: {
     wrapper: {
       height: '350px',
