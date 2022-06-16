@@ -2,6 +2,8 @@ import { ChangeEvent, MouseEvent, useState } from 'react';
 
 import {
   makeStyles,
+  Menu,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -44,8 +46,6 @@ const headCells = [
   { id: '...1', label: '' },
   { id: '...2', label: '' },
   { id: '...3', label: '' },
-  { id: '...4', label: '' },
-  { id: '...5', label: '' },
 ];
 
 interface QuotationsTableProps {
@@ -93,6 +93,14 @@ function QuotationsTable({
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [cloningRow, setCloningRow] = useState('');
+
+  const [openProfileMenu, setOpenProfileMenu] = useState<null | HTMLElement>(null);
+  const handleClickProfileMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    setOpenProfileMenu(event.currentTarget);
+  };
+  const handleCloseProfileMenu = () => {
+    setOpenProfileMenu(null);
+  };
 
   const history = useHistory();
 
@@ -359,47 +367,6 @@ function QuotationsTable({
                       btnDisabled
                     />
                     <TableRowButtonCell
-                      onClick={() => window.open(row.pdfURL)}
-                      align="right"
-                      btnWidth="8rem"
-                      btnSize="medium"
-                      btnBorderRadius="0.5rem"
-                      btnText="View Quote"
-                      btnColors={['#C9F7F5', '#1BC5BD']}
-                    />
-                    <TableRowButtonCell
-                      onClick={() => history.replace(`/quote/quotations/edit/${row.id}/customer`)}
-                      align="right"
-                      btnWidth="8rem"
-                      btnSize="medium"
-                      btnBorderRadius="0.5rem"
-                      btnText="Edit Quote"
-                      btnColors={['#e0ca51', '#464E5F']}
-                    />
-                    {row.id === cloningRow ? (
-                      <TableRowButtonCell
-                        onClick={() => cloneQuote(row)}
-                        align="right"
-                        btnWidth={cloned ? '10rem' : '8rem'}
-                        btnSize="medium"
-                        btnBorderRadius="0.5rem"
-                        btnText="Clone Quote"
-                        btnColors={['#4dda31', '#ffffff']}
-                        loading={cloned}
-                        btnDisabled={cloned}
-                      />
-                    ) : (
-                      <TableRowButtonCell
-                        onClick={() => cloneQuote(row)}
-                        align="right"
-                        btnWidth={cloned ? '10rem' : '8rem'}
-                        btnSize="medium"
-                        btnBorderRadius="0.5rem"
-                        btnText="Clone Quote"
-                        btnColors={['#4dda31', '#ffffff']}
-                      />
-                    )}
-                    <TableRowButtonCell
                       onClick={() => history.replace(`/quote/summary/${row.id}`)}
                       align="right"
                       btnWidth="8rem"
@@ -417,6 +384,26 @@ function QuotationsTable({
                       btnText="Share"
                       btnColors={['#7879F1', '#ffffff']}
                     />
+                    <TableRowButtonCell
+                      onClick={handleClickProfileMenu}
+                      align="right"
+                      btnWidth="8rem"
+                      btnSize="medium"
+                      btnBorderRadius="0.5rem"
+                      btnText="More"
+                      btnColors={['#C9F7F5', '#208883']}
+                    />
+                    <Menu
+                      id="profile-menu"
+                      anchorEl={openProfileMenu}
+                      keepMounted
+                      open={Boolean(openProfileMenu)}
+                      onClose={handleCloseProfileMenu}
+                    >
+                      <MenuItem onClick={() => window.open(row.pdfURL)}>View Quote</MenuItem>
+                      <MenuItem onClick={() => history.replace(`/quote/quotations/edit/${row.id}/customer`)}>Edit Quote</MenuItem>
+                      <MenuItem onClick={() => cloneQuote(row)}>Clone Quote</MenuItem>
+                    </Menu>
                   </TableRow>
                 ))}
             </TableBody>
