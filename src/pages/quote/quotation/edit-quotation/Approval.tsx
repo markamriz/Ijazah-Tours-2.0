@@ -12,7 +12,7 @@ import {
 import { getStorage } from 'firebase/storage';
 import JSPDF from 'jspdf';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
 import ButtonAtom from '../../../../atoms/ButtonAtom';
@@ -94,6 +94,7 @@ function Approval({ setCreated }: ApprovalProps) {
   const [isSavingQuote, setIsSavingQuote] = useState(false);
 
   const history = useHistory();
+  const { id: quoteId } = useParams<{ id: string }>();
 
   useEffect(() => {
     const getInitialData = async () => {
@@ -259,6 +260,7 @@ function Approval({ setCreated }: ApprovalProps) {
       email,
       tourType,
       status,
+      commentsChecked,
       driverChoice: dc,
       saveCheckin: customerDetails[7],
       saveCheckout: customerDetails[8],
@@ -279,7 +281,7 @@ function Approval({ setCreated }: ApprovalProps) {
       name: `${firstName} ${lastName}`,
     };
 
-    await setDoc(doc(db, 'Approval Quotations', uuid()), {
+    await setDoc(doc(db, 'Approval Quotations', quoteId), {
       ...guestDetails,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),

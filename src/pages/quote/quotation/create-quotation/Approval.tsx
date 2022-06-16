@@ -253,6 +253,7 @@ function Approval({ setCreated }: ApprovalProps) {
       email,
       tourType,
       status,
+      commentsChecked,
       driverChoice: dc,
       saveCheckin: customerDetails[7],
       saveCheckout: customerDetails[8],
