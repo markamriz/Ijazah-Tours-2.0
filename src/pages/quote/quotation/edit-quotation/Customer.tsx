@@ -102,7 +102,7 @@ function Customer() {
 
       const thisQuote = aqData.find((q) => q.id === quoteId) as any;
       localStorage.setItem('Editing Quote', JSON.stringify({ thisQuote }));
-      setQuoteNum(thisQuote.quoteNo);
+      setQuoteNum(aqData.length + 1);
       setRefNum(thisQuote.refNum);
       setTitle(thisQuote.quoteTitle);
       setAdditionalBed(thisQuote.additionalBed);
