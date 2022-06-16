@@ -187,7 +187,7 @@ function Approval({ setCreated }: ApprovalProps) {
   };
 
   const approveUserQuotation = async () => {
-    const guestDetails = createQuote(driverChoice!, 'APPROVED', setIsApprovingQuote);
+    const guestDetails = await createQuote(driverChoice!, 'APPROVED', setIsApprovingQuote);
 
     // Close any existing quote of same ref num
     const eqData = (await getDocs(collection(db, 'Approval Quotations'))).docs;

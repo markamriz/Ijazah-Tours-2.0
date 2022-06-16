@@ -181,7 +181,7 @@ function Approval({ setCreated }: ApprovalProps) {
   };
 
   const approveUserQuotation = async () => {
-    const guestDetails = createQuote(driverChoice!, 'APPROVED', setIsApprovingQuote);
+    const guestDetails = await createQuote(driverChoice!, 'APPROVED', setIsApprovingQuote);
 
     // Close any existing quote of same ref num
     const eqData = (await getDocs(collection(db, 'Approval Quotations'))).docs;
@@ -299,14 +299,15 @@ function Approval({ setCreated }: ApprovalProps) {
   };
 
   const createVouchers = async (guestDetails: any) => {
-    await createVoucher(guestDetails, 'Driver Voucher', 'Driver');
-    await createVoucher(guestDetails, 'Itinerary Voucher', 'Itinerary');
-    await createVoucher(guestDetails, 'Tour Confirmation Voucher', 'Proforma Invoice');
-    await createVoucher(guestDetails, 'Cash Receipt', 'Cash Receipt');
+    console.log(guestDetails);
+    // await createVoucher(guestDetails, 'Driver Voucher', 'Driver');
+    // await createVoucher(guestDetails, 'Itinerary Voucher', 'Itinerary');
+    // await createVoucher(guestDetails, 'Tour Confirmation Voucher', 'Proforma Invoice');
+    // await createVoucher(guestDetails, 'Cash Receipt', 'Cash Receipt');
 
-    if (tourType === tourTypeOptions[0].value) {
-      await createAccomodationVouchers(guestDetails, 'Supplier Voucher');
-    }
+    // if (tourType === tourTypeOptions[0].value) {
+    //   await createAccomodationVouchers(guestDetails, 'Supplier Voucher');
+    // }
   };
 
   const createVoucher = async (guestDetails: any, type: string, title: string) => {
