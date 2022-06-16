@@ -122,7 +122,7 @@ function CostingAccomodationTable({
                 key={uuid()}
                 cell={{
                   align: 'center',
-                  title: row.total,
+                  title: `$${Number(row.roomRate.slice(1, row.roomRate.length)) * Number(row.nights)}`,
                   colors: ['#464E5F'],
                   weight: 400,
                 }}
