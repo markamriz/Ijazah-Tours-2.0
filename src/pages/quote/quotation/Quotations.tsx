@@ -54,6 +54,7 @@ function Quotations() {
   const [created, setCreated] = useState(false);
   const [cloned, setCloned] = useState(false);
   const [shared, setShared] = useState(false);
+  const [closed, setClosed] = useState(false);
 
   useEffect(() => {
     searchData(search, initialQuotationSearchData, setQuotationsData);
@@ -92,7 +93,7 @@ function Quotations() {
     };
 
     getIntialQuotationsData();
-  }, [cloned, created, shared]);
+  }, [cloned, closed, created, shared]);
 
   const filterApproved = () => {
     const approvedData = initialQuotationFilteredData.filter((quote) => (
@@ -345,8 +346,8 @@ function Quotations() {
                 <QuotationsTable
                   rowdata={quotationsData}
                   setCloned={setCloned}
-                  cloned={cloned}
                   setShared={setShared}
+                  setClosed={setClosed}
                 />
               </>
             ) : (

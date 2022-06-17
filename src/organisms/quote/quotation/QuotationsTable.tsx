@@ -50,9 +50,9 @@ const headCells = [
 
 interface QuotationsTableProps {
   rowdata: any[];
-  cloned: boolean;
   setCloned: any;
   setShared: any;
+  setClosed: any;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -81,9 +81,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function QuotationsTable({
   rowdata,
-  cloned,
   setCloned,
   setShared,
+  setClosed,
 }: QuotationsTableProps) {
   const user = useSelector(selectUser);
   const classes = useStyles();
@@ -91,8 +91,6 @@ function QuotationsTable({
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [cloningRow, setCloningRow] = useState('');
 
   const [openProfileMenu, setOpenProfileMenu] = useState<any>(new Array(rowdata.length).fill(null));
   const handleClickProfileMenu = (event: MouseEvent<HTMLButtonElement>, i: number) => {
@@ -171,7 +169,6 @@ function QuotationsTable({
 
   const cloneQuote = async (row: any) => {
     setCloned(true);
-    setCloningRow(row.id);
     const qData = (await getDocs(collection(db, 'Approval Quotations'))).docs;
     const aqData = qData.map((dc) => dc.data());
     const quoteNo = aqData.length + 1;
@@ -194,7 +191,6 @@ function QuotationsTable({
 
     await cloneVouchers(guestDetails);
     setCloned(false);
-    setCloningRow('');
   };
 
   const cloneVouchers = async (guestDetails: any) => {
@@ -276,6 +272,17 @@ function QuotationsTable({
     });
   };
 
+  const closeQuote = async (row: any) => {
+    setClosed(true);
+    await setDoc(doc(db, 'Approval Quotations', row.id), {
+      ...row,
+      status: 'CLOSED',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    setClosed(false);
+  };
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -340,7 +347,7 @@ function QuotationsTable({
                     <TableRowTextCell
                       cell={{
                         align: 'left',
-                        title: new Date(row.updatedAt.toDate()).toDateString(),
+                        title: new Date(row.updatedAt?.toDate()).toDateString(),
                         colors: ['#464E5F', '#B5B5C3'],
                         weight: 300,
                       }}
@@ -418,6 +425,7 @@ function QuotationsTable({
                       <MenuItem onClick={() => window.open(row.pdfURL)}>View Quote</MenuItem>
                       <MenuItem onClick={() => history.replace(`/quote/quotations/edit/${row.id}/customer`)}>Edit Quote</MenuItem>
                       <MenuItem onClick={() => cloneQuote(row)}>Clone Quote</MenuItem>
+                      <MenuItem onClick={() => closeQuote(row)}>Close Quote</MenuItem>
                     </Menu>
                   </TableRow>
                 ))}
