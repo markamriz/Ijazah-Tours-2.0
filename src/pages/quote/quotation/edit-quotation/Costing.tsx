@@ -52,6 +52,7 @@ function Costing() {
   const [calculateComparison, setCalculateComparison] = useState(false);
 
   const { id: quoteId } = useParams<{ id: string }>();
+  const [showValidationErrorMessage, setShowValidationErrorMessage] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -130,6 +131,12 @@ function Costing() {
   };
 
   const saveCost = () => {
+    setShowValidationErrorMessage(false);
+    if (Number(sellingPrice) < Number(totalPrice)) {
+      setShowValidationErrorMessage(true);
+      return;
+    }
+
     if (!comparisonData) {
       setComparisonData([]);
     }
@@ -266,6 +273,12 @@ function Costing() {
             setDiscount={setDiscount}
             setNetPrice={setNetPrice}
           />
+          {showValidationErrorMessage && (
+            <ParagraphAtom
+              text="The Selling Price cannot be less than the Total Price"
+              style={quoteCreateQuoteStyles.errorMsg}
+            />
+          )}
           <DivAtom
             style={{
               ...quoteCreateQuoteStyles.addBtnContainer,
