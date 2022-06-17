@@ -94,12 +94,16 @@ function QuotationsTable({
 
   const [cloningRow, setCloningRow] = useState('');
 
-  const [openProfileMenu, setOpenProfileMenu] = useState<null | HTMLElement>(null);
-  const handleClickProfileMenu = (event: MouseEvent<HTMLButtonElement>) => {
-    setOpenProfileMenu(event.currentTarget);
+  const [openProfileMenu, setOpenProfileMenu] = useState<any>(new Array(rowdata.length).fill(null));
+  const handleClickProfileMenu = (event: MouseEvent<HTMLButtonElement>, i: number) => {
+    const updated = [...openProfileMenu];
+    updated.splice(i, 1, event.currentTarget);
+    setOpenProfileMenu(updated);
   };
-  const handleCloseProfileMenu = () => {
-    setOpenProfileMenu(null);
+  const handleCloseProfileMenu = (i: number) => {
+    const updated = [...openProfileMenu];
+    updated.splice(i, 1, null);
+    setOpenProfileMenu(updated);
   };
 
   const history = useHistory();
@@ -295,7 +299,7 @@ function QuotationsTable({
             <TableBody>
               {stableSort(rowdata, getComparator(order as Order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: any) => (
+                .map((row: any, i: number) => (
                   <TableRow
                     hover
                     tabIndex={-1}
@@ -396,7 +400,7 @@ function QuotationsTable({
                       btnColors={['#7879F1', '#ffffff']}
                     />
                     <TableRowButtonCell
-                      onClick={handleClickProfileMenu}
+                      onClick={(event: any) => handleClickProfileMenu(event, i)}
                       align="right"
                       btnWidth="8rem"
                       btnSize="medium"
@@ -406,10 +410,10 @@ function QuotationsTable({
                     />
                     <Menu
                       id="profile-menu"
-                      anchorEl={openProfileMenu}
+                      anchorEl={openProfileMenu[i]}
                       keepMounted
-                      open={Boolean(openProfileMenu)}
-                      onClose={handleCloseProfileMenu}
+                      open={Boolean(openProfileMenu[i])}
+                      onClose={() => handleCloseProfileMenu(i)}
                     >
                       <MenuItem onClick={() => window.open(row.pdfURL)}>View Quote</MenuItem>
                       <MenuItem onClick={() => history.replace(`/quote/quotations/edit/${row.id}/customer`)}>Edit Quote</MenuItem>
