@@ -32,6 +32,7 @@ import { selectWith2NavbarHeight, selectWith2NavbarWidth } from '../../../../red
 import { selectUser } from '../../../../redux/userSlice';
 import { approvalStyles, fetchingDataIndicatorStyles, quoteCreateQuoteStyles } from '../../../../styles';
 import {
+  convertDateToFullMonth,
   getDaysDifference,
   tourTypeOptions,
   uploadPDF,
@@ -131,13 +132,20 @@ function Approval({ setCreated }: ApprovalProps) {
     const daysDifference = getDaysDifference(customerDetails[8], customerDetails[7]);
     setQuoteTitle(customerDetails[0]);
     setQuoteNo(customerDetails[1]);
-    setDaysAndNights(`${daysDifference + 1} - ${daysDifference}`);
     setRefNum(customerDetails[2]);
     setFirstName(customerDetails[3]);
     setLastName(customerDetails[4]);
     setNationality(customerDetails[6]);
-    setArrival(customerDetails[7]);
-    setDeparture(customerDetails[8]);
+    if (customerDetails[16] === 'Not Specific') {
+      setArrival(convertDateToFullMonth(customerDetails[7]));
+      setDeparture(convertDateToFullMonth(customerDetails[8]));
+      setDaysAndNights(`${customerDetails[17]} - ${Number(customerDetails[17]) - 1}`);
+    } else {
+      setArrival(customerDetails[7]);
+      setDeparture(customerDetails[8]);
+      setDaysAndNights(`${daysDifference + 1} - ${daysDifference}`);
+    }
+
     setAdults(customerDetails[9]);
     setChildren(customerDetails[10]);
     setUserId(customerDetails[11]);

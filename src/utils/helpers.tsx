@@ -133,6 +133,11 @@ export const number2words: any = (n: any) => {
   return `${number2words(~~(n / 1000))} thousand${n % 1000 !== 0 ? ` ${number2words(n % 1000)}` : ''}`;
 };
 
+export const convertDateToFullMonth = (date: string) => {
+  const dt = new Date(date);
+  return `${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
+};
+
 export const statusOptions = [
   { label: 'ACTIVE', value: 'ACTIVE' },
   { label: 'INACTIVE', value: 'INACTIVE' },
@@ -163,6 +168,21 @@ export const dateTypeOptions = [
 export const roleOptions = [
   { label: 'Admin', value: 'Admin' },
   { label: 'Travel Agent', value: 'Travel Agent' },
+];
+
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 const ITEM_HEIGHT = 48;
