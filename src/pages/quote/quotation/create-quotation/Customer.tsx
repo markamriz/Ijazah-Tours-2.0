@@ -46,7 +46,7 @@ function Customer() {
   const [city, setCity] = useState('');
   const [rooms, setRooms] = useState(0);
 
-  const [destinations, setDestinations] = useState<string[]>([]);
+  const [destinations, setDestinations] = useState<string[]>(['Sri Lanka']);
   const [toStoreDestinations, setToStoreDestinations] = useState<string[]>([]);
   const [additionalBed, setAdditionalBed] = useState(false);
   const [mealPlan, setMealPlan] = useState(mealPlanOptions[0].value);

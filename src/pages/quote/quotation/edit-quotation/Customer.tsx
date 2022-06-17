@@ -121,6 +121,7 @@ function Customer() {
         setNotSpecificDays(thisQuote.notSpecificDays);
       }
       setHolidayType(thisQuote.holidayType);
+      setDestinations(thisQuote.toStoreDestinations);
       setToStoreDestinations(thisQuote.toStoreDestinations);
       onRefNumChange(rfData as LibraryGuest[], thisQuote.refNum);
 
