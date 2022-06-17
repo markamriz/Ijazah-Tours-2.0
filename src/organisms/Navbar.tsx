@@ -50,8 +50,8 @@ function Navbar({ type }: NavbarProps) {
     <DivAtom style={navbarStyles.container}>
       {navbarType?.links.map((link) => (
         <LinkAtom
-          disabled={link.link === '/quote/summary'}
-          style={{ ...navbarStyles.link, cursor: link.link === '/quote/summary' ? 'default' : 'pointer' }}
+          disabled={link.link === '/quote/summary/:id'}
+          style={{ ...navbarStyles.link, cursor: link.link === '/quote/summary/:id' ? 'default' : 'pointer' }}
           key={link.key}
           to={link.link}
         >

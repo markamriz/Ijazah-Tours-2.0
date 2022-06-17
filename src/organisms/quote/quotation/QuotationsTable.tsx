@@ -336,7 +336,7 @@ function QuotationsTable({
                     <TableRowTextCell
                       cell={{
                         align: 'left',
-                        title: new Date(row.createdAt.toDate()).toDateString(),
+                        title: new Date(row.updatedAt.toDate()).toDateString(),
                         colors: ['#464E5F', '#B5B5C3'],
                         weight: 300,
                       }}
@@ -366,15 +366,26 @@ function QuotationsTable({
                       cell={{ status: row.status }}
                       btnDisabled
                     />
-                    <TableRowButtonCell
-                      onClick={() => history.replace(`/quote/summary/${row.id}`)}
-                      align="right"
-                      btnWidth="8rem"
-                      btnSize="medium"
-                      btnBorderRadius="0.5rem"
-                      btnText="Summary"
-                      btnColors={['#7595EC', '#333333']}
-                    />
+                    {row.status === 'APPROVED' ? (
+                      <TableRowButtonCell
+                        onClick={() => history.replace(`/quote/summary/${row.id}`)}
+                        align="right"
+                        btnWidth="8rem"
+                        btnSize="medium"
+                        btnBorderRadius="0.5rem"
+                        btnText="Summary"
+                        btnColors={['#7595EC', '#333333']}
+                      />
+                    ) : (
+                      <TableRowTextCell
+                        cell={{
+                          align: 'left',
+                          title: '',
+                          colors: ['#464E5F', '#B5B5C3'],
+                          weight: 300,
+                        }}
+                      />
+                    )}
                     <TableRowButtonCell
                       onClick={() => shareAndAddReminder(row)}
                       align="left"
