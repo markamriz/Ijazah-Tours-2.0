@@ -16,7 +16,6 @@ function Comments({
 }: CommentsProps) {
   return (
     <DivAtom style={approvalStyles.offers.container}>
-      <ParagraphAtom style={approvalStyles.titleText} text="Comments:" />
       {comments.map((c: { val: string }, i: number) => (
         <CheckboxAtom
           key={i}

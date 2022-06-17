@@ -40,7 +40,11 @@ function ApprovalAccomodationTable({
   const classes = useStyles();
 
   return (
-    <TableContainer style={width < 1500 ? { width: '100%' } : {}} className={classes.paper} component={Paper}>
+    <TableContainer
+      style={width < 1500 ? { width: '100%' } : {}}
+      className={classes.paper}
+      component={Paper}
+    >
       <Table className={classes.table} aria-label="approval accomodation table">
         <TableHead>
           <TableRow style={{ borderTop: '1px solid #41E93E' }}>
@@ -84,6 +88,15 @@ function ApprovalAccomodationTable({
                   cell={{
                     align: 'center',
                     title: row.roomType,
+                    colors: ['#464E5F'],
+                    weight: 400,
+                  }}
+                />
+                <TableRowTextCell
+                  key={uuid()}
+                  cell={{
+                    align: 'center',
+                    title: row.mealPlan,
                     colors: ['#464E5F'],
                     weight: 400,
                   }}

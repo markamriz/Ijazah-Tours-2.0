@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, TextField } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import {
   collection,
@@ -63,6 +63,7 @@ function Approval({ setCreated }: ApprovalProps) {
   const [nationality, setNationality] = useState('');
   const [arrival, setArrival] = useState('');
   const [departure, setDeparture] = useState('');
+  const [rooms, setRooms] = useState('');
   const [daysAndNights, setDaysAndNights] = useState('');
   const [quoteTitle, setQuoteTitle] = useState('');
   const [quoteNo, setQuoteNo] = useState('');
@@ -82,6 +83,7 @@ function Approval({ setCreated }: ApprovalProps) {
 
   const [comments, setComments] = useState<any>();
   const [commentsChecked, setCommentsChecked] = useState<boolean[]>([]);
+  const [additionalComments, setAdditionalComments] = useState('');
 
   // Tour Type
   const [driverChoice, setDriverChoice] = useState<LibraryDriver>();
@@ -150,6 +152,7 @@ function Approval({ setCreated }: ApprovalProps) {
     setChildren(customerDetails[10]);
     setUserId(customerDetails[11]);
     setEmail(customerDetails[18]);
+    setRooms(customerDetails[19] || '1');
 
     const costDetails = JSON.parse(localStorage.getItem('New Quote Costing')!);
     setSellingPrice(costDetails.sellingPrice);
@@ -262,6 +265,7 @@ function Approval({ setCreated }: ApprovalProps) {
       tourType,
       status,
       commentsChecked,
+      rooms,
       driverChoice: dc,
       saveCheckin: customerDetails[7],
       saveCheckout: customerDetails[8],
@@ -380,7 +384,7 @@ function Approval({ setCreated }: ApprovalProps) {
 
   const OffersContainer = () => (!isSavingQuote && !isApprovingQuote ? (
     <DivAtom
-      style={{ borderBottom: '2px solid #41E93E' }}
+      style={{ borderBottom: '2px solid #41E93E', padding: '1rem' }}
     >
       <Offers
         roomAndBreakfast={roomAndBreakfast}
@@ -397,6 +401,20 @@ function Approval({ setCreated }: ApprovalProps) {
         setCommentsChecked={setCommentsChecked}
         commentsChecked={commentsChecked}
       />
+      <DivAtom style={{ paddingTop: '1rem' }}>
+        <TextField
+          multiline
+          fullWidth
+          variant="outlined"
+          maxRows={20}
+          minRows={5}
+          value={additionalComments}
+          onChange={(e) => setAdditionalComments(e.target.value)}
+          label="Additional Comments"
+          color="primary"
+          focused
+        />
+      </DivAtom>
     </DivAtom>
   ) : (
     <DivAtom style={approvalStyles.offers.container}>
@@ -411,7 +429,6 @@ function Approval({ setCreated }: ApprovalProps) {
 
       {!commentsChecked.every((a) => !a) && (
         <>
-          <ParagraphAtom style={approvalStyles.titleText} text="Comments:" />
           <ul>
             {comments.map((c: { val: string }, i: number) => commentsChecked[i] && (
               <li key={i}>{c.val}</li>
@@ -419,6 +436,9 @@ function Approval({ setCreated }: ApprovalProps) {
           </ul>
         </>
       )}
+
+      <ParagraphAtom style={approvalStyles.titleText} text="Additional Comments:" />
+      <ParagraphAtom text={additionalComments} />
     </DivAtom>
   ));
 
@@ -438,6 +458,7 @@ function Approval({ setCreated }: ApprovalProps) {
                 departure={departure}
                 daysAndNights={daysAndNights}
                 children={children}
+                rooms={rooms}
               />
               {tourType === tourTypeOptions[0].value && (
                 <>
@@ -473,6 +494,7 @@ function Approval({ setCreated }: ApprovalProps) {
                           'Nights',
                           'Accomodation',
                           'Room Type',
+                          'Meal Plan',
                           'Room View',
                         ]}
                         data={accomodationData}

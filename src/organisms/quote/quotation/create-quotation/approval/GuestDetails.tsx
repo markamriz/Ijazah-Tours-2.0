@@ -12,6 +12,7 @@ interface GuestDetailsProps {
   arrival: string;
   departure: string;
   daysAndNights: string;
+  rooms: string;
   children: string[];
 }
 
@@ -23,6 +24,7 @@ function GuestDetails({
   arrival,
   departure,
   daysAndNights,
+  rooms,
   children,
 }: GuestDetailsProps) {
   const getChildrenAgeString = (age: string, index: number) => (index === children.length - 1 ? age : `${age}, `);
@@ -58,6 +60,16 @@ function GuestDetails({
           <SpanAtom
             style={approvalStyles.guestDetails.costContainer.cost}
             text={adults}
+          />
+        </p>
+        <p style={approvalStyles.guestDetails.costContainer.container}>
+          <SpanAtom
+            style={approvalStyles.guestDetails.costContainer.label}
+            text="Rooms"
+          />
+          <SpanAtom
+            style={approvalStyles.guestDetails.costContainer.cost}
+            text={rooms}
           />
         </p>
         {children && (

@@ -453,7 +453,6 @@ export const approvalStyles = {
   },
   offers: {
     container: {
-      padding: '1rem',
       display: 'flex',
       flexDirection: 'column' as const,
     },
