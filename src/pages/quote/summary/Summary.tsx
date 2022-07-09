@@ -121,10 +121,10 @@ function Summary() {
       setEarningsData(userSummary ? (userSummary as any).earningsData : []);
       // setExtrasData(userSummary ? (userSummary as any).extrasData : []);
 
-      setAccAmountPaid(userSummary!.accAmountPaid || new Array(vcs[0].accomodationDetails).fill('0'));
-      setAccEXRate(userSummary!.accEXRate || new Array(vcs[0].accomodationDetails).fill('0'));
-      setTransportAmountPaid(userSummary!.transportAmountPaid || '');
-      setTransportEXRate(userSummary!.transportEXRate || '');
+      setAccAmountPaid(userSummary?.accAmountPaid || new Array(vcs[0].accomodationDetails).fill('0'));
+      setAccEXRate(userSummary?.accEXRate || new Array(vcs[0].accomodationDetails).fill('0'));
+      setTransportAmountPaid(userSummary?.transportAmountPaid || '');
+      setTransportEXRate(userSummary?.transportEXRate || '');
 
       let tempUsdAccTotal = 0;
       vcs[0].accomodationDetails.forEach((acc: any) => {

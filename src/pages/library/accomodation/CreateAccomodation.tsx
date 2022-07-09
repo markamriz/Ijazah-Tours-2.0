@@ -31,9 +31,11 @@ import {
   SettingsLocation,
   LocationDropdown,
   CityDropdown,
+  LibraryAccomodation,
 } from '../../../utils/types';
 
 interface CreateAccomodationProps {
+  accomodationData: LibraryAccomodation[];
   isCreating: boolean;
   roomViewData: SettingsRoomProperties[];
   roomCategoriesData: SettingsRoomProperties[];
@@ -42,6 +44,7 @@ interface CreateAccomodationProps {
 }
 
 function CreateAccomodation({
+  accomodationData,
   isCreating,
   roomViewData,
   roomCategoriesData,
@@ -95,6 +98,7 @@ function CreateAccomodation({
   const [newTriplePrice, setNewTriplePrice] = useState('');
 
   const [showValidationErrorMessage, setShowValidationErrorMessage] = useState(false);
+  const [showExistingErrorMessage, setShowExistingErrorMessage] = useState(false);
 
   const history = useHistory();
 
@@ -129,10 +133,16 @@ function CreateAccomodation({
 
   const onAddAccomodation = async () => {
     setShowValidationErrorMessage(false);
+    setShowExistingErrorMessage(false);
     if (name.trim() === '' || location.trim() === ''
       || city.trim() === '' || contactNumber.trim() === '' || email.trim() === ''
       || additionalBedPrice.trim() === '' || rateData.length === 0) {
       setShowValidationErrorMessage(true);
+      return;
+    }
+
+    if (accomodationData.find((a) => a.name.toLowerCase() === name.toLowerCase())) {
+      setShowExistingErrorMessage(true);
       return;
     }
 
@@ -281,6 +291,7 @@ function CreateAccomodation({
             isCreating={isCreating}
             deleteRate={(row: AccomodationRate) => deleteRate(row)}
             showValidationErrorMessage={showValidationErrorMessage}
+            showExistingErrorMessage={showExistingErrorMessage}
             width={width}
             btnText="Create"
             accomodationType={accomodationType}

@@ -147,6 +147,7 @@ function Accomodation() {
       >
         <Route path="/library/accomodation/create">
           <CreateAccomodation
+            accomodationData={accomodationData}
             roomViewData={roomViewData}
             roomCategoriesData={roomCategoriesData}
             roomGradingsData={roomGradingsData}
@@ -156,6 +157,7 @@ function Accomodation() {
         </Route>
         <Route path="/library/accomodation/edit/:id">
           <EditAccomodation
+            accomodationData={accomodationData}
             accomodationTypeData={accomodationTypeData}
             accomodationLocations={accomodationLocations}
             accomodationCities={accomodationCities}

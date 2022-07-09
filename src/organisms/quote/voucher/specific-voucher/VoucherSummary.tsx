@@ -74,10 +74,10 @@ function VoucherSummary({ type, vData }: VoucherSummaryProps) {
       </DivAtom>
 
       <DivAtom>
-        {type === 'accomodation' ? (
+        <>
           <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
             <SpanAtom
-              text="Date"
+              text="Arrival"
               style={voucherStyles.voucherTemplate.summaryDetails.label}
             />
             <SpanAtom
@@ -85,42 +85,29 @@ function VoucherSummary({ type, vData }: VoucherSummaryProps) {
               style={voucherStyles.voucherTemplate.summaryDetails.detail}
             />
           </p>
-        ) : (
-          <>
+          <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
+            <SpanAtom
+              text="Departure"
+              style={voucherStyles.voucherTemplate.summaryDetails.label}
+            />
+            <SpanAtom
+              text={vData.guestDetails.departure}
+              style={voucherStyles.voucherTemplate.summaryDetails.detail}
+            />
+          </p>
+          {type === 'driver' && (
             <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
               <SpanAtom
-                text="Arrival"
+                text="Days"
                 style={voucherStyles.voucherTemplate.summaryDetails.label}
               />
               <SpanAtom
-                text={vData.guestDetails.arrival}
+                text={vData.guestDetails.daysAndNights.split('-')[0]}
                 style={voucherStyles.voucherTemplate.summaryDetails.detail}
               />
             </p>
-            <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
-              <SpanAtom
-                text="Departure"
-                style={voucherStyles.voucherTemplate.summaryDetails.label}
-              />
-              <SpanAtom
-                text={vData.guestDetails.departure}
-                style={voucherStyles.voucherTemplate.summaryDetails.detail}
-              />
-            </p>
-            {type === 'driver' && (
-              <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
-                <SpanAtom
-                  text="Days"
-                  style={voucherStyles.voucherTemplate.summaryDetails.label}
-                />
-                <SpanAtom
-                  text={vData.guestDetails.daysAndNights.split('-')[0]}
-                  style={voucherStyles.voucherTemplate.summaryDetails.detail}
-                />
-              </p>
-            )}
-          </>
-        )}
+          )}
+        </>
       </DivAtom>
     </DivAtom>
   );

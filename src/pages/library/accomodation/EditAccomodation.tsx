@@ -28,6 +28,7 @@ import {
 } from '../../../utils/types';
 
 interface EditAccomodationProps {
+  accomodationData: LibraryAccomodation[];
   row: LibraryAccomodation;
   isUpdating: boolean;
   accomodationTypeData: DropdownOption[],
@@ -42,6 +43,7 @@ interface EditAccomodationProps {
 }
 
 function EditAccomodation({
+  accomodationData,
   row,
   isUpdating,
   accomodationTypeData,
@@ -95,6 +97,7 @@ function EditAccomodation({
   const [newTriplePrice, setNewTriplePrice] = useState('');
 
   const [showValidationErrorMessage, setShowValidationErrorMessage] = useState(false);
+  const [showExistingErrorMessage, setShowExistingErrorMessage] = useState(false);
 
   const history = useHistory();
 
@@ -106,10 +109,16 @@ function EditAccomodation({
 
   const onEditAccomodation = async () => {
     setShowValidationErrorMessage(false);
+    setShowExistingErrorMessage(false);
     if (name.trim() === '' || location.trim() === ''
       || city.trim() === '' || contactNumber.trim() === '' || email.trim() === ''
       || additionalBedPrice.trim() === '' || rateData.length === 0) {
       setShowValidationErrorMessage(true);
+      return;
+    }
+
+    if (accomodationData.find((a) => a.name.toLowerCase() === name.toLowerCase())) {
+      setShowExistingErrorMessage(true);
       return;
     }
 
@@ -244,6 +253,7 @@ function EditAccomodation({
             width={width}
             btnText="Update"
             showValidationErrorMessage={showValidationErrorMessage}
+            showExistingErrorMessage={showExistingErrorMessage}
             location={location}
             accomodationType={accomodationType}
             city={city}

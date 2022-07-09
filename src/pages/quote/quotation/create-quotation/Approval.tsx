@@ -401,20 +401,6 @@ function Approval({ setCreated }: ApprovalProps) {
         setCommentsChecked={setCommentsChecked}
         commentsChecked={commentsChecked}
       />
-      <DivAtom style={{ paddingTop: '1rem' }}>
-        <TextField
-          multiline
-          fullWidth
-          variant="outlined"
-          maxRows={20}
-          minRows={5}
-          value={additionalComments}
-          onChange={(e) => setAdditionalComments(e.target.value)}
-          label="Additional Comments"
-          color="primary"
-          focused
-        />
-      </DivAtom>
     </DivAtom>
   ) : (
     <DivAtom style={approvalStyles.offers.container}>
@@ -423,7 +409,7 @@ function Approval({ setCreated }: ApprovalProps) {
         <li>Room and Breakfast in the hotel: {getSaveQuoteOffers(roomAndBreakfast)}</li>
         <li>Reception at Airport: {getSaveQuoteOffers(receptionAtAirport)}</li>
         <li>All Government Taxes: {getSaveQuoteOffers(allGovernmentTaxes)}</li>
-        { /* eslint-disable-next-line max-len */ }
+        { /* eslint-disable-next-line max-len */}
         <li>Guide and the Car. Transportation from Reception to Fairwell, (Throught the Trip): {getSaveQuoteOffers(guideAndCar)}</li>
       </ul>
 
@@ -509,6 +495,22 @@ function Approval({ setCreated }: ApprovalProps) {
                 netPrice={netPrice}
               />
               <OffersContainer />
+              {(!isSavingQuote && !isApprovingQuote) && (
+                <DivAtom style={{ paddingTop: '1rem' }}>
+                  <TextField
+                    multiline
+                    fullWidth
+                    variant="outlined"
+                    maxRows={20}
+                    minRows={5}
+                    value={additionalComments}
+                    onChange={(e) => setAdditionalComments(e.target.value)}
+                    label="Additional Comments"
+                    color="primary"
+                    focused
+                  />
+                </DivAtom>
+              )}
             </DivAtom>
           </div>
 

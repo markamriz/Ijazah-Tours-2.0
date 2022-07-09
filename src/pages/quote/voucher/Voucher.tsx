@@ -54,7 +54,7 @@ function Voucher() {
       const aprovedQuoteVouchers: any[] = [];
       vouchData.forEach((v) => {
         const quote = quoteData.find((q) => String(q.quoteNo) === String(v.quoteNo));
-        if (quote!.status === 'APPROVED') {
+        if (quote?.status === 'APPROVED') {
           aprovedQuoteVouchers.push(v);
         }
       });

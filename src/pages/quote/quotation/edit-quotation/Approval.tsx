@@ -407,20 +407,6 @@ function Approval({ setCreated }: ApprovalProps) {
         setCommentsChecked={setCommentsChecked}
         commentsChecked={commentsChecked}
       />
-      <DivAtom style={{ paddingTop: '1rem' }}>
-        <TextField
-          multiline
-          fullWidth
-          variant="outlined"
-          maxRows={20}
-          minRows={5}
-          value={additionalComments}
-          onChange={(e) => setAdditionalComments(e.target.value)}
-          label="Additional Comments"
-          color="primary"
-          focused
-        />
-      </DivAtom>
     </DivAtom>
   ) : (
     <DivAtom style={approvalStyles.offers.container}>
@@ -515,6 +501,22 @@ function Approval({ setCreated }: ApprovalProps) {
                 netPrice={netPrice}
               />
               <OffersContainer />
+              {(!isSavingQuote && !isApprovingQuote) && (
+                <DivAtom style={{ paddingTop: '1rem' }}>
+                  <TextField
+                    multiline
+                    fullWidth
+                    variant="outlined"
+                    maxRows={20}
+                    minRows={5}
+                    value={additionalComments}
+                    onChange={(e) => setAdditionalComments(e.target.value)}
+                    label="Additional Comments"
+                    color="primary"
+                    focused
+                  />
+                </DivAtom>
+              )}
             </DivAtom>
           </div>
 

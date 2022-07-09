@@ -224,7 +224,7 @@ function VoucherGuestTable({
             style={voucherStyles.voucherTemplate.summaryDetails.label}
           />
           <SpanAtom
-            text={data.guestDetails.refNum}
+            text={data.guestDetails.name}
             style={voucherStyles.voucherTemplate.summaryDetails.detail}
           />
         </p>

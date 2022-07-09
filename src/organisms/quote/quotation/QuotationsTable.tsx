@@ -377,7 +377,7 @@ function QuotationsTable({
                       cell={{ status: row.status }}
                       btnDisabled
                     />
-                    {row.status === 'APPROVED' ? (
+                    {row.status === 'APPROVED' || row.status === 'COMPLETED' ? (
                       <TableRowButtonCell
                         onClick={() => history.replace(`/quote/summary/${row.id}`)}
                         align="right"

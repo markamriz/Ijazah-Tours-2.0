@@ -5,7 +5,6 @@ import {
   FormControl,
   InputLabel,
 } from '@material-ui/core';
-import { v4 as uuid } from 'uuid';
 
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
@@ -39,6 +38,7 @@ interface CreateEditAccomodationFormProps {
   allRoomGradings: SettingsRoomProperties[];
   width: number;
   showValidationErrorMessage: boolean;
+  showExistingErrorMessage: boolean;
   btnText: string;
   accomodationType: string;
   location: string;
@@ -106,6 +106,7 @@ function CreateEditAccomodationForm({
   btnText,
   accomodationType,
   showValidationErrorMessage,
+  showExistingErrorMessage,
   location,
   city,
   group,
@@ -428,6 +429,12 @@ function CreateEditAccomodationForm({
       {showValidationErrorMessage && (
         <ParagraphAtom
           text="Please fill in all the required fields"
+          style={libraryAccomodationStyles.errorMsg}
+        />
+      )}
+      {showExistingErrorMessage && (
+        <ParagraphAtom
+          text="Hotel already exists"
           style={libraryAccomodationStyles.errorMsg}
         />
       )}

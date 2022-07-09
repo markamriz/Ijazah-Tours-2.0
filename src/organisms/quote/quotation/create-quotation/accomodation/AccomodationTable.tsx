@@ -9,6 +9,7 @@ import {
   Theme,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import _ from 'lodash';
 
 import TableColumnCell from '../../../../../molecules/TableColumnCell';
 import TableRowEditCell from '../../../../../molecules/TableRowEditCell';
@@ -96,6 +97,8 @@ function AccomodationTable({
               setSelectedAccomodationsNights(temp);
             };
 
+            const allRoomTypes = _.uniqBy([...roomTypes, ...roomTypeOptions], 'value');
+
             return (
               <TableRow key={index + 100}>
                 <TableRowTextCell
@@ -142,7 +145,7 @@ function AccomodationTable({
                   type="Room Type"
                   value={selectedAccomodationsRoomTypes[index] || ''}
                   onSelectChange={onRoomTypeChange}
-                  options={roomTypes[0]?.value ? roomTypes : roomTypeOptions}
+                  options={allRoomTypes}
                   align="center"
                 />
                 <TableRowEditCell
