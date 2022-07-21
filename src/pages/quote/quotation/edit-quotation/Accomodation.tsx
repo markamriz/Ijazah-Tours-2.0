@@ -70,6 +70,7 @@ function Accomodation() {
   const [deletingPresetQuote, setDeletingPresetQuote] = useState(false);
 
   const [showValidationErrorMessage, setShowValidationErrorMessage] = useState(false);
+  const [showNoRateErrorMessage, setShowNoRateErrorMessage] = useState<any>([]);
   const [validationNightsRequired, setValidationNightsRequired] = useState(0);
 
   const { id: quoteId } = useParams<{ id: string }>();
@@ -231,6 +232,7 @@ function Accomodation() {
 
   const continueToCosting = () => {
     setShowValidationErrorMessage(false);
+    setShowNoRateErrorMessage([{ '': false }]);
 
     const customerDetails = JSON.parse(
       localStorage.getItem('New Quote Customer')!,
@@ -252,17 +254,38 @@ function Accomodation() {
     if (nightsRequired !== totalUsedNights) {
       setShowValidationErrorMessage(true);
     } else {
+      let validAndContinue = true;
+
       const tempAccomodation = [...selectedAccomodations];
+      let noRateErr = tempAccomodation.map((a) => ({ [a.name]: false }));
       tempAccomodation.forEach((acc, index) => {
         acc.nights = selectedAccomodationsNights[index];
         acc.roomType = selectedAccomodationsRoomTypes[index];
 
         const children = customerDetails[10];
         const adults = Number(customerDetails[9]);
-        const days = nightsRequired + 1;
-        const needAdditionalBed = customerDetails[14];
+        // const days = nightsRequired + 1;
+        // const needAdditionalBed = customerDetails[14];
 
-        const rate = acc.rates.find((r) => r.newMealPlan === selectedAccomodationsMealPlans[index]);
+        // eslint-disable-next-line max-len
+        const mealPlanRates = acc.rates.filter((r) => r.newMealPlan === selectedAccomodationsMealPlans[index]);
+        const cusCheckin = new Date(customerDetails[7]);
+        const cusCheckout = new Date(customerDetails[8]);
+
+        // Check if theres a meal plan rate that can hold range from checkin to checkout
+        const rate = mealPlanRates.find((r) => (
+          new Date(r.newRateStart) <= cusCheckin && new Date(r.newRateEnd) >= cusCheckin
+          && new Date(r.newRateStart) <= cusCheckout && new Date(r.newRateEnd) >= cusCheckout
+        ));
+
+        if (!rate) {
+          validAndContinue = false;
+          const tempSetShowNoRateErrorMessage = [...noRateErr];
+          tempSetShowNoRateErrorMessage[index] = { [acc.name]: true };
+          noRateErr = tempSetShowNoRateErrorMessage;
+          return;
+        }
+
         const singleGuestPrice = Number(rate?.newSinglePrice.slice(1));
         const adultsPrice = adults * singleGuestPrice;
 
@@ -277,16 +300,22 @@ function Accomodation() {
 
         const roomPrice = adultsPrice + childrenPrice;
 
-        const roomTypeCost = acc.categoryValues[
-          Object.keys(acc.categoryValues)
-            .find((cat) => cat === selectedAccomodationsRoomTypes[index])!
-        ];
+        // const roomTypeCost = acc.categoryValues[
+        //   Object.keys(acc.categoryValues)
+        //     .find((cat) => cat === selectedAccomodationsRoomTypes[index])!
+        // ];
 
         // eslint-disable-next-line max-len
-        const totalSum = Number(roomPrice) + Number(roomTypeCost) + (needAdditionalBed ? Number(acc.additionalBedPrice) : 0);
+        // const totalSum = Number(roomPrice) + Number(roomTypeCost) + (needAdditionalBed ? Number(acc.additionalBedPrice) : 0);
         acc.roomRate = `$${roomPrice}`;
         acc.total = `$${roomPrice * nightsRequired * (Number(customerDetails[19]) || 1)}`;
       });
+
+      setShowNoRateErrorMessage(noRateErr);
+
+      if (!validAndContinue) {
+        return;
+      }
 
       localStorage.setItem('New Quote Accomodation', JSON.stringify({
         selectedAccomodationsRoomTypes,
@@ -476,6 +505,15 @@ function Accomodation() {
             {showValidationErrorMessage && (
               <ParagraphAtom
                 text={`Please specify the same number of nights as your departure - check-in. (Nights required - ${validationNightsRequired})`}
+                style={quoteCreateQuoteStyles.errorMsg}
+              />
+            )}
+            {showNoRateErrorMessage?.some((rtErr: any) => Object.values(rtErr).includes(true)) && (
+              <ParagraphAtom
+                text={`
+                  No available room rates for specified checkin and checkout dates for hotels:
+                    ${showNoRateErrorMessage.map((rtErr: any) => Object.keys(rtErr)).join(', ')}
+                  `}
                 style={quoteCreateQuoteStyles.errorMsg}
               />
             )}
