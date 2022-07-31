@@ -376,7 +376,7 @@ function CustomerForm({
           {dateType === dateTypeOptions[1].value && (
             <FormControlInput
               margin="1rem 0 0 0"
-              label="Days"
+              label="Nights"
               fullWidth={false}
               flex={0}
               multiline={false}
@@ -384,7 +384,7 @@ function CustomerForm({
               width="100px"
               value={notSpecificDays}
               setValue={setNotSpecificDays}
-              placeholder="No. of Days"
+              placeholder="No. of Nights"
               type="number"
             />
           )}

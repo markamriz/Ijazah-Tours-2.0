@@ -20,6 +20,7 @@ interface InputAtomProps {
   multiline?: boolean;
   dollarAdornment?: boolean;
   lkrAdornment?: boolean;
+  percentAdornment?: boolean;
   error?: boolean;
   rows?: number;
   minValue?: number | string;
@@ -41,6 +42,7 @@ function InputAtom({
   multiline,
   dollarAdornment,
   lkrAdornment,
+  percentAdornment,
   rows,
   minValue,
   error,
@@ -58,6 +60,8 @@ function InputAtom({
     adornment = <InputAdornment position="start">$</InputAdornment>;
   } else if (lkrAdornment) {
     adornment = <InputAdornment position="start">LKR</InputAdornment>;
+  } else if (percentAdornment) {
+    adornment = <InputAdornment position="end">%</InputAdornment>;
   } else if (adornmentPosition) {
     adornment = <InputAdornment position="start">{props.children}</InputAdornment>;
   }
@@ -79,7 +83,8 @@ function InputAtom({
       placeholder={placeholder}
       fullWidth={fullWidth}
       disableUnderline={plain === 'false'}
-      startAdornment={adornment}
+      startAdornment={!percentAdornment ? adornment : undefined}
+      endAdornment={percentAdornment ? adornment : undefined}
       inputProps={{
         min: minValue || 0,
       }}

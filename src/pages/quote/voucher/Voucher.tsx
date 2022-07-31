@@ -54,7 +54,7 @@ function Voucher() {
       const aprovedQuoteVouchers: any[] = [];
       vouchData.forEach((v) => {
         const quote = quoteData.find((q) => String(q.quoteNo) === String(v.quoteNo));
-        if (quote?.status === 'APPROVED') {
+        if (quote?.status === 'APPROVED' || quote?.status === 'COMPLETE') {
           aprovedQuoteVouchers.push(v);
         }
       });
@@ -125,7 +125,6 @@ function Voucher() {
         quotationSnapshot.forEach(async (snap) => {
           await setDoc(doc(db, 'Approval Quotations', snap.id), {
             ...snap.data(),
-            status: 'IN PROGRESS',
             updatedAt: serverTimestamp(),
           });
         });

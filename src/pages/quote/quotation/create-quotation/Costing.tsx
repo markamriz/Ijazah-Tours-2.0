@@ -32,7 +32,7 @@ function Costing() {
 
   // Overall cost
   const [totalExpense, setTotalExpense] = useState('');
-  const [commission, setCommission] = useState('30%');
+  const [commission, setCommission] = useState('30');
   const [totalPrice, setTotalPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('1000');
   const [discount, setDiscount] = useState('40');
@@ -69,8 +69,7 @@ function Costing() {
 
     const transportTotal = Number(rate) * Number(days);
     const expenseTotal = Number(accTotal + transportTotal);
-    const priceTotal = ((Number(commission.slice(0, commission.length - 1)) + 100) / 100)
-      * expenseTotal;
+    const priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
 
     const netTotal = Number(sellingPrice) - Number(discount);
 

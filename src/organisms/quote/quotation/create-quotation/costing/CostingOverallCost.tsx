@@ -64,6 +64,7 @@ function CostingOverallCost({
         setValue={setCommission}
         placeholder="Enter Commission"
         margin="0 0 1rem 0"
+        percentAdornment
       />
       <FormControlInput
         label="Total Price"

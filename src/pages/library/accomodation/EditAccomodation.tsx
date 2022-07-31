@@ -58,6 +58,8 @@ function EditAccomodation({
 }: EditAccomodationProps) {
   const width = useSelector(selectWithNavbarWidth);
 
+  // Have a duplicate to determine if same name or not to prevent duplicate hotels
+  const [prevName] = useState(row.name);
   const [name, setName] = useState(row.name);
   const [group, setGroup] = useState(row.group);
   const [accomodationType, setAccomodationType] = useState(row.accomodationType);
@@ -117,7 +119,8 @@ function EditAccomodation({
       return;
     }
 
-    if (accomodationData.find((a) => a.name.toLowerCase() === name.toLowerCase())) {
+    if ((prevName !== name)
+      && (accomodationData.find((a) => a.name.toLowerCase() === name.toLowerCase()))) {
       setShowExistingErrorMessage(true);
       return;
     }

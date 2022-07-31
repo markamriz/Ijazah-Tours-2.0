@@ -50,10 +50,7 @@ function EditDriver({ row, isUpdating, setIsUpdating }: EditDriverProps) {
   const onEditDriver = async () => {
     setShowValidationErrorMessage(false);
     if (firstName.trim() === '' || lastName.trim() === '' || nic.trim() === ''
-      || boardCertNum.trim() === '' || contactNumber.trim() === '' || email.trim() === ''
-      || address.trim() === '' || vehicleType.trim() === '' || status.trim() === ''
-      || rate.trim() === '' || notes.trim() === '' || insurance.length === 0 || !insurance
-      || profilePic.length === 0 || !profilePic || vehiclePic.length === 0 || !vehiclePic) {
+      || contactNumber.trim() === '') {
       setShowValidationErrorMessage(true);
       return;
     }

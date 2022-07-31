@@ -116,7 +116,7 @@ function CashReceipt({ voucherData, setIsVoucherApproved }: CashReceiptProps) {
                 style={voucherStyles.voucherTemplate.summaryDetails.label}
               />
               <SpanAtom
-                text={vData.guestDetails.arrival}
+                text={new Date().toISOString().substring(0, 10)}
                 style={voucherStyles.voucherTemplate.summaryDetails.detail}
               />
             </p>

@@ -95,12 +95,12 @@ function QuotationsTable({
   const [openProfileMenu, setOpenProfileMenu] = useState<any>(new Array(rowdata.length).fill(null));
   const handleClickProfileMenu = (event: MouseEvent<HTMLButtonElement>, i: number) => {
     const updated = [...openProfileMenu];
-    updated.splice(i, 1, event.currentTarget);
+    updated[i] = event.currentTarget;
     setOpenProfileMenu(updated);
   };
   const handleCloseProfileMenu = (i: number) => {
     const updated = [...openProfileMenu];
-    updated.splice(i, 1, null);
+    updated[i] = null;
     setOpenProfileMenu(updated);
   };
 
@@ -416,7 +416,7 @@ function QuotationsTable({
                       btnColors={['#C9F7F5', '#208883']}
                     />
                     <Menu
-                      id="profile-menu"
+                      id={row.id}
                       anchorEl={openProfileMenu[i]}
                       keepMounted
                       open={Boolean(openProfileMenu[i])}
