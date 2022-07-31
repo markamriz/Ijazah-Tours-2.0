@@ -36,6 +36,24 @@ function VoucherSummary({ type, vData }: VoucherSummaryProps) {
     return [text, data];
   };
 
+  const getArrival = () => {
+    let data = vData.guestDetails.arrival;
+    if (type === 'accomodation') {
+      data = vData.accomodationDetails.checkin;
+    }
+
+    return data;
+  };
+
+  const getDeparture = () => {
+    let data = vData.guestDetails.arrival;
+    if (type === 'accomodation') {
+      data = vData.accomodationDetails.checkout;
+    }
+
+    return data;
+  };
+
   const DITCContainer = () => (
     <DivAtom style={voucherStyles.voucherTemplate.summaryDetails.mainContainer}>
       <DivAtom>
@@ -81,7 +99,7 @@ function VoucherSummary({ type, vData }: VoucherSummaryProps) {
               style={voucherStyles.voucherTemplate.summaryDetails.label}
             />
             <SpanAtom
-              text={vData.guestDetails.arrival}
+              text={getArrival()}
               style={voucherStyles.voucherTemplate.summaryDetails.detail}
             />
           </p>
@@ -91,7 +109,7 @@ function VoucherSummary({ type, vData }: VoucherSummaryProps) {
               style={voucherStyles.voucherTemplate.summaryDetails.label}
             />
             <SpanAtom
-              text={vData.guestDetails.departure}
+              text={getDeparture()}
               style={voucherStyles.voucherTemplate.summaryDetails.detail}
             />
           </p>

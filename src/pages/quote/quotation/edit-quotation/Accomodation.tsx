@@ -32,7 +32,7 @@ import {
   fetchingDataIndicatorStyles,
   quoteCreateQuoteStyles,
 } from '../../../../styles';
-import { getDaysDifference, widthHeightDynamicStyle } from '../../../../utils/helpers';
+import { addDays, getDaysDifference, widthHeightDynamicStyle } from '../../../../utils/helpers';
 import {
   FlexDirection,
   SettingsSingleInput,
@@ -258,9 +258,16 @@ function Accomodation() {
 
       const tempAccomodation = [...selectedAccomodations];
       let noRateErr = tempAccomodation.map((a) => ({ [a.name]: false }));
+
+      let tempCurrDate = new Date(customerDetails[7]);
+
       tempAccomodation.forEach((acc, index) => {
         acc.nights = selectedAccomodationsNights[index];
         acc.roomType = selectedAccomodationsRoomTypes[index];
+
+        acc.checkin = tempCurrDate.toISOString().substring(0, 10);
+        acc.checkout = addDays(tempCurrDate, Number(selectedAccomodationsNights[index]));
+        tempCurrDate = new Date(acc.checkout);
 
         const children = customerDetails[10];
         const adults = Number(customerDetails[9]);

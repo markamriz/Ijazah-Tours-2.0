@@ -106,6 +106,10 @@ export const getDaysDifference = (a: string, b: string) => {
   return Math.ceil(difference / (1000 * 3600 * 24));
 };
 
+export const addDays = (date: Date, days: number) => new Date(date.setDate(date.getDate() + days))
+  .toISOString()
+  .substring(0, 10);
+
 export const getElementWidth = (id: string) => {
   const element = document.querySelector<HTMLElement>(`#${id}`);
   const elementWidth = element!.offsetWidth;

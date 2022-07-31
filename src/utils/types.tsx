@@ -171,6 +171,8 @@ export interface CityDropdown extends Option {
 }
 export interface UserAccomodation extends LibraryAccomodation {
   nights: string;
+  checkin: string;
+  checkout: string;
   pax: string;
   mealPlan: string;
   roomType: string;
