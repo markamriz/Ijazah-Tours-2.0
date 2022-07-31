@@ -201,9 +201,12 @@ function Accomodation() {
       );
 
       acc.pax = 'Triple';
+    } else if (pax === 1) {
+      acc.pax = 'Single';
+    } else if (pax === 2) {
+      acc.pax = 'Double';
     } else {
-      // eslint-disable-next-line no-nested-ternary
-      acc.pax = pax === 1 ? 'Single' : pax === 2 ? 'Double' : 'Triple';
+      acc.pax = 'Triple';
     }
 
     acc.roomType = roomTypes[0]?.value || roomTypeOptions[0].value;
@@ -269,20 +272,16 @@ function Accomodation() {
         acc.checkout = addDays(tempCurrDate, Number(selectedAccomodationsNights[index]));
         tempCurrDate = new Date(acc.checkout);
 
-        const children = customerDetails[10];
-        const adults = Number(customerDetails[9]);
-        // const days = nightsRequired + 1;
-        // const needAdditionalBed = customerDetails[14];
-
-        // eslint-disable-next-line max-len
-        const mealPlanRates = acc.rates.filter((r) => r.newMealPlan === selectedAccomodationsMealPlans[index]);
-        const cusCheckin = new Date(customerDetails[7]);
-        const cusCheckout = new Date(customerDetails[8]);
+        const mealPlanRates = acc.rates.filter((r) => (
+          r.newMealPlan === selectedAccomodationsMealPlans[index]
+        ));
 
         // Check if theres a meal plan rate that can hold range from checkin to checkout
         const rate = mealPlanRates.find((r) => (
-          new Date(r.newRateStart) <= cusCheckin && new Date(r.newRateEnd) >= cusCheckin
-          && new Date(r.newRateStart) <= cusCheckout && new Date(r.newRateEnd) >= cusCheckout
+          new Date(r.newRateStart) <= new Date(acc.checkin)
+              && new Date(r.newRateEnd) >= new Date(acc.checkin)
+            && new Date(r.newRateStart) <= new Date(acc.checkout)
+              && new Date(r.newRateEnd) >= new Date(acc.checkout)
         ));
 
         if (!rate) {
@@ -294,26 +293,16 @@ function Accomodation() {
         }
 
         const singleGuestPrice = Number(rate?.newSinglePrice.slice(1));
-        const adultsPrice = adults * singleGuestPrice;
+        const doubleGuestPrice = Number(rate?.newDoublePrice.slice(1));
+        const tripleGuestPrice = Number(rate?.newTriplePrice.slice(1));
 
-        let childrenPrice = 0;
-        children.forEach((c: string) => {
-          if (Number(c) <= 5) {
-            childrenPrice += (singleGuestPrice / 2);
-          } else {
-            childrenPrice += singleGuestPrice;
-          }
-        });
+        let roomPrice = singleGuestPrice;
+        if (acc.pax === 'Double') {
+          roomPrice = doubleGuestPrice;
+        } else if (acc.pax === 'Triple') {
+          roomPrice = tripleGuestPrice;
+        }
 
-        const roomPrice = adultsPrice + childrenPrice;
-
-        // const roomTypeCost = acc.categoryValues[
-        //   Object.keys(acc.categoryValues)
-        //     .find((cat) => cat === selectedAccomodationsRoomTypes[index])!
-        // ];
-
-        // eslint-disable-next-line max-len
-        // const totalSum = Number(roomPrice) + Number(roomTypeCost) + (needAdditionalBed ? Number(acc.additionalBedPrice) : 0);
         acc.roomRate = `$${roomPrice}`;
         acc.total = `$${roomPrice * nightsRequired * (Number(customerDetails[19]) || 1)}`;
       });
