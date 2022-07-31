@@ -32,7 +32,7 @@ function Costing() {
 
   // Overall cost
   const [totalExpense, setTotalExpense] = useState('');
-  const [commission, setCommission] = useState('30%');
+  const [commission, setCommission] = useState('30');
   const [totalPrice, setTotalPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('1000');
   const [discount, setDiscount] = useState('40');
@@ -56,6 +56,41 @@ function Costing() {
   const history = useHistory();
 
   useEffect(() => {
+    const accData: UserAccomodation[] = JSON.parse(
+      localStorage.getItem('New Quote Accomodation')!,
+    ).selectedAccomodations;
+    const costingData = JSON.parse(
+      localStorage.getItem('Editing Quote')!,
+    ).thisQuote.costings;
+
+    let accTotal = 0;
+    let transportNights = 0;
+    accData.forEach((acc) => {
+      transportNights += Number(acc.nights);
+      accTotal += Number(acc.roomRate.slice(1, acc.roomRate.length)) * Number(acc.nights);
+    });
+
+    const transportTotal = Number(costingData.transportRate) * Number(transportNights + 1);
+    const expenseTotal = Number(accTotal + transportTotal);
+    const priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
+
+    const netTotal = Number(costingData.sellingPrice) - Number(costingData.discount);
+
+    setTransport(String(transportTotal));
+    setRate(String(costingData.transportRate));
+    setDays(String(transportNights + 1));
+    setCommission(costingData.commission);
+    setDiscount(costingData.discount);
+    setSellingPrice(costingData.sellingPrice);
+
+    setAccomodationTotal(String(accTotal));
+    setTotalExpense(String(expenseTotal));
+    setTotalPrice(String(priceTotal));
+    setNetPrice(String(netTotal));
+    setAccomodationData(accData);
+  }, []);
+
+  useEffect(() => {
     const data: UserAccomodation[] = JSON.parse(
       localStorage.getItem('New Quote Accomodation')!,
     ).selectedAccomodations;
@@ -69,8 +104,7 @@ function Costing() {
 
     const transportTotal = Number(rate) * Number(days);
     const expenseTotal = Number(accTotal + transportTotal);
-    const priceTotal = ((Number(commission.slice(0, commission.length - 1)) + 100) / 100)
-      * expenseTotal;
+    const priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
 
     const netTotal = Number(sellingPrice) - Number(discount);
 
@@ -167,7 +201,7 @@ function Costing() {
           size="small"
           children={<ChevronLeftRoundedIcon />}
           style={quoteCreateQuoteStyles.backBtn}
-          onClick={() => history.replace('/quote/quotations/create/accomodation')}
+          onClick={() => history.replace(`/quote/quotations/edit/${quoteId}/accomodation`)}
         />
         <H2Atom style={quoteCreateQuoteStyles.title} text="Costing" />
       </DivAtom>

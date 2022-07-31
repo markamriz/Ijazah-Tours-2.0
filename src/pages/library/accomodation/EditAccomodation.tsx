@@ -90,7 +90,6 @@ function EditAccomodation({
 
   const [rateData, setRateData] = useState<AccomodationRate[]>(row.rates);
   const [newRateType, setNewRateType] = useState('');
-  const [newRatePrice, setNewRatePrice] = useState('');
   const [newRateStart, setNewRateStart] = useState('');
   const [newRateEnd, setNewRateEnd] = useState('');
   const [newMealPlan, setNewMealPlan] = useState('');
@@ -268,7 +267,6 @@ function EditAccomodation({
             ijazahLink={ijazahLink}
             additionalBedPrice={additionalBedPrice}
             newRateType={newRateType}
-            newRatePrice={newRatePrice}
             newRateStart={newRateStart}
             newRateEnd={newRateEnd}
             newMealPlan={newMealPlan}
@@ -297,7 +295,6 @@ function EditAccomodation({
             setIjazahLink={setIjazahLink}
             setAdditionalBedPrice={setAdditionalBedPrice}
             setNewRateType={setNewRateType}
-            setNewRatePrice={setNewRatePrice}
             setNewRateStart={setNewRateStart}
             setNewRateEnd={setNewRateEnd}
             setNewMealPlan={setNewMealPlan}

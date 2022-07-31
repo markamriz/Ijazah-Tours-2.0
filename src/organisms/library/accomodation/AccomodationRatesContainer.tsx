@@ -21,7 +21,6 @@ interface AccomodationRatesContainerProps {
   selectedRoomTypes: boolean[];
   width: number;
   newRateType: string;
-  newRatePrice: string;
   newRateStart: string;
   newRateEnd: string;
   newMealPlan: string;
@@ -32,7 +31,6 @@ interface AccomodationRatesContainerProps {
   deleteRate: ((row: AccomodationRate) => Promise<void>) | ((row: AccomodationRate) => void);
   onCreateRate: MouseEventHandler<HTMLButtonElement>;
   setNewRateType: any;
-  setNewRatePrice: any;
   setNewRateStart: any;
   setNewRateEnd: any;
   setNewMealPlan: any;
@@ -46,7 +44,6 @@ function AccomodationRatesContainer({
   rateRoomTypes,
   selectedRoomTypes,
   newRateType,
-  newRatePrice,
   newRateStart,
   newRateEnd,
   newMealPlan,
@@ -54,7 +51,6 @@ function AccomodationRatesContainer({
   newDoublePrice,
   newTriplePrice,
   setNewRateType,
-  setNewRatePrice,
   setNewRateStart,
   setNewRateEnd,
   setNewMealPlan,
@@ -133,18 +129,6 @@ function AccomodationRatesContainer({
         <FormControlInput
           margin={widthHeightDynamicStyle(width, 1000, '0 0 1rem 0', '0 1rem 1rem 0') as string}
           flex={1}
-          label="Price"
-          fullWidth
-          multiline={false}
-          rows={1}
-          value={newRatePrice}
-          setValue={setNewRatePrice}
-          placeholder="Enter Price"
-          dollarAdornment
-        />
-        <FormControlInput
-          margin={widthHeightDynamicStyle(width, 1000, '0 0 1rem 0', '0 1rem 1rem 0') as string}
-          flex={1}
           label="Meal Plan"
           fullWidth
           multiline={false}
@@ -194,7 +178,6 @@ function AccomodationRatesContainer({
           text={widthHeightDynamicStyle(width, 1000, 'Add Rate', 'Add') as string}
           disabled={
             newRateStart === ''
-            || newRatePrice === ''
             || newRateEnd === ''
             || newMealPlan === ''
             || newSinglePrice === ''
@@ -219,7 +202,6 @@ function AccomodationRatesContainer({
               'ROOM TYPE',
               'START DATE',
               'END DATE',
-              'ROOM PRICE',
               'MEAL PLAN',
               'SINGLE',
               'DOUBLE',

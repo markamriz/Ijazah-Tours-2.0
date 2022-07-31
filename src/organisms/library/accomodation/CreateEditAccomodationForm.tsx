@@ -51,7 +51,6 @@ interface CreateEditAccomodationFormProps {
   ijazahLink: string;
   additionalBedPrice: string;
   newRateType: string;
-  newRatePrice: string;
   newRateStart: string;
   newRateEnd: string;
   newMealPlan: string;
@@ -83,7 +82,6 @@ interface CreateEditAccomodationFormProps {
   setIjazahLink: any;
   setAdditionalBedPrice: any;
   setNewRateType: any;
-  setNewRatePrice: any;
   setNewRateStart: any,
   setNewRateEnd: any,
   setNewMealPlan: any,
@@ -117,7 +115,6 @@ function CreateEditAccomodationForm({
   ijazahLink,
   additionalBedPrice,
   newRateType,
-  newRatePrice,
   newRateStart,
   newRateEnd,
   newMealPlan,
@@ -149,7 +146,6 @@ function CreateEditAccomodationForm({
   setIjazahLink,
   setAdditionalBedPrice,
   setNewRateType,
-  setNewRatePrice,
   setNewRateStart,
   setNewRateEnd,
   setNewMealPlan,
@@ -352,14 +348,12 @@ function CreateEditAccomodationForm({
           deleteRate={deleteRate}
           newRateType={newRateType}
           newRateStart={newRateStart}
-          newRatePrice={newRatePrice}
           newRateEnd={newRateEnd}
           newMealPlan={newMealPlan}
           newSinglePrice={newSinglePrice}
           newDoublePrice={newDoublePrice}
           newTriplePrice={newTriplePrice}
           setNewRateType={setNewRateType}
-          setNewRatePrice={setNewRatePrice}
           setNewRateStart={setNewRateStart}
           setNewRateEnd={setNewRateEnd}
           setNewMealPlan={setNewMealPlan}

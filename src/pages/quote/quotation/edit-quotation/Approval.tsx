@@ -156,6 +156,7 @@ function Approval({ setCreated }: ApprovalProps) {
     setEmail(customerDetails[18]);
     setRooms(customerDetails[19] || '1');
 
+    setAdditionalComments(thisQuote.additionalComments);
     setRoomAndBreakfast(thisQuote.roomAndBreakfast);
     setReceptionAtAirport(thisQuote.receptionAtAirport);
     setAllGovernmentTaxes(thisQuote.allGovernmentTaxes);
@@ -272,6 +273,7 @@ function Approval({ setCreated }: ApprovalProps) {
       tourType,
       status,
       commentsChecked,
+      additionalComments,
       rooms,
       driverChoice: dc,
       saveCheckin: customerDetails[7],

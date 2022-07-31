@@ -265,6 +265,7 @@ function Approval({ setCreated }: ApprovalProps) {
       tourType,
       status,
       commentsChecked,
+      additionalComments,
       rooms,
       driverChoice: dc,
       saveCheckin: customerDetails[7],
