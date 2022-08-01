@@ -276,35 +276,93 @@ function Accomodation() {
           r.newMealPlan === selectedAccomodationsMealPlans[index]
         ));
 
-        // Check if theres a meal plan rate that can hold range from checkin to checkout
-        const rate = mealPlanRates.find((r) => (
+        // Step one - try to obtain a perfect rate (where it lies within the range)
+        // Step two - check if checkin is within range of one rate and checkout wihin another
+        const perfectRate = mealPlanRates.find((r) => (
           new Date(r.newRateStart) <= new Date(acc.checkin)
               && new Date(r.newRateEnd) >= new Date(acc.checkin)
             && new Date(r.newRateStart) <= new Date(acc.checkout)
               && new Date(r.newRateEnd) >= new Date(acc.checkout)
         ));
 
-        if (!rate) {
-          validAndContinue = false;
-          const tempSetShowNoRateErrorMessage = [...noRateErr];
-          tempSetShowNoRateErrorMessage[index] = { [acc.name]: true };
-          noRateErr = tempSetShowNoRateErrorMessage;
-          return;
+        // Failed to find a perfect rate
+        if (!perfectRate) {
+          // Attempt to find rates that covers the checkin and checkout
+          const rangeRates: any = [];
+          const firstRate = mealPlanRates.find((r) => (
+            (new Date(r.newRateStart) <= new Date(acc.checkin)
+            && new Date(r.newRateEnd) >= new Date(acc.checkin))
+          ));
+          const secondRate = mealPlanRates.find((r) => (
+            (new Date(r.newRateStart) <= new Date(acc.checkout)
+            && new Date(r.newRateEnd) >= new Date(acc.checkout))
+          ));
+
+          if (firstRate) {
+            rangeRates.push(firstRate);
+          }
+          if (secondRate) {
+            rangeRates.push(secondRate);
+          }
+
+          if (!rangeRates.length || rangeRates.length === 1) {
+            validAndContinue = false;
+            const tempSetShowNoRateErrorMessage = [...noRateErr];
+            tempSetShowNoRateErrorMessage[index] = { [acc.name]: true };
+            noRateErr = tempSetShowNoRateErrorMessage;
+            return;
+          }
+
+          rangeRates[0].nights = getDaysDifference(rangeRates[0].newRateEnd, acc.checkin);
+          rangeRates[1].nights = getDaysDifference(acc.checkout, rangeRates[0].newRateEnd);
+          const singleGuestPrices = [
+            Number(rangeRates[0]?.newSinglePrice.slice(1)),
+            Number(rangeRates[1]?.newSinglePrice.slice(1)),
+          ];
+          const doubleGuestPrices = [
+            Number(rangeRates[0]?.newDoublePrice.slice(1)),
+            Number(rangeRates[1]?.newDoublePrice.slice(1)),
+          ];
+          const tripleGuestPrices = [
+            Number(rangeRates[0]?.newTriplePrice.slice(1)),
+            Number(rangeRates[1]?.newTriplePrice.slice(1)),
+          ];
+
+          let roomPrices = singleGuestPrices;
+          if (acc.pax === 'Double') {
+            roomPrices = doubleGuestPrices;
+          } else if (acc.pax === 'Triple') {
+            roomPrices = tripleGuestPrices;
+          }
+
+          acc.roomRatesExtra = [
+            {
+              nights: rangeRates[0].nights,
+              rate: `$${roomPrices[0]}`,
+            },
+            {
+              nights: rangeRates[1].nights,
+              rate: `$${roomPrices[1]}`,
+            },
+          ];
+          acc.roomRate = `$${roomPrices[0]} for ${rangeRates[0].nights} nights, $${roomPrices[1]} for ${rangeRates[1].nights} nights`;
+          acc.total = `$${((Number(customerDetails[19]) || 1) * roomPrices[0] * rangeRates[0].nights)
+            + ((Number(customerDetails[19]) || 1) * roomPrices[1] * rangeRates[1].nights)}`;
+        } else {
+          const singleGuestPrice = Number(perfectRate?.newSinglePrice.slice(1));
+          const doubleGuestPrice = Number(perfectRate?.newDoublePrice.slice(1));
+          const tripleGuestPrice = Number(perfectRate?.newTriplePrice.slice(1));
+
+          let roomPrice = singleGuestPrice;
+          if (acc.pax === 'Double') {
+            roomPrice = doubleGuestPrice;
+          } else if (acc.pax === 'Triple') {
+            roomPrice = tripleGuestPrice;
+          }
+
+          acc.roomRate = `$${roomPrice}`;
+          acc.total = `$${roomPrice * nightsRequired * (Number(customerDetails[19]) || 1)}`;
         }
-
-        const singleGuestPrice = Number(rate?.newSinglePrice.slice(1));
-        const doubleGuestPrice = Number(rate?.newDoublePrice.slice(1));
-        const tripleGuestPrice = Number(rate?.newTriplePrice.slice(1));
-
-        let roomPrice = singleGuestPrice;
-        if (acc.pax === 'Double') {
-          roomPrice = doubleGuestPrice;
-        } else if (acc.pax === 'Triple') {
-          roomPrice = tripleGuestPrice;
-        }
-
-        acc.roomRate = `$${roomPrice}`;
-        acc.total = `$${roomPrice * nightsRequired * (Number(customerDetails[19]) || 1)}`;
       });
 
       setShowNoRateErrorMessage(noRateErr);
