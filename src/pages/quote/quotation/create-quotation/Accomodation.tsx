@@ -252,6 +252,7 @@ function Accomodation() {
       let validAndContinue = true;
 
       const tempAccomodation = [...selectedAccomodations];
+      const requireAdditionalBed = customerDetails[14];
       let noRateErr = tempAccomodation.map((a) => ({ [a.name]: false }));
 
       let tempCurrDate = new Date(customerDetails[7]);
@@ -305,8 +306,8 @@ function Accomodation() {
             return;
           }
 
-          rangeRates[0].nights = getDaysDifference(rangeRates[0].newRateEnd, acc.checkin);
-          rangeRates[1].nights = getDaysDifference(acc.checkout, rangeRates[0].newRateEnd);
+          rangeRates[0].nights = getDaysDifference(rangeRates[0].newRateEnd, acc.checkin) + 1;
+          rangeRates[1].nights = getDaysDifference(acc.checkout, rangeRates[0].newRateEnd) - 1;
           const singleGuestPrices = [
             Number(rangeRates[0]?.newSinglePrice.slice(1)),
             Number(rangeRates[1]?.newSinglePrice.slice(1)),
@@ -337,9 +338,16 @@ function Accomodation() {
               rate: `$${roomPrices[1]}`,
             },
           ];
-          acc.roomRate = `$${roomPrices[0]} for ${rangeRates[0].nights} nights, $${roomPrices[1]} for ${rangeRates[1].nights} nights`;
-          acc.total = `$${((Number(customerDetails[19]) || 1) * roomPrices[0] * rangeRates[0].nights)
-            + ((Number(customerDetails[19]) || 1) * roomPrices[1] * rangeRates[1].nights)}`;
+
+          const firstRatePrice = roomPrices[0]
+            + (requireAdditionalBed ? Number(acc.additionalBedPrice) : 0);
+          const secondRatePrice = roomPrices[1]
+            + (requireAdditionalBed ? Number(acc.additionalBedPrice) : 0);
+
+          acc.roomRate = `$${firstRatePrice} for ${rangeRates[0].nights} ${rangeRates[0].nights === 1 ? 'night' : 'nights'},
+            $${secondRatePrice} for ${rangeRates[1].nights} ${rangeRates[1].nights === 1 ? 'night' : 'nights'}`;
+          acc.total = `$${((Number(customerDetails[19]) || 1) * (firstRatePrice) * rangeRates[0].nights)
+            + ((Number(customerDetails[19]) || 1) * (secondRatePrice) * rangeRates[1].nights)}`;
         } else {
           const singleGuestPrice = Number(perfectRate?.newSinglePrice.slice(1));
           const doubleGuestPrice = Number(perfectRate?.newDoublePrice.slice(1));
@@ -352,8 +360,9 @@ function Accomodation() {
             roomPrice = tripleGuestPrice;
           }
 
-          acc.roomRate = `$${roomPrice}`;
-          acc.total = `$${roomPrice * nightsRequired * (Number(customerDetails[19]) || 1)}`;
+          const ratePrice = roomPrice + (requireAdditionalBed ? Number(acc.additionalBedPrice) : 0);
+          acc.roomRate = `$${ratePrice}`;
+          acc.total = `$${(ratePrice) * nightsRequired * (Number(customerDetails[19]) || 1)}`;
         }
       });
 
