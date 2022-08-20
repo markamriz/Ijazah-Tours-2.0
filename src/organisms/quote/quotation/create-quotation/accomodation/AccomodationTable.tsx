@@ -15,6 +15,7 @@ import TableColumnCell from '../../../../../molecules/TableColumnCell';
 import TableRowEditCell from '../../../../../molecules/TableRowEditCell';
 import TableRowIconCell from '../../../../../molecules/TableRowIconCell';
 import TableRowTextCell from '../../../../../molecules/TableRowTextCell';
+import { paxOptions } from '../../../../../utils/helpers';
 import { UserAccomodation } from '../../../../../utils/types';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -33,9 +34,11 @@ interface AccomodationTableProps {
   selectedAccomodationsNights: string[];
   selectedAccomodationsRoomTypes: string[];
   selectedAccomodationsMealPlans: string[];
+  selectedAccomodationsPax: string[];
   setSelectedAccomodationsNights: any;
   setSelectedAccomodationsRoomTypes: any;
   setSelectedAccomodationsMealPlans: any;
+  setSelectedAccomodationsPax: any;
   deleteAccomodation: (row: UserAccomodation) => void;
 }
 
@@ -46,8 +49,10 @@ function AccomodationTable({
   selectedAccomodationsRoomTypes,
   selectedAccomodationsMealPlans,
   setSelectedAccomodationsNights,
+  selectedAccomodationsPax,
   setSelectedAccomodationsRoomTypes,
   setSelectedAccomodationsMealPlans,
+  setSelectedAccomodationsPax,
   deleteAccomodation,
 }: AccomodationTableProps) {
   const classes = useStyles();
@@ -97,6 +102,12 @@ function AccomodationTable({
               setSelectedAccomodationsNights(temp);
             };
 
+            const onPaxChange = (v: string) => {
+              const temp = [...selectedAccomodationsPax];
+              temp.splice(index, 1, v);
+              setSelectedAccomodationsPax(temp);
+            };
+
             const allRoomTypes = _.uniqBy([...roomTypes, ...roomTypeOptions], 'value');
 
             return (
@@ -132,14 +143,25 @@ function AccomodationTable({
                     weight: 400,
                   }}
                 />
-                <TableRowTextCell
-                  cell={{
-                    align: 'center',
-                    title: row.pax,
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
+                {row.pax === '' ? (
+                  <TableRowEditCell
+                    select
+                    type="Pax"
+                    value={selectedAccomodationsPax[index]}
+                    onCountChange={onPaxChange}
+                    options={paxOptions}
+                    align="center"
+                  />
+                ) : (
+                  <TableRowTextCell
+                    cell={{
+                      align: 'center',
+                      title: row.pax,
+                      colors: ['#464E5F'],
+                      weight: 400,
+                    }}
+                  />
+                )}
                 <TableRowEditCell
                   select
                   type="Room Type"

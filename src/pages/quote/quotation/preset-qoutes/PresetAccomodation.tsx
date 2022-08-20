@@ -51,6 +51,7 @@ function PresetAccomodation() {
   const [roomGradingsData, setRoomGradingsData] = useState<SettingsSingleInput[]>();
 
   const [selectedAccomodationsNights, setSelectedAccomodationsNights] = useState<string[]>([]);
+  const [selectedAccomodationsPax, setSelectedAccomodationsPax] = useState<string[]>([]);
   const [
     selectedAccomodationsRoomTypes,
     setSelectedAccomodationsRoomTypes,
@@ -123,6 +124,10 @@ function PresetAccomodation() {
   }, []);
 
   const addAccomodation = (acc: UserAccomodation) => {
+    const customerDetails = JSON.parse(
+      localStorage.getItem('New Quote Customer')!,
+    ).data[0];
+
     if (selectedAccomodations.find((a) => a.name === acc.name)) {
       return;
     }
@@ -141,7 +146,18 @@ function PresetAccomodation() {
     acc.nights = '1';
     acc.roomRate = '';
     acc.total = '';
-    acc.pax = 'Single';
+
+    const adults = customerDetails[9];
+    const children = customerDetails[10];
+    let pax = Number(adults);
+    children.forEach((child: string) => {
+      if (Number(child) > 14) {
+        pax += 1;
+      }
+    });
+
+    // eslint-disable-next-line no-nested-ternary
+    acc.pax = pax === 1 ? 'Single' : pax === 2 ? 'Double' : pax === 3 ? 'Triple' : '';
     acc.roomType = roomTypes[0]?.value || roomTypeOptions[0].value;
     acc.mealPlan = mealPlanOptions[0].value;
     const tempAccomodation = [...selectedAccomodations];
@@ -160,12 +176,14 @@ function PresetAccomodation() {
       acc.nights = selectedAccomodationsNights[index] || '0';
       acc.roomType = selectedAccomodationsRoomTypes[index] || '';
       acc.mealPlan = selectedAccomodationsMealPlans[index] || '';
+      acc.pax = selectedAccomodationsPax[index] || '';
     });
 
     await setDoc(doc(db, 'Preset Quotes', uuid()), {
       title,
       selectedAccomodationsMealPlans,
       selectedAccomodationsRoomTypes,
+      selectedAccomodationsPax,
       selectedAccomodations: tempAccomodation,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
@@ -177,18 +195,22 @@ function PresetAccomodation() {
   };
 
   const deleteAccomodation = (acc: UserAccomodation) => {
-    const removeIndex = selectedAccomodations.findIndex((ac) => ac.id === acc.id);
+    const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
+      .filter(String) as number[];
     const tempAccomodationNights = [...selectedAccomodationsNights];
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
+    const tempAccomodationPax = [...selectedAccomodationsPax];
     const tempAccomodation = [...selectedAccomodations];
-    tempAccomodationNights.splice(removeIndex, 1);
-    tempAccomodationRoomTypes.splice(removeIndex, 1);
-    tempAccomodationMealPlans.splice(removeIndex, 1);
-    tempAccomodation.splice(removeIndex, 1);
+    tempAccomodationNights.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
     setSelectedAccomodationsNights(tempAccomodationNights);
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
     setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
+    setSelectedAccomodationsPax(tempAccomodationPax);
     setSelectedAccomodations(tempAccomodation);
   };
 
@@ -262,9 +284,11 @@ function PresetAccomodation() {
                 selectedAccomodationsNights={selectedAccomodationsNights}
                 selectedAccomodationsRoomTypes={selectedAccomodationsRoomTypes}
                 selectedAccomodationsMealPlans={selectedAccomodationsMealPlans}
+                selectedAccomodationsPax={selectedAccomodationsPax}
                 setSelectedAccomodationsNights={setSelectedAccomodationsNights}
                 setSelectedAccomodationsRoomTypes={setSelectedAccomodationsRoomTypes}
                 setSelectedAccomodationsMealPlans={setSelectedAccomodationsMealPlans}
+                setSelectedAccomodationsPax={setSelectedAccomodationsPax}
                 deleteAccomodation={deleteAccomodation}
               />
             </DivAtom>

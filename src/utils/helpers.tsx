@@ -174,6 +174,12 @@ export const roleOptions = [
   { label: 'Travel Agent', value: 'Travel Agent' },
 ];
 
+export const paxOptions = [
+  { value: 'Single', label: 'Single' },
+  { value: 'Double', label: 'Double' },
+  { value: 'Triple', label: 'Triple' },
+];
+
 export const MONTHS = [
   'January',
   'February',

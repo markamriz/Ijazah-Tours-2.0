@@ -54,6 +54,7 @@ function Accomodation() {
   const [presetQuotesData, setPresetQuotesData] = useState<any[]>();
 
   const [selectedAccomodationsNights, setSelectedAccomodationsNights] = useState<string[]>([]);
+  const [selectedAccomodationsPax, setSelectedAccomodationsPax] = useState<string[]>([]);
   const [
     selectedAccomodationsRoomTypes,
     setSelectedAccomodationsRoomTypes,
@@ -117,6 +118,7 @@ function Accomodation() {
       setSelectedAccomodationsMealPlans(accDetails.selectedAccomodationsMealPlans);
       setSelectedAccomodationsRoomTypes(accDetails.selectedAccomodationsRoomTypes);
       setSelectedAccomodationsNights(accDetails.selectedAccomodationsNights);
+      setSelectedAccomodationsPax(accDetails.selectedAccomodationsPax);
 
       if (localStorage.getItem('New Quote Accomodation')) {
         const selectedAcc = JSON.parse(
@@ -125,6 +127,7 @@ function Accomodation() {
 
         setSelectedAccomodations(selectedAcc.selectedAccomodations as UserAccomodation[]);
         setSelectedAccomodationsMealPlans(selectedAcc.selectedAccomodationsMealPlans);
+        setSelectedAccomodationsPax(selectedAcc.selectedAccomodationsPax);
         setSelectedAccomodationsRoomTypes(selectedAcc.selectedAccomodationsRoomTypes);
         setSelectedAccomodationsNights(selectedAcc.selectedAccomodationsNights);
       }
@@ -193,14 +196,13 @@ function Accomodation() {
       const initRooms = Number(customerDetails[19]) + (Math.floor(totalGuests / 3) + 1);
 
       customerDetails[19] = initRooms;
+      customerDetails.push(totalGuests);
       localStorage.setItem(
         'New Quote Customer',
         JSON.stringify({
           data: [customerDetails],
         }),
       );
-
-      acc.pax = 'Triple';
     } else if (pax === 1) {
       acc.pax = 'Single';
     } else if (pax === 2) {
@@ -213,23 +215,35 @@ function Accomodation() {
     acc.mealPlan = mealPlanOptions[0].value;
 
     const tempAccomodation = [...selectedAccomodations];
-    tempAccomodation.push(acc);
+    if (customerDetails[19] > 1 || pax > 3) {
+      const numberOfEntries = pax > 3 ? Math.ceil(pax / 3) : Number(customerDetails[19]);
+      for (let i = 0; i < numberOfEntries; i += 1) {
+        tempAccomodation.push(acc);
+      }
+      acc.pax = '';
+    } else {
+      tempAccomodation.push(acc);
+    }
     setSelectedAccomodations(tempAccomodation);
   };
 
   const deleteAccomodation = (acc: UserAccomodation) => {
-    const removeIndex = selectedAccomodations.findIndex((ac) => ac.id === acc.id);
+    const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
+      .filter(String) as number[];
     const tempAccomodationNights = [...selectedAccomodationsNights];
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
+    const tempAccomodationPax = [...selectedAccomodationsPax];
     const tempAccomodation = [...selectedAccomodations];
-    tempAccomodationNights.splice(removeIndex, 1);
-    tempAccomodationRoomTypes.splice(removeIndex, 1);
-    tempAccomodationMealPlans.splice(removeIndex, 1);
-    tempAccomodation.splice(removeIndex, 1);
+    tempAccomodationNights.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
     setSelectedAccomodationsNights(tempAccomodationNights);
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
     setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
+    setSelectedAccomodationsPax(tempAccomodationPax);
     setSelectedAccomodations(tempAccomodation);
   };
 
@@ -257,17 +271,21 @@ function Accomodation() {
     if (nightsRequired !== totalUsedNights) {
       setShowValidationErrorMessage(true);
     } else {
-      let validAndContinue = true;
-
       const tempAccomodation = [...selectedAccomodations];
-      const requireAdditionalBed = customerDetails[14];
-      let noRateErr = tempAccomodation.map((a) => ({ [a.name]: false }));
 
+      const requireAdditionalBed = customerDetails[14];
+      const customerRooms = Number(customerDetails[19]) || 1;
+
+      let validAndContinue = true;
+      let noRateErr = tempAccomodation.map((a) => ({ [a.name]: false }));
       let tempCurrDate = new Date(customerDetails[7]);
 
       tempAccomodation.forEach((acc, index) => {
+        const additionalBedPrice = requireAdditionalBed ? Number(acc.additionalBedPrice) : 0;
+
         acc.nights = selectedAccomodationsNights[index];
         acc.roomType = selectedAccomodationsRoomTypes[index];
+        acc.pax = selectedAccomodationsPax[index];
 
         acc.checkin = tempCurrDate.toISOString().substring(0, 10);
         acc.checkout = addDays(tempCurrDate, Number(selectedAccomodationsNights[index]));
@@ -347,15 +365,17 @@ function Accomodation() {
             },
           ];
 
-          const firstRatePrice = roomPrices[0]
-            + (requireAdditionalBed ? Number(acc.additionalBedPrice) : 0);
-          const secondRatePrice = roomPrices[1]
-            + (requireAdditionalBed ? Number(acc.additionalBedPrice) : 0);
+          const firstRatePrice = roomPrices[0] + additionalBedPrice;
+          const secondRatePrice = roomPrices[1] + additionalBedPrice;
 
-          acc.roomRate = `$${firstRatePrice} for ${rangeRates[0].nights} ${rangeRates[0].nights === 1 ? 'night' : 'nights'},
-            $${secondRatePrice} for ${rangeRates[1].nights} ${rangeRates[1].nights === 1 ? 'night' : 'nights'}`;
-          acc.total = `$${((Number(customerDetails[19]) || 1) * (firstRatePrice) * rangeRates[0].nights)
-            + ((Number(customerDetails[19]) || 1) * (secondRatePrice) * rangeRates[1].nights)}`;
+          acc.roomRate = `
+            $${firstRatePrice} for ${rangeRates[0].nights} ${rangeRates[0].nights === 1 ? 'night' : 'nights'},
+            $${secondRatePrice} for ${rangeRates[1].nights} ${rangeRates[1].nights === 1 ? 'night' : 'nights'}
+          `;
+          acc.total = `$
+            ${(customerRooms * firstRatePrice * rangeRates[0].nights)
+            + (customerRooms * secondRatePrice * rangeRates[1].nights)}
+          `;
         } else {
           const singleGuestPrice = Number(perfectRate?.newSinglePrice.slice(1));
           const doubleGuestPrice = Number(perfectRate?.newDoublePrice.slice(1));
@@ -368,9 +388,9 @@ function Accomodation() {
             roomPrice = tripleGuestPrice;
           }
 
-          const ratePrice = roomPrice + (requireAdditionalBed ? Number(acc.additionalBedPrice) : 0);
+          const ratePrice = roomPrice + additionalBedPrice;
           acc.roomRate = `$${ratePrice}`;
-          acc.total = `$${(ratePrice) * nightsRequired * (Number(customerDetails[19]) || 1)}`;
+          acc.total = `$${ratePrice * nightsRequired * customerRooms}`;
         }
       });
 
@@ -384,6 +404,7 @@ function Accomodation() {
         selectedAccomodationsRoomTypes,
         selectedAccomodationsMealPlans,
         selectedAccomodationsNights,
+        selectedAccomodationsPax,
         selectedAccomodations: tempAccomodation,
       }));
       history.replace(`/quote/quotations/edit/${quoteId}/costing`);
@@ -417,7 +438,7 @@ function Accomodation() {
       );
 
       presetSelectedAccs.forEach((acc: any) => {
-        acc.pax = 'Triple';
+        acc.pax = '';
       });
     } else {
       presetSelectedAccs.forEach((acc: any) => {
@@ -481,6 +502,7 @@ function Accomodation() {
                         setSelectedAccomodations(quote.selectedAccomodations);
                         setPresetPax(quote.selectedAccomodations);
                         setSelectedAccomodationsMealPlans(quote.selectedAccomodationsMealPlans);
+                        setSelectedAccomodationsPax(quote.selectedAccomodationsPax);
                         setSelectedAccomodationsRoomTypes(quote.selectedAccomodationsRoomTypes);
                       }}
                       size="large"
@@ -558,9 +580,11 @@ function Accomodation() {
                 selectedAccomodationsNights={selectedAccomodationsNights}
                 selectedAccomodationsRoomTypes={selectedAccomodationsRoomTypes}
                 selectedAccomodationsMealPlans={selectedAccomodationsMealPlans}
+                selectedAccomodationsPax={selectedAccomodationsPax}
                 setSelectedAccomodationsNights={setSelectedAccomodationsNights}
                 setSelectedAccomodationsRoomTypes={setSelectedAccomodationsRoomTypes}
                 setSelectedAccomodationsMealPlans={setSelectedAccomodationsMealPlans}
+                setSelectedAccomodationsPax={setSelectedAccomodationsPax}
                 deleteAccomodation={deleteAccomodation}
               />
             </DivAtom>
