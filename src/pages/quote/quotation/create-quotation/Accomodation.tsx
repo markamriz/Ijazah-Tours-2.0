@@ -191,7 +191,7 @@ function Accomodation() {
     if (pax > 3) {
       // Obtain required number of rooms depending on pax --> Commenting atm
       const totalGuests = Number(adults) + children.length;
-      const initRooms = Number(customerDetails[19]) + (Math.floor(totalGuests / 3) + 1);
+      const initRooms = Math.ceil(pax / 3);
 
       customerDetails[19] = initRooms;
       customerDetails.push(totalGuests);
@@ -427,7 +427,14 @@ function Accomodation() {
 
           const ratePrice = roomPrice + additionalBedPrice;
           acc.roomRate = `$${ratePrice}`;
-          acc.total = `$${ratePrice * nightsRequired * customerRooms}`;
+
+          if (acc.additionalEntries) {
+            acc.total = 'PENDING';
+          } else if (acc.isMultiple) {
+            acc.total = '$0';
+          } else {
+            acc.total = `$${ratePrice * nightsRequired * customerRooms}`;
+          }
         }
       });
 
@@ -655,8 +662,8 @@ function Accomodation() {
               <ParagraphAtom
                 text={`
                   No available room rates for specified checkin and checkout dates for hotels:
-                    ${showNoRateErrorMessage.map((rtErr: any) => Object.keys(rtErr)).join(', ')}
-                  `}
+                    ${Array.from(new Set(showNoRateErrorMessage.map((rtErr: any) => Object.keys(rtErr)))).join(', ')}
+                `}
                 style={quoteCreateQuoteStyles.errorMsg}
               />
             )}

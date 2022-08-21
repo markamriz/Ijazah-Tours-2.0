@@ -99,6 +99,16 @@ function Costing() {
     let transportDays = 0;
     data.forEach((acc) => {
       transportDays += Number(acc.nights);
+
+      if (acc.additionalEntries) {
+        let total = Number(acc.roomRate.slice(1, acc.roomRate.length));
+        acc.additionalEntries.forEach((entry) => {
+          total += Number(entry.roomRate.slice(1, entry.roomRate.length));
+        });
+
+        acc.total = `$${total * Number(acc.nights)}`;
+      }
+
       accTotal += Number(acc.total.slice(1, acc.total.length));
     });
 
