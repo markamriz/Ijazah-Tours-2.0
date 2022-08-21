@@ -95,6 +95,7 @@ function TextFieldAtom({
       style={style}
       value={value}
       onChange={onChange}
+      disabled={disabled}
       variant={variant}
       size={size}
       label={label}

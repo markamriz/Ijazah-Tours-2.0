@@ -34,6 +34,7 @@ import {
 } from '../../../../styles';
 import { addDays, getDaysDifference, widthHeightDynamicStyle } from '../../../../utils/helpers';
 import {
+  AccomodationNight,
   FlexDirection,
   SettingsSingleInput,
   UserAccomodation,
@@ -53,8 +54,12 @@ function Accomodation() {
 
   const [presetQuotesData, setPresetQuotesData] = useState<any[]>();
 
-  const [selectedAccomodationsNights, setSelectedAccomodationsNights] = useState<string[]>([]);
   const [selectedAccomodationsPax, setSelectedAccomodationsPax] = useState<string[]>([]);
+  const [
+    selectedAccomodationsNights,
+    setSelectedAccomodationsNights,
+  ] = useState<AccomodationNight[]>([]);
+
   const [
     selectedAccomodationsRoomTypes,
     setSelectedAccomodationsRoomTypes,
@@ -205,10 +210,13 @@ function Accomodation() {
       );
     } else if (pax === 1) {
       acc.pax = 'Single';
+      setSelectedAccomodationsPax((prev) => [...prev, 'Single']);
     } else if (pax === 2) {
       acc.pax = 'Double';
+      setSelectedAccomodationsPax((prev) => [...prev, 'Double']);
     } else {
       acc.pax = 'Triple';
+      setSelectedAccomodationsPax((prev) => [...prev, 'Triple']);
     }
 
     acc.roomType = roomTypes[0]?.value || roomTypeOptions[0].value;
@@ -217,10 +225,18 @@ function Accomodation() {
     const tempAccomodation = [...selectedAccomodations];
     if (customerDetails[19] > 1 || pax > 3) {
       const numberOfEntries = pax > 3 ? Math.ceil(pax / 3) : Number(customerDetails[19]);
-      for (let i = 0; i < numberOfEntries; i += 1) {
-        tempAccomodation.push(acc);
+      acc.isMultiple = true;
+      const additionalEntry = { ...acc, isSubEntry: true };
+      acc.additionalEntries = [];
+
+      for (let i = 0; i < numberOfEntries - 1; i += 1) {
+        acc.additionalEntries.push(additionalEntry);
       }
-      acc.pax = '';
+      tempAccomodation.push(acc);
+
+      for (let i = 0; i < numberOfEntries - 1; i += 1) {
+        tempAccomodation.push(additionalEntry);
+      }
     } else {
       tempAccomodation.push(acc);
     }
@@ -230,16 +246,22 @@ function Accomodation() {
   const deleteAccomodation = (acc: UserAccomodation) => {
     const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
       .filter(String) as number[];
+
+    // Each accomodation - with additional entries or not - will have only a single nights entry
+    const removeNightIndex = selectedAccomodationsNights.findIndex((ac) => ac.accId === acc.id);
+
     const tempAccomodationNights = [...selectedAccomodationsNights];
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
     const tempAccomodationPax = [...selectedAccomodationsPax];
     const tempAccomodation = [...selectedAccomodations];
-    tempAccomodationNights.splice(removeIndexes[0], removeIndexes.length);
+
     tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationNights.splice(removeNightIndex, 1);
+
     setSelectedAccomodationsNights(tempAccomodationNights);
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
     setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
@@ -264,9 +286,10 @@ function Accomodation() {
     }
 
     setValidationNightsRequired(nightsRequired);
-    const totalUsedNights = selectedAccomodationsNights.reduce((prev, curr) => (
-      prev + Number(curr)
-    ), 0);
+    const totalUsedNights = selectedAccomodationsNights.map((x) => x.nights)
+      .reduce((prev, curr) => (
+        prev + Number(curr)
+      ), 0);
 
     if (nightsRequired !== totalUsedNights) {
       setShowValidationErrorMessage(true);
@@ -283,13 +306,29 @@ function Accomodation() {
       tempAccomodation.forEach((acc, index) => {
         const additionalBedPrice = requireAdditionalBed ? Number(acc.additionalBedPrice) : 0;
 
-        acc.nights = selectedAccomodationsNights[index];
         acc.roomType = selectedAccomodationsRoomTypes[index];
         acc.pax = selectedAccomodationsPax[index];
 
-        acc.checkin = tempCurrDate.toISOString().substring(0, 10);
-        acc.checkout = addDays(tempCurrDate, Number(selectedAccomodationsNights[index]));
-        tempCurrDate = new Date(acc.checkout);
+        if (acc.additionalEntries || !acc.isMultiple) {
+          const thisAccomodationsNights = selectedAccomodationsNights.find((x) => (
+            x.accId === acc.id
+          ))!.nights;
+          const thisAcomodationsCheckin = tempCurrDate.toISOString().substring(0, 10);
+          const thisAccomodationsCheckout = addDays(tempCurrDate, Number(thisAccomodationsNights));
+
+          acc.nights = thisAccomodationsNights;
+          acc.checkin = thisAcomodationsCheckin;
+          acc.checkout = thisAccomodationsCheckout;
+          if (acc.additionalEntries) {
+            acc.additionalEntries.forEach((ae) => {
+              ae.checkin = thisAcomodationsCheckin;
+              ae.checkout = thisAccomodationsCheckout;
+              ae.nights = thisAccomodationsNights;
+            });
+          }
+
+          tempCurrDate = new Date(acc.checkout);
+        }
 
         const mealPlanRates = acc.rates.filter((r) => (
           r.newMealPlan === selectedAccomodationsMealPlans[index]
@@ -440,12 +479,37 @@ function Accomodation() {
       presetSelectedAccs.forEach((acc: any) => {
         acc.pax = '';
       });
-    } else {
+
+      const tempPresetAccs = [...presetSelectedAccs];
       presetSelectedAccs.forEach((acc: any) => {
-        // eslint-disable-next-line no-nested-ternary
-        acc.pax = pax === 1 ? 'Single' : pax === 2 ? 'Double' : 'Triple';
+        const numberOfEntries = pax > 3 ? Math.ceil(pax / 3) : Number(customerDetails[19]);
+        acc.isMultiple = true;
+        const additionalEntry = { ...acc, isSubEntry: true };
+        acc.additionalEntries = [];
+
+        for (let i = 0; i < numberOfEntries - 1; i += 1) {
+          const addAtIndex = tempPresetAccs.findIndex((x) => x.id === acc.id);
+          acc.additionalEntries.push(additionalEntry);
+          tempPresetAccs.splice(addAtIndex + 1, 0, additionalEntry);
+        }
       });
+
+      return tempPresetAccs;
     }
+
+    presetSelectedAccs.forEach((acc: any) => {
+      // eslint-disable-next-line no-nested-ternary
+      acc.pax = pax === 1 ? 'Single' : pax === 2 ? 'Double' : 'Triple';
+    });
+
+    return presetSelectedAccs;
+  };
+
+  const addPresetQuote = (quote: any) => {
+    const setAccomodations = setPresetPax(quote.selectedAccomodations);
+    setSelectedAccomodations(setAccomodations);
+    setSelectedAccomodationsMealPlans(quote.selectedAccomodationsMealPlans);
+    setSelectedAccomodationsRoomTypes(quote.selectedAccomodationsRoomTypes);
   };
 
   const deletePresetQuote = async (quote: any) => {
@@ -498,13 +562,7 @@ function Accomodation() {
                         width: 'auto',
                         minWidth: widthHeightDynamicStyle(width, 768, '100%', '9rem'),
                       }}
-                      onClick={() => {
-                        setSelectedAccomodations(quote.selectedAccomodations);
-                        setPresetPax(quote.selectedAccomodations);
-                        setSelectedAccomodationsMealPlans(quote.selectedAccomodationsMealPlans);
-                        setSelectedAccomodationsPax(quote.selectedAccomodationsPax);
-                        setSelectedAccomodationsRoomTypes(quote.selectedAccomodationsRoomTypes);
-                      }}
+                      onClick={() => addPresetQuote(quote)}
                       size="large"
                     />
                     <DivAtom
@@ -567,13 +625,13 @@ function Accomodation() {
               <AccomodationTable
                 columns={[
                   'LOCATION',
+                  'CITY',
                   'NIGHTS',
                   'CATEGORY',
                   'ACCOMODATION',
                   'PAX',
                   'ROOM TYPE',
                   'MEAL PLAN',
-                  'CITY',
                   '',
                 ]}
                 selectedAccomodations={selectedAccomodations}

@@ -179,10 +179,18 @@ export interface UserAccomodation extends LibraryAccomodation {
   roomRate: string;
   roomRatesExtra: { rate: string, nights: number }[];
   total: string;
+  isMultiple?: boolean;
+  isSubEntry?: boolean;
+  additionalEntries?: UserAccomodation[];
 }
 
 export interface CompareRatesAccomdation extends UserAccomodation {
   bookingEngine: string;
   roomTypes: string[];
   accGradings: string[];
+}
+
+export interface AccomodationNight {
+  nights: string;
+  accId: string;
 }

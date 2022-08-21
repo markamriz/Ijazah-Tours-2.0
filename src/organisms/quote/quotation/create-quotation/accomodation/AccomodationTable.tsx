@@ -16,7 +16,7 @@ import TableRowEditCell from '../../../../../molecules/TableRowEditCell';
 import TableRowIconCell from '../../../../../molecules/TableRowIconCell';
 import TableRowTextCell from '../../../../../molecules/TableRowTextCell';
 import { paxOptions } from '../../../../../utils/helpers';
-import { UserAccomodation } from '../../../../../utils/types';
+import { AccomodationNight, UserAccomodation } from '../../../../../utils/types';
 
 const useStyles = makeStyles((theme: Theme) => ({
   table: {
@@ -31,19 +31,21 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface AccomodationTableProps {
   selectedAccomodations: UserAccomodation[];
   columns: string[];
-  selectedAccomodationsNights: string[];
-  selectedAccomodationsRoomTypes: string[];
-  selectedAccomodationsMealPlans: string[];
-  selectedAccomodationsPax: string[];
-  setSelectedAccomodationsNights: any;
-  setSelectedAccomodationsRoomTypes: any;
-  setSelectedAccomodationsMealPlans: any;
-  setSelectedAccomodationsPax: any;
+  preset?: boolean;
+  selectedAccomodationsNights?: AccomodationNight[];
+  selectedAccomodationsRoomTypes?: string[];
+  selectedAccomodationsMealPlans?: string[];
+  selectedAccomodationsPax?: string[];
+  setSelectedAccomodationsNights?: any;
+  setSelectedAccomodationsRoomTypes?: any;
+  setSelectedAccomodationsMealPlans?: any;
+  setSelectedAccomodationsPax?: any;
   deleteAccomodation: (row: UserAccomodation) => void;
 }
 
 function AccomodationTable({
   columns,
+  preset,
   selectedAccomodations,
   selectedAccomodationsNights,
   selectedAccomodationsRoomTypes,
@@ -56,6 +58,7 @@ function AccomodationTable({
   deleteAccomodation,
 }: AccomodationTableProps) {
   const classes = useStyles();
+
   return (
     <TableContainer className={classes.paper} component={Paper}>
       <Table className={classes.table} aria-label="quotations table">
@@ -72,131 +75,148 @@ function AccomodationTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {selectedAccomodations?.length > 0 && selectedAccomodations.map((row, index) => {
-            const roomTypes = Object.keys(row.categoryValues).map((cat) => (
-              { value: cat, label: cat }
-            ));
-            const roomTypeOptions = row.rates
-              .map((rate) => rate.newRateType)
-              .map((rate) => ({ value: rate, label: rate }));
+          {selectedAccomodations?.length > 0
+            && selectedAccomodations.map((row, index) => {
+              const roomTypes = Object.keys(row.categoryValues).map((cat) => (
+                { value: cat, label: cat }
+              ));
 
-            const mealPlans = row.rates.map((rate) => (
-              { value: rate.newMealPlan, label: rate.newMealPlan }
-            ));
+              const roomTypeOptions = row.rates
+                .map((rate) => rate.newRateType)
+                .map((rate) => ({ value: rate, label: rate }));
 
-            const onRoomTypeChange = (v: string) => {
-              const temp = [...selectedAccomodationsRoomTypes];
-              temp.splice(index, 1, v);
-              setSelectedAccomodationsRoomTypes(temp);
-            };
+              const mealPlans = row.rates.map((rate) => (
+                { value: rate.newMealPlan, label: rate.newMealPlan }
+              ));
 
-            const onMealPlanChange = (v: string) => {
-              const temp = [...selectedAccomodationsMealPlans];
-              temp.splice(index, 1, v);
-              setSelectedAccomodationsMealPlans(temp);
-            };
+              const allRoomTypes = _.uniqBy([...roomTypes, ...roomTypeOptions], 'value');
 
-            const onNightsChange = (v: string) => {
-              const temp = [...selectedAccomodationsNights];
-              temp.splice(index, 1, v);
-              setSelectedAccomodationsNights(temp);
-            };
+              const onRoomTypeChange = (v: string) => {
+                const temp = [...selectedAccomodationsRoomTypes!];
+                temp.splice(index, 1, v);
+                setSelectedAccomodationsRoomTypes(temp);
+              };
 
-            const onPaxChange = (v: string) => {
-              const temp = [...selectedAccomodationsPax];
-              temp.splice(index, 1, v);
-              setSelectedAccomodationsPax(temp);
-            };
+              const onMealPlanChange = (v: string) => {
+                const temp = [...selectedAccomodationsMealPlans!];
+                temp.splice(index, 1, v);
+                setSelectedAccomodationsMealPlans(temp);
+              };
 
-            const allRoomTypes = _.uniqBy([...roomTypes, ...roomTypeOptions], 'value');
+              const onNightsChange = (v: string) => {
+                const temp = [...selectedAccomodationsNights!];
+                temp.splice(index, 1, { accId: row.id, nights: v });
+                setSelectedAccomodationsNights(temp);
+              };
 
-            return (
-              <TableRow key={index + 100}>
-                <TableRowTextCell
-                  cell={{
-                    align: 'center',
-                    title: row.country,
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowEditCell
-                  type="Nights"
-                  select={false}
-                  value={selectedAccomodationsNights[index]}
-                  onCountChange={onNightsChange}
-                  align="center"
-                />
-                <TableRowTextCell
-                  cell={{
-                    align: 'center',
-                    title: row.accomodationType,
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowTextCell
-                  cell={{
-                    align: 'center',
-                    title: row.name,
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                {row.pax === '' ? (
-                  <TableRowEditCell
-                    select
-                    type="Pax"
-                    value={selectedAccomodationsPax[index]}
-                    onCountChange={onPaxChange}
-                    options={paxOptions}
-                    align="center"
-                  />
-                ) : (
+              const onPaxChange = (v: string) => {
+                const temp = [...selectedAccomodationsPax!];
+                temp.splice(index, 1, v);
+                setSelectedAccomodationsPax(temp);
+              };
+
+              return (
+                <TableRow key={index + 100}>
                   <TableRowTextCell
                     cell={{
                       align: 'center',
-                      title: row.pax,
+                      title: row.isSubEntry ? '' : row.country,
                       colors: ['#464E5F'],
                       weight: 400,
                     }}
                   />
-                )}
-                <TableRowEditCell
-                  select
-                  type="Room Type"
-                  value={selectedAccomodationsRoomTypes[index] || ''}
-                  onSelectChange={onRoomTypeChange}
-                  options={allRoomTypes}
-                  align="center"
-                />
-                <TableRowEditCell
-                  select
-                  type="Meal Plan"
-                  value={selectedAccomodationsMealPlans[index] || ''}
-                  onSelectChange={onMealPlanChange}
-                  options={mealPlans}
-                  align="center"
-                />
-                <TableRowTextCell
-                  cell={{
-                    align: 'center',
-                    title: row.city,
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowIconCell
-                  align="center"
-                  onClick={() => deleteAccomodation(row)}
-                  textColor="#B5B5C3"
-                  size="small"
-                  padding="8px"
-                  children={<CloseIcon style={{ color: 'black' }} />}
-                />
-              </TableRow>
-            );
-          })}
+                  <TableRowTextCell
+                    cell={{
+                      align: 'center',
+                      title: row.isSubEntry ? '' : row.city,
+                      colors: ['#464E5F'],
+                      weight: 400,
+                    }}
+                  />
+                  {!preset && (
+                    row.isSubEntry ? (
+                      <TableRowTextCell
+                        cell={{
+                          align: 'center',
+                          title: '',
+                          colors: ['#464E5F'],
+                          weight: 400,
+                        }}
+                      />
+                    ) : (
+                      <TableRowEditCell
+                        type="Nights"
+                        select={false}
+                        value={selectedAccomodationsNights?.find((x) => x.accId === row.id)?.nights || ''}
+                        onCountChange={onNightsChange}
+                        align="center"
+                      />
+                    )
+                  )}
+                  <TableRowTextCell
+                    cell={{
+                      align: 'center',
+                      title: row.isSubEntry ? '' : row.accomodationType,
+                      colors: ['#464E5F'],
+                      weight: 400,
+                    }}
+                  />
+                  <TableRowTextCell
+                    cell={{
+                      align: 'center',
+                      title: row.isSubEntry ? '' : row.name,
+                      colors: ['#464E5F'],
+                      weight: 400,
+                    }}
+                  />
+                  {!preset && (
+                    row.isMultiple ? (
+                      <TableRowEditCell
+                        select
+                        type="Pax"
+                        value={selectedAccomodationsPax![index]}
+                        onSelectChange={onPaxChange}
+                        options={paxOptions}
+                        align="center"
+                      />
+                    ) : (
+                      <TableRowTextCell
+                        cell={{
+                          align: 'center',
+                          title: selectedAccomodationsPax![index],
+                          colors: ['#464E5F'],
+                          weight: 400,
+                        }}
+                      />
+                    )
+                  )}
+                  <TableRowEditCell
+                    select
+                    type="Room Type"
+                    value={selectedAccomodationsRoomTypes![index] || ''}
+                    onSelectChange={onRoomTypeChange}
+                    options={allRoomTypes}
+                    align="center"
+                  />
+                  <TableRowEditCell
+                    select
+                    type="Meal Plan"
+                    value={selectedAccomodationsMealPlans![index] || ''}
+                    onSelectChange={onMealPlanChange}
+                    options={mealPlans}
+                    align="center"
+                  />
+                  <TableRowIconCell
+                    align="center"
+                    onClick={() => deleteAccomodation(row)}
+                    textColor="#B5B5C3"
+                    size="small"
+                    padding="8px"
+                    children={<CloseIcon style={{ color: 'black' }} />}
+                  />
+                </TableRow>
+              );
+            })}
         </TableBody>
       </Table>
     </TableContainer>

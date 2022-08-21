@@ -9,6 +9,7 @@ interface TableRowEditCellProps {
   select: boolean;
   align: 'left' | 'center' | 'right';
   inputTextField?: boolean;
+  disabled?: boolean;
   lkrAdornment?: boolean;
   dollarAdornment?: boolean;
   type?: string;
@@ -25,6 +26,7 @@ function TableRowEditCell({
   options,
   align,
   inputTextField,
+  disabled,
   lkrAdornment,
   dollarAdornment,
   onSelectChange,
@@ -46,6 +48,7 @@ function TableRowEditCell({
           flex: 1,
         }}
         disableUnderline={false}
+        disabled={disabled}
         select
       />
     </TableCell>
@@ -67,6 +70,7 @@ function TableRowEditCell({
           minValue={1}
           lkrAdornment={lkrAdornment}
           dollarAdornment={dollarAdornment}
+          disabled={disabled}
         />
       </FormControl>
     </TableCell>
