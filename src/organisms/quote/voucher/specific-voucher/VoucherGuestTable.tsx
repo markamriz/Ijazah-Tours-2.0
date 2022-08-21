@@ -149,7 +149,7 @@ function VoucherGuestTable({
                 key={uuid()}
                 cell={{
                   align: 'center',
-                  title: data.accomodationDetails.roomType,
+                  title: [data.accomodationDetails.pax, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.pax)].flat().join(' | '),
                   colors: ['#464E5F'],
                   weight: 400,
                 }}
@@ -158,7 +158,16 @@ function VoucherGuestTable({
                 key={uuid()}
                 cell={{
                   align: 'center',
-                  title: data.accomodationDetails.mealPlan,
+                  title: [data.accomodationDetails.roomType, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.roomType)].flat().join(' | '),
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: [data.accomodationDetails.mealPlan, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.mealPlan)].flat().join(' | '),
                   colors: ['#464E5F'],
                   weight: 400,
                 }}

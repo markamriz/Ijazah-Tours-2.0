@@ -369,23 +369,25 @@ function Approval({ setCreated }: ApprovalProps) {
 
   const createAccomodationVouchers = async (guestDetails: any, type: string) => {
     accomodationData!.forEach(async (acc) => {
-      const accVName = acc.name.toUpperCase().split(' ').map((w) => w[0]).join('');
-      const vId = `${quoteTitle.slice(0, 5)} HV${accVName}`;
+      if ((acc.isMultiple && acc.additionalEntries) || !acc.isMultiple) {
+        const accVName = acc.name.toUpperCase().split(' ').map((w) => w[0]).join('');
+        const vId = `${quoteTitle.slice(0, 5)} HV${accVName}`;
 
-      await setDoc(doc(db, 'Vouchers', String(quoteNo), 'Vouchers', `${String(quoteNo)}-${type}-${acc.name}`), {
-        vId,
-        guestDetails,
-        type,
-        title: acc.name,
-        mainVId: `${quoteTitle.slice(0, 5)} V`,
-        quoteNo: String(quoteNo),
-        quotationTitle: quoteTitle,
-        driverDetails: driverChoice,
-        accomodationDetails: acc,
-        completed: false,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+        await setDoc(doc(db, 'Vouchers', String(quoteNo), 'Vouchers', `${String(quoteNo)}-${type}-${acc.name}`), {
+          vId,
+          guestDetails,
+          type,
+          title: acc.name,
+          mainVId: `${quoteTitle.slice(0, 5)} V`,
+          quoteNo: String(quoteNo),
+          quotationTitle: quoteTitle,
+          driverDetails: driverChoice,
+          accomodationDetails: acc,
+          completed: false,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      }
     });
   };
 
@@ -488,8 +490,10 @@ function Approval({ setCreated }: ApprovalProps) {
                         columns={[
                           'Nights',
                           'Accomodation',
+                          'Pax',
                           'Room Type',
                           'Meal Plan',
+                          'Room Rate',
                           'Room View',
                         ]}
                         data={accomodationData}

@@ -63,7 +63,7 @@ function ApprovalAccomodationTable({
           {data.map((row) => {
             const roomView = row.views.find((view) => view.checked);
 
-            return (
+            return ((row.isMultiple && row.additionalEntries) || !row.isMultiple) && (
               <TableRow key={uuid()}>
                 <TableRowTextCell
                   key={uuid()}
@@ -87,7 +87,7 @@ function ApprovalAccomodationTable({
                   key={uuid()}
                   cell={{
                     align: 'center',
-                    title: row.roomType,
+                    title: [row.pax, row.additionalEntries?.map((entry) => entry.pax)].flat().join(' | '),
                     colors: ['#464E5F'],
                     weight: 400,
                   }}
@@ -96,7 +96,25 @@ function ApprovalAccomodationTable({
                   key={uuid()}
                   cell={{
                     align: 'center',
-                    title: row.mealPlan,
+                    title: [row.roomType, row.additionalEntries?.map((entry) => entry.roomType)].flat().join(' | '),
+                    colors: ['#464E5F'],
+                    weight: 400,
+                  }}
+                />
+                <TableRowTextCell
+                  key={uuid()}
+                  cell={{
+                    align: 'center',
+                    title: [row.mealPlan, row.additionalEntries?.map((entry) => entry.mealPlan)].flat().join(' | '),
+                    colors: ['#464E5F'],
+                    weight: 400,
+                  }}
+                />
+                <TableRowTextCell
+                  key={uuid()}
+                  cell={{
+                    align: 'center',
+                    title: [row.roomRate, row.additionalEntries?.map((entry) => entry.roomRate)].flat().join(' | '),
                     colors: ['#464E5F'],
                     weight: 400,
                   }}

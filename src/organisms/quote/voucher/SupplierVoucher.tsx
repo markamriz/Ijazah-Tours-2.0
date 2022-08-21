@@ -98,7 +98,7 @@ function SupplierVoucher({ voucherData, setIsVoucherApproved }: SupplierVoucherP
           <Banner />
           <VoucherSummary vData={vData} type="accomodation" />
           <VoucherGuestTable
-            accColumns={['NIGHTS', 'ROOM TYPE', 'MEAL PLAN', 'VIEW']}
+            accColumns={['NIGHTS', 'PAX', 'ROOM TYPE', 'MEAL PLAN', 'VIEW']}
             guestColumns={['ADULTS', 'CHILDREN', 'AGE']}
             data={vData}
             type="accomodation"
