@@ -409,10 +409,17 @@ function Accomodation() {
             $${firstRatePrice} for ${rangeRates[0].nights} ${rangeRates[0].nights === 1 ? 'night' : 'nights'},
             $${secondRatePrice} for ${rangeRates[1].nights} ${rangeRates[1].nights === 1 ? 'night' : 'nights'}
           `;
-          acc.total = `$
-            ${(customerRooms * firstRatePrice * rangeRates[0].nights)
-            + (customerRooms * secondRatePrice * rangeRates[1].nights)}
-          `;
+
+          if (acc.additionalEntries) {
+            acc.total = 'PENDING';
+          } else if (acc.isMultiple) {
+            acc.total = 'N/A';
+          } else {
+            acc.total = `$
+              ${(customerRooms * firstRatePrice * rangeRates[0].nights)
+              + (customerRooms * secondRatePrice * rangeRates[1].nights)}
+            `;
+          }
         } else {
           const singleGuestPrice = Number(perfectRate?.newSinglePrice.slice(1));
           const doubleGuestPrice = Number(perfectRate?.newDoublePrice.slice(1));
@@ -431,7 +438,7 @@ function Accomodation() {
           if (acc.additionalEntries) {
             acc.total = 'PENDING';
           } else if (acc.isMultiple) {
-            acc.total = '$0';
+            acc.total = 'N/A';
           } else {
             acc.total = `$${ratePrice * nightsRequired * customerRooms}`;
           }
@@ -444,12 +451,21 @@ function Accomodation() {
         return;
       }
 
+      // Additional entries rates have been set above - this will update the nested sub array
+      const temp2Accomodation = [...tempAccomodation];
+      temp2Accomodation.forEach((acc) => {
+        if (acc.additionalEntries) {
+          const updatedEntries = tempAccomodation.filter((x) => x.id === acc.id && x.isSubEntry);
+          acc.additionalEntries = updatedEntries;
+        }
+      });
+
       localStorage.setItem('New Quote Accomodation', JSON.stringify({
         selectedAccomodationsRoomTypes,
         selectedAccomodationsMealPlans,
         selectedAccomodationsNights,
         selectedAccomodationsPax,
-        selectedAccomodations: tempAccomodation,
+        selectedAccomodations: temp2Accomodation,
       }));
       history.replace('/quote/quotations/create/costing');
     }

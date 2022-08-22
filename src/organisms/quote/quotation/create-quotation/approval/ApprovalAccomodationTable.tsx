@@ -87,7 +87,7 @@ function ApprovalAccomodationTable({
                   key={uuid()}
                   cell={{
                     align: 'center',
-                    title: [row.pax, row.additionalEntries?.map((entry) => entry.pax)].flat().join(' | '),
+                    title: [row.pax, row.additionalEntries?.map((entry) => entry.pax)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                     colors: ['#464E5F'],
                     weight: 400,
                   }}
@@ -96,7 +96,7 @@ function ApprovalAccomodationTable({
                   key={uuid()}
                   cell={{
                     align: 'center',
-                    title: [row.roomType, row.additionalEntries?.map((entry) => entry.roomType)].flat().join(' | '),
+                    title: [row.roomType, row.additionalEntries?.map((entry) => entry.roomType)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                     colors: ['#464E5F'],
                     weight: 400,
                   }}
@@ -105,7 +105,7 @@ function ApprovalAccomodationTable({
                   key={uuid()}
                   cell={{
                     align: 'center',
-                    title: [row.mealPlan, row.additionalEntries?.map((entry) => entry.mealPlan)].flat().join(' | '),
+                    title: [row.mealPlan, row.additionalEntries?.map((entry) => entry.mealPlan)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                     colors: ['#464E5F'],
                     weight: 400,
                   }}
@@ -114,7 +114,7 @@ function ApprovalAccomodationTable({
                   key={uuid()}
                   cell={{
                     align: 'center',
-                    title: [row.roomRate, row.additionalEntries?.map((entry) => entry.roomRate)].flat().join(' | '),
+                    title: [row.roomRate, row.additionalEntries?.map((entry) => entry.roomRate)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                     colors: ['#464E5F'],
                     weight: 400,
                   }}

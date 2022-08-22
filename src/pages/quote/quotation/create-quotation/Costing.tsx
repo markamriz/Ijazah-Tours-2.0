@@ -66,15 +66,38 @@ function Costing() {
       transportDays += Number(acc.nights);
 
       if (acc.additionalEntries) {
-        let total = Number(acc.roomRate.slice(1, acc.roomRate.length));
-        acc.additionalEntries.forEach((entry) => {
-          total += Number(entry.roomRate.slice(1, entry.roomRate.length));
-        });
+        try {
+          let total = Number(acc.roomRate.slice(1, acc.roomRate.length));
+          acc.additionalEntries.forEach((entry) => {
+            total += Number(entry.roomRate.slice(1, entry.roomRate.length));
+          });
 
-        acc.total = `$${total * Number(acc.nights)}`;
+          acc.total = `$${total * Number(acc.nights)}`;
+        } catch {
+          // Range rates room rate cannot be casted to Number: will hit the catch block
+          let total = (Number(
+            acc.roomRatesExtra[0].rate.slice(1, acc.roomRatesExtra[0].rate.length),
+          ) * acc.roomRatesExtra[0].nights)
+          + (Number(
+            acc.roomRatesExtra[1].rate.slice(1, acc.roomRatesExtra[1].rate.length),
+          ) * acc.roomRatesExtra[1].nights);
+
+          acc.additionalEntries.forEach((entry) => {
+            total += (Number(
+              entry.roomRatesExtra[0].rate.slice(1, entry.roomRatesExtra[0].rate.length),
+            ) * entry.roomRatesExtra[0].nights)
+            + (Number(
+              entry.roomRatesExtra[1].rate.slice(1, entry.roomRatesExtra[1].rate.length),
+            ) * entry.roomRatesExtra[1].nights);
+          });
+
+          acc.total = `$${total}`;
+        }
       }
 
-      accTotal += Number(acc.total.slice(1, acc.total.length));
+      if (acc.additionalEntries || !acc.isMultiple) {
+        accTotal += Number(acc.total.slice(1, acc.total.length));
+      }
     });
 
     const transportTotal = Number(rate) * Number(days);

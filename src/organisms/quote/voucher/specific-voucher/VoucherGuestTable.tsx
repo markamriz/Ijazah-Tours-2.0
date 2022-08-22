@@ -149,7 +149,7 @@ function VoucherGuestTable({
                 key={uuid()}
                 cell={{
                   align: 'center',
-                  title: [data.accomodationDetails.pax, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.pax)].flat().join(' | '),
+                  title: [data.accomodationDetails.pax, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.pax)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                   colors: ['#464E5F'],
                   weight: 400,
                 }}
@@ -158,7 +158,7 @@ function VoucherGuestTable({
                 key={uuid()}
                 cell={{
                   align: 'center',
-                  title: [data.accomodationDetails.roomType, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.roomType)].flat().join(' | '),
+                  title: [data.accomodationDetails.roomType, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.roomType)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                   colors: ['#464E5F'],
                   weight: 400,
                 }}
@@ -167,7 +167,7 @@ function VoucherGuestTable({
                 key={uuid()}
                 cell={{
                   align: 'center',
-                  title: [data.accomodationDetails.mealPlan, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.mealPlan)].flat().join(' | '),
+                  title: [data.accomodationDetails.mealPlan, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.mealPlan)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                   colors: ['#464E5F'],
                   weight: 400,
                 }}
