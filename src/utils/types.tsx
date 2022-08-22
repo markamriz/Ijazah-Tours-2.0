@@ -182,6 +182,8 @@ export interface UserAccomodation extends LibraryAccomodation {
   isMultiple?: boolean;
   isSubEntry?: boolean;
   additionalEntries?: UserAccomodation[];
+  perfectRate?: AccomodationRate;
+  rangeRates?: any;
 }
 
 export interface CompareRatesAccomdation extends UserAccomodation {

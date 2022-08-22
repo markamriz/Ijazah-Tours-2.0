@@ -330,28 +330,96 @@ function Accomodation() {
 
         const mealPlanRates = acc.rates.filter((r) => (
           r.newMealPlan === selectedAccomodationsMealPlans[index]
+          && r.newRateType === selectedAccomodationsRoomTypes[index]
         ));
 
         // Step one - try to obtain a perfect rate (where it lies within the range)
         // Step two - check if checkin is within range of one rate and checkout wihin another
         const perfectRate = mealPlanRates.find((r) => (
           new Date(r.newRateStart) <= new Date(acc.checkin)
-              && new Date(r.newRateEnd) >= new Date(acc.checkin)
-            && new Date(r.newRateStart) <= new Date(acc.checkout)
-              && new Date(r.newRateEnd) >= new Date(acc.checkout)
+          && new Date(r.newRateEnd) >= new Date(acc.checkin)
+          && new Date(r.newRateStart) <= new Date(acc.checkout)
+          && new Date(r.newRateEnd) >= new Date(acc.checkout)
         ));
 
-        // Failed to find a perfect rate
-        if (!perfectRate) {
+        if (acc.isSubEntry && Object.keys(acc.categoryValues).includes(acc.roomType)
+        && !mealPlanRates.find((r) => r.newRateType === acc.roomType)) {
+          const supplementCost = Number(acc.categoryValues[acc.roomType]);
+          const mainAcc = tempAccomodation.find((x) => (
+            x.id === acc.id && x.additionalEntries
+          ));
+
+          if (mainAcc?.roomRatesExtra) {
+            // Main accomodation has a range rate
+            const mainAccRangeRates = mainAcc.rangeRates;
+
+            const singleGuestPrices = [
+              Number(mainAccRangeRates[0]?.newSinglePrice.slice(1)),
+              Number(mainAccRangeRates[1]?.newSinglePrice.slice(1)),
+            ];
+            const doubleGuestPrices = [
+              Number(mainAccRangeRates[0]?.newDoublePrice.slice(1)),
+              Number(mainAccRangeRates[1]?.newDoublePrice.slice(1)),
+            ];
+            const tripleGuestPrices = [
+              Number(mainAccRangeRates[0]?.newTriplePrice.slice(1)),
+              Number(mainAccRangeRates[1]?.newTriplePrice.slice(1)),
+            ];
+
+            let roomPrices = singleGuestPrices;
+            if (acc.pax === 'Double') {
+              roomPrices = doubleGuestPrices;
+            } else if (acc.pax === 'Triple') {
+              roomPrices = tripleGuestPrices;
+            }
+
+            const firstRatePrice = roomPrices[0] + additionalBedPrice + supplementCost;
+            const secondRatePrice = roomPrices[1] + additionalBedPrice + supplementCost;
+
+            acc.roomRatesExtra = [
+              {
+                nights: mainAccRangeRates[0].nights,
+                rate: `$${firstRatePrice}`,
+              },
+              {
+                nights: mainAccRangeRates[1].nights,
+                rate: `$${secondRatePrice}`,
+              },
+            ];
+
+            acc.roomRate = `
+              $${firstRatePrice} for ${mainAccRangeRates[0].nights} ${mainAccRangeRates[0].nights === 1 ? 'night' : 'nights'},
+              $${secondRatePrice} for ${mainAccRangeRates[1].nights} ${mainAccRangeRates[1].nights === 1 ? 'night' : 'nights'}
+            `;
+            acc.total = 'N/A';
+          } else {
+            // Main accomodation has a perfect rate
+            const mainAccPerfectRate = mainAcc?.perfectRate!;
+            const singleGuestPrice = Number(mainAccPerfectRate.newSinglePrice.slice(1));
+            const doubleGuestPrice = Number(mainAccPerfectRate.newDoublePrice.slice(1));
+            const tripleGuestPrice = Number(mainAccPerfectRate.newTriplePrice.slice(1));
+
+            let roomPrice = singleGuestPrice;
+            if (acc.pax === 'Double') {
+              roomPrice = doubleGuestPrice;
+            } else if (acc.pax === 'Triple') {
+              roomPrice = tripleGuestPrice;
+            }
+
+            const ratePrice = roomPrice + additionalBedPrice + supplementCost;
+            acc.roomRate = `$${ratePrice}`;
+            acc.total = 'N/A';
+          }
+        } else if (!perfectRate) {
           // Attempt to find rates that covers the checkin and checkout
           const rangeRates: any = [];
           const firstRate = mealPlanRates.find((r) => (
             (new Date(r.newRateStart) <= new Date(acc.checkin)
-            && new Date(r.newRateEnd) >= new Date(acc.checkin))
+              && new Date(r.newRateEnd) >= new Date(acc.checkin))
           ));
           const secondRate = mealPlanRates.find((r) => (
             (new Date(r.newRateStart) <= new Date(acc.checkout)
-            && new Date(r.newRateEnd) >= new Date(acc.checkout))
+              && new Date(r.newRateEnd) >= new Date(acc.checkout))
           ));
 
           if (firstRate) {
@@ -391,20 +459,21 @@ function Accomodation() {
             roomPrices = tripleGuestPrices;
           }
 
-          acc.roomRatesExtra = [
-            {
-              nights: rangeRates[0].nights,
-              rate: `$${roomPrices[0]}`,
-            },
-            {
-              nights: rangeRates[1].nights,
-              rate: `$${roomPrices[1]}`,
-            },
-          ];
-
           const firstRatePrice = roomPrices[0] + additionalBedPrice;
           const secondRatePrice = roomPrices[1] + additionalBedPrice;
 
+          acc.roomRatesExtra = [
+            {
+              nights: rangeRates[0].nights,
+              rate: `$${firstRatePrice}`,
+            },
+            {
+              nights: rangeRates[1].nights,
+              rate: `$${secondRatePrice}`,
+            },
+          ];
+
+          acc.rangeRates = rangeRates;
           acc.roomRate = `
             $${firstRatePrice} for ${rangeRates[0].nights} ${rangeRates[0].nights === 1 ? 'night' : 'nights'},
             $${secondRatePrice} for ${rangeRates[1].nights} ${rangeRates[1].nights === 1 ? 'night' : 'nights'}
@@ -433,6 +502,7 @@ function Accomodation() {
           }
 
           const ratePrice = roomPrice + additionalBedPrice;
+          acc.perfectRate = perfectRate;
           acc.roomRate = `$${ratePrice}`;
 
           if (acc.additionalEntries) {
@@ -677,9 +747,9 @@ function Accomodation() {
             {showNoRateErrorMessage?.some((rtErr: any) => Object.values(rtErr).includes(true)) && (
               <ParagraphAtom
                 text={`
-                  No available room rates for specified checkin and checkout dates for hotels:
-                    ${Array.from(new Set(showNoRateErrorMessage.map((rtErr: any) => Object.keys(rtErr)))).join(', ')}
-                `}
+                    No available room rates for specified checkin and checkout dates for hotels:
+                      ${Array.from(new Set(showNoRateErrorMessage.map((rtErr: any) => Object.keys(rtErr)))).join(', ')}
+                  `}
                 style={quoteCreateQuoteStyles.errorMsg}
               />
             )}

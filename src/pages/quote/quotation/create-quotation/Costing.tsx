@@ -66,15 +66,7 @@ function Costing() {
       transportDays += Number(acc.nights);
 
       if (acc.additionalEntries) {
-        try {
-          let total = Number(acc.roomRate.slice(1, acc.roomRate.length));
-          acc.additionalEntries.forEach((entry) => {
-            total += Number(entry.roomRate.slice(1, entry.roomRate.length));
-          });
-
-          acc.total = `$${total * Number(acc.nights)}`;
-        } catch {
-          // Range rates room rate cannot be casted to Number: will hit the catch block
+        if (acc.roomRatesExtra) {
           let total = (Number(
             acc.roomRatesExtra[0].rate.slice(1, acc.roomRatesExtra[0].rate.length),
           ) * acc.roomRatesExtra[0].nights)
@@ -92,6 +84,13 @@ function Costing() {
           });
 
           acc.total = `$${total}`;
+        } else {
+          let total = Number(acc.roomRate.slice(1, acc.roomRate.length));
+          acc.additionalEntries.forEach((entry) => {
+            total += Number(entry.roomRate.slice(1, entry.roomRate.length));
+          });
+
+          acc.total = `$${total * Number(acc.nights)}`;
         }
       }
 
