@@ -60,6 +60,11 @@ function PresetAccomodation() {
     setSelectedAccomodationsMealPlans,
   ] = useState<string[]>([]);
 
+  const [
+    selectedAccomodationsAdditionalBed,
+    setSelectedAccomodationsAdditionalBed,
+  ] = useState<string[]>([]);
+
   const [search, setSearch] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
 
@@ -140,6 +145,7 @@ function PresetAccomodation() {
     acc.nights = '1';
     acc.roomRate = '';
     acc.total = '';
+    acc.includeAdditionalBed = 'No';
 
     acc.roomType = roomTypes[0]?.value || roomTypeOptions[0].value;
     acc.mealPlan = mealPlanOptions[0].value;
@@ -157,6 +163,7 @@ function PresetAccomodation() {
     const tempAccomodation = [...selectedAccomodations];
     tempAccomodation.forEach((acc, index) => {
       acc.nights = '0';
+      acc.includeAdditionalBed = selectedAccomodationsAdditionalBed[index] || 'No';
       acc.roomType = selectedAccomodationsRoomTypes[index] || '';
       acc.mealPlan = selectedAccomodationsMealPlans[index] || '';
       acc.pax = '';
@@ -166,6 +173,7 @@ function PresetAccomodation() {
       title,
       selectedAccomodationsMealPlans,
       selectedAccomodationsRoomTypes,
+      selectedAccomodationsAdditionalBed,
       selectedAccomodations: tempAccomodation,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
@@ -181,9 +189,11 @@ function PresetAccomodation() {
       .filter(String) as number[];
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
+    const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
     const tempAccomodation = [...selectedAccomodations];
     tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationAdditionalBed.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
     setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
@@ -250,6 +260,7 @@ function PresetAccomodation() {
                   'CITY',
                   'CATEGORY',
                   'ACCOMODATION',
+                  'EXTRA BED',
                   'ROOM TYPE',
                   'MEAL PLAN',
                   '',
@@ -257,8 +268,10 @@ function PresetAccomodation() {
                 selectedAccomodations={selectedAccomodations}
                 selectedAccomodationsRoomTypes={selectedAccomodationsRoomTypes}
                 selectedAccomodationsMealPlans={selectedAccomodationsMealPlans}
+                selectedAccomodationsAdditionalBed={selectedAccomodationsAdditionalBed}
                 setSelectedAccomodationsRoomTypes={setSelectedAccomodationsRoomTypes}
                 setSelectedAccomodationsMealPlans={setSelectedAccomodationsMealPlans}
+                setSelectedAccomodationsAdditionalBed={setSelectedAccomodationsAdditionalBed}
                 deleteAccomodation={deleteAccomodation}
                 preset
               />

@@ -15,7 +15,7 @@ import TableColumnCell from '../../../../../molecules/TableColumnCell';
 import TableRowEditCell from '../../../../../molecules/TableRowEditCell';
 import TableRowIconCell from '../../../../../molecules/TableRowIconCell';
 import TableRowTextCell from '../../../../../molecules/TableRowTextCell';
-import { paxOptions } from '../../../../../utils/helpers';
+import { addBedOptions, paxOptions } from '../../../../../utils/helpers';
 import { AccomodationNight, UserAccomodation } from '../../../../../utils/types';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -33,9 +33,11 @@ interface AccomodationTableProps {
   columns: string[];
   preset?: boolean;
   selectedAccomodationsNights?: AccomodationNight[];
+  selectedAccomodationsAdditionalBed?: string[];
   selectedAccomodationsRoomTypes?: string[];
   selectedAccomodationsMealPlans?: string[];
   selectedAccomodationsPax?: string[];
+  setSelectedAccomodationsAdditionalBed?: any;
   setSelectedAccomodationsNights?: any;
   setSelectedAccomodationsRoomTypes?: any;
   setSelectedAccomodationsMealPlans?: any;
@@ -48,10 +50,12 @@ function AccomodationTable({
   preset,
   selectedAccomodations,
   selectedAccomodationsNights,
+  selectedAccomodationsAdditionalBed,
   selectedAccomodationsRoomTypes,
   selectedAccomodationsMealPlans,
   setSelectedAccomodationsNights,
   selectedAccomodationsPax,
+  setSelectedAccomodationsAdditionalBed,
   setSelectedAccomodationsRoomTypes,
   setSelectedAccomodationsMealPlans,
   setSelectedAccomodationsPax,
@@ -113,6 +117,12 @@ function AccomodationTable({
                 const temp = [...selectedAccomodationsPax!];
                 temp.splice(index, 1, v);
                 setSelectedAccomodationsPax(temp);
+              };
+
+              const onAdditionalBedChange = (v: string) => {
+                const temp = [...selectedAccomodationsAdditionalBed!];
+                temp.splice(index, 1, v);
+                setSelectedAccomodationsAdditionalBed(temp);
               };
 
               return (
@@ -190,6 +200,14 @@ function AccomodationTable({
                       />
                     )
                   )}
+                  <TableRowEditCell
+                    select
+                    type="Additional Bed"
+                    value={String(selectedAccomodationsAdditionalBed![index]) || ''}
+                    onSelectChange={onAdditionalBedChange}
+                    options={addBedOptions}
+                    align="center"
+                  />
                   <TableRowEditCell
                     select
                     type="Room Type"

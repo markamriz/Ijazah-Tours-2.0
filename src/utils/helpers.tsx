@@ -180,6 +180,11 @@ export const paxOptions = [
   { value: 'Triple', label: 'Triple' },
 ];
 
+export const addBedOptions = [
+  { value: 'Yes', label: 'Yes' },
+  { value: 'No', label: 'No' },
+];
+
 export const MONTHS = [
   'January',
   'February',

@@ -179,6 +179,7 @@ export interface UserAccomodation extends LibraryAccomodation {
   roomRate: string;
   roomRatesExtra: { rate: string, nights: number }[];
   total: string;
+  includeAdditionalBed?: string;
   isMultiple?: boolean;
   isSubEntry?: boolean;
   additionalEntries?: UserAccomodation[];
