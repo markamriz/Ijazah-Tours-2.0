@@ -306,6 +306,7 @@ function Accomodation() {
         acc.includeAdditionalBed = selectedAccomodationsAdditionalBed[index];
         acc.roomType = selectedAccomodationsRoomTypes[index];
         acc.pax = selectedAccomodationsPax[index];
+        acc.mealPlan = selectedAccomodationsMealPlans[index];
 
         const requireAdditionalBed = acc.includeAdditionalBed === 'Yes';
         const additionalBedPrice = requireAdditionalBed ? Number(acc.additionalBedPrice) : 0;
