@@ -56,15 +56,19 @@ function Costing() {
   const history = useHistory();
 
   useEffect(() => {
-    const data: UserAccomodation[] = JSON.parse(
+    const accData: UserAccomodation[] = JSON.parse(
       localStorage.getItem('New Quote Accomodation')!,
     ).selectedAccomodations;
+    const accNights: { [k: string]: string } = JSON.parse(
+      localStorage.getItem('New Quote Accomodation')!,
+    ).selectedAccomodationsNights;
 
     let accTotal = 0;
-    let transportDays = 0;
-    data.forEach((acc) => {
-      transportDays += Number(acc.nights);
+    const transportDays = Object.values(accNights).reduce((prev, curr) => (
+      prev + Number(curr)
+    ), 0);
 
+    accData.forEach((acc) => {
       if (acc.additionalEntries) {
         if (acc.roomRatesExtra) {
           let total = (Number(
@@ -105,13 +109,13 @@ function Costing() {
 
     const netTotal = Number(sellingPrice) - Number(discount);
 
-    setDays(String(transportDays + 1));
+    setDays(String(transportDays));
     setAccomodationTotal(String(accTotal));
     setTransport(String(transportTotal));
     setTotalExpense(String(expenseTotal));
     setTotalPrice(String(priceTotal));
     setNetPrice(String(netTotal));
-    setAccomodationData(data);
+    setAccomodationData(accData);
   }, [rate, transport, totalExpense, commission, sellingPrice, discount]);
 
   const getComparisonRates = async (display: boolean) => {

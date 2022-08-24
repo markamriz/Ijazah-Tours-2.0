@@ -62,15 +62,51 @@ function Costing() {
     const costingData = JSON.parse(
       localStorage.getItem('Editing Quote')!,
     ).thisQuote.costings;
+    const accNights: { [k: string]: string } = JSON.parse(
+      localStorage.getItem('New Quote Accomodation')!,
+    ).selectedAccomodationsNights;
 
     let accTotal = 0;
-    let transportNights = 0;
+    const transportDays = Object.values(accNights).reduce((prev, curr) => (
+      prev + Number(curr)
+    ), 0);
+
     accData.forEach((acc) => {
-      transportNights += Number(acc.nights);
-      accTotal += Number(acc.roomRate.slice(1, acc.roomRate.length)) * Number(acc.nights);
+      if (acc.additionalEntries) {
+        if (acc.roomRatesExtra) {
+          let total = (Number(
+            acc.roomRatesExtra[0].rate.slice(1, acc.roomRatesExtra[0].rate.length),
+          ) * acc.roomRatesExtra[0].nights)
+          + (Number(
+            acc.roomRatesExtra[1].rate.slice(1, acc.roomRatesExtra[1].rate.length),
+          ) * acc.roomRatesExtra[1].nights);
+
+          acc.additionalEntries.forEach((entry) => {
+            total += (Number(
+              entry.roomRatesExtra[0].rate.slice(1, entry.roomRatesExtra[0].rate.length),
+            ) * entry.roomRatesExtra[0].nights)
+            + (Number(
+              entry.roomRatesExtra[1].rate.slice(1, entry.roomRatesExtra[1].rate.length),
+            ) * entry.roomRatesExtra[1].nights);
+          });
+
+          acc.total = `$${total}`;
+        } else {
+          let total = Number(acc.roomRate.slice(1, acc.roomRate.length));
+          acc.additionalEntries.forEach((entry) => {
+            total += Number(entry.roomRate.slice(1, entry.roomRate.length));
+          });
+
+          acc.total = `$${total * Number(acc.nights)}`;
+        }
+      }
+
+      if (acc.additionalEntries || !acc.isMultiple) {
+        accTotal += Number(acc.total.slice(1, acc.total.length));
+      }
     });
 
-    const transportTotal = Number(costingData.transportRate) * Number(transportNights + 1);
+    const transportTotal = Number(costingData.transportRate) * Number(transportDays);
     const expenseTotal = Number(accTotal + transportTotal);
     const priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
 
@@ -78,7 +114,7 @@ function Costing() {
 
     setTransport(String(transportTotal));
     setRate(String(costingData.transportRate));
-    setDays(String(transportNights + 1));
+    setDays(String(transportDays));
     setCommission(costingData.commission);
     setDiscount(costingData.discount);
     setSellingPrice(costingData.sellingPrice);
@@ -91,15 +127,19 @@ function Costing() {
   }, []);
 
   useEffect(() => {
-    const data: UserAccomodation[] = JSON.parse(
+    const accData: UserAccomodation[] = JSON.parse(
       localStorage.getItem('New Quote Accomodation')!,
     ).selectedAccomodations;
+    const accNights: { [k: string]: string } = JSON.parse(
+      localStorage.getItem('New Quote Accomodation')!,
+    ).selectedAccomodationsNights;
 
     let accTotal = 0;
-    let transportDays = 0;
-    data.forEach((acc) => {
-      transportDays += Number(acc.nights);
+    const transportDays = Object.values(accNights).reduce((prev, curr) => (
+      prev + Number(curr)
+    ), 0);
 
+    accData.forEach((acc) => {
       if (acc.additionalEntries) {
         if (acc.roomRatesExtra) {
           let total = (Number(
@@ -140,13 +180,13 @@ function Costing() {
 
     const netTotal = Number(sellingPrice) - Number(discount);
 
-    setDays(String(transportDays + 1));
+    setDays(String(transportDays));
     setAccomodationTotal(String(accTotal));
     setTransport(String(transportTotal));
     setTotalExpense(String(expenseTotal));
     setTotalPrice(String(priceTotal));
     setNetPrice(String(netTotal));
-    setAccomodationData(data);
+    setAccomodationData(accData);
   }, [rate, transport, totalExpense, commission, sellingPrice, discount]);
 
   const getComparisonRates = async (display: boolean) => {
