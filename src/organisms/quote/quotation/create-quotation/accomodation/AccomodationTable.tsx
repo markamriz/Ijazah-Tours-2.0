@@ -32,7 +32,7 @@ interface AccomodationTableProps {
   selectedAccomodations: UserAccomodation[];
   columns: string[];
   preset?: boolean;
-  selectedAccomodationsNights?: AccomodationNight[];
+  selectedAccomodationsNights?: { [k: string]: string };
   selectedAccomodationsAdditionalBed?: string[];
   selectedAccomodationsRoomTypes?: string[];
   selectedAccomodationsMealPlans?: string[];
@@ -108,8 +108,8 @@ function AccomodationTable({
               };
 
               const onNightsChange = (v: string) => {
-                const temp = [...selectedAccomodationsNights!];
-                temp.splice(index, 1, { accId: row.id, nights: v });
+                const temp = { ...selectedAccomodationsNights! };
+                temp[row.id] = v;
                 setSelectedAccomodationsNights(temp);
               };
 
@@ -157,7 +157,7 @@ function AccomodationTable({
                       <TableRowEditCell
                         type="Nights"
                         select={false}
-                        value={selectedAccomodationsNights?.find((x) => x.accId === row.id)?.nights || ''}
+                        value={selectedAccomodationsNights![row.id] || ''}
                         onCountChange={onNightsChange}
                         align="center"
                       />
@@ -184,7 +184,7 @@ function AccomodationTable({
                       <TableRowEditCell
                         select
                         type="Pax"
-                        value={selectedAccomodationsPax![index]}
+                        value={selectedAccomodationsPax![index] || ''}
                         onSelectChange={onPaxChange}
                         options={paxOptions}
                         align="center"
@@ -193,7 +193,7 @@ function AccomodationTable({
                       <TableRowTextCell
                         cell={{
                           align: 'center',
-                          title: selectedAccomodationsPax![index],
+                          title: selectedAccomodationsPax![index] || '',
                           colors: ['#464E5F'],
                           weight: 400,
                         }}
@@ -203,7 +203,7 @@ function AccomodationTable({
                   <TableRowEditCell
                     select
                     type="Additional Bed"
-                    value={String(selectedAccomodationsAdditionalBed![index]) || ''}
+                    value={selectedAccomodationsAdditionalBed![index] || ''}
                     onSelectChange={onAdditionalBedChange}
                     options={addBedOptions}
                     align="center"

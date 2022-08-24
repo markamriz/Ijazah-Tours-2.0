@@ -34,7 +34,6 @@ import {
 } from '../../../../styles';
 import { addDays, getDaysDifference, widthHeightDynamicStyle } from '../../../../utils/helpers';
 import {
-  AccomodationNight,
   FlexDirection,
   SettingsSingleInput,
   UserAccomodation,
@@ -58,7 +57,7 @@ function Accomodation() {
   const [
     selectedAccomodationsNights,
     setSelectedAccomodationsNights,
-  ] = useState<AccomodationNight[]>([]);
+  ] = useState<{ [k: string]: string }>({});
 
   const [
     selectedAccomodationsRoomTypes,
@@ -254,10 +253,7 @@ function Accomodation() {
     const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
       .filter(String) as number[];
 
-    // Each accomodation - with additional entries or not - will have only a single nights entry
-    const removeNightIndex = selectedAccomodationsNights.findIndex((ac) => ac.accId === acc.id);
-
-    const tempAccomodationNights = [...selectedAccomodationsNights];
+    const tempAccomodationNights = { ...selectedAccomodationsNights };
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
     const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
@@ -269,7 +265,7 @@ function Accomodation() {
     tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
-    tempAccomodationNights.splice(removeNightIndex, 1);
+    delete tempAccomodationNights[acc.id];
 
     setSelectedAccomodationsNights(tempAccomodationNights);
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
@@ -296,10 +292,9 @@ function Accomodation() {
     }
 
     setValidationNightsRequired(nightsRequired);
-    const totalUsedNights = selectedAccomodationsNights.map((x) => x.nights)
-      .reduce((prev, curr) => (
-        prev + Number(curr)
-      ), 0);
+    const totalUsedNights = Object.values(selectedAccomodationsNights).reduce((prev, curr) => (
+      prev + Number(curr)
+    ), 0);
 
     if (nightsRequired !== totalUsedNights) {
       setShowValidationErrorMessage(true);
@@ -322,9 +317,7 @@ function Accomodation() {
         // If there are multiple entries for the same accomodation,
         // use the first entry's date & nights
         if (acc.additionalEntries || !acc.isMultiple) {
-          const thisAccomodationsNights = selectedAccomodationsNights.find((x) => (
-            x.accId === acc.id
-          ))!.nights;
+          const thisAccomodationsNights = selectedAccomodationsNights[acc.id];
           const thisAcomodationsCheckin = tempCurrDate.toISOString().substring(0, 10);
           const thisAccomodationsCheckout = addDays(tempCurrDate, Number(thisAccomodationsNights));
 
@@ -504,6 +497,7 @@ function Accomodation() {
             `;
           }
         } else {
+          const thisAccomodationsNights = selectedAccomodationsNights[acc.id];
           const singleGuestPrice = Number(perfectRate?.newSinglePrice.slice(1));
           const doubleGuestPrice = Number(perfectRate?.newDoublePrice.slice(1));
           const tripleGuestPrice = Number(perfectRate?.newTriplePrice.slice(1));
@@ -524,7 +518,7 @@ function Accomodation() {
           } else if (acc.isMultiple) {
             acc.total = 'N/A';
           } else {
-            acc.total = `$${ratePrice * nightsRequired * customerRooms}`;
+            acc.total = `$${ratePrice * Number(thisAccomodationsNights) * customerRooms}`;
           }
         }
       });
