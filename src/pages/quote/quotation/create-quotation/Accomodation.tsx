@@ -121,6 +121,7 @@ function Accomodation() {
         gradingsData[i].id = id;
       });
 
+      // Refetch data stored in local for instances of back navigation
       if (localStorage.getItem('New Quote Accomodation')) {
         const selectedAcc = JSON.parse(
           localStorage.getItem('New Quote Accomodation')!,
@@ -165,6 +166,7 @@ function Accomodation() {
       localStorage.getItem('New Quote Customer')!,
     ).data[0];
 
+    // Avoid selecting same accomodations multiple times
     if (selectedAccomodations.find((a) => a.name === acc.name)) {
       return;
     }
@@ -184,6 +186,7 @@ function Accomodation() {
     acc.roomRate = '';
     acc.total = '';
 
+    // pax ==> adults + count of children > 14
     const adults = customerDetails[9];
     const children = customerDetails[10];
     let pax = Number(adults);
@@ -194,7 +197,8 @@ function Accomodation() {
     });
 
     if (pax > 3) {
-      // Obtain required number of rooms depending on pax --> Commenting atm
+      // Obtain required number of rooms depending on pax
+      // A Single room can hold a max of 3 pax
       const totalGuests = Number(adults) + children.length;
       const initRooms = Math.ceil(pax / 3);
 
@@ -223,7 +227,7 @@ function Accomodation() {
 
     const tempAccomodation = [...selectedAccomodations];
 
-    // Signify that there will be multiple of the same accomodation due to pax > 3 OR rooms > 1
+    // There will be multiple entries of the same accomodation due to pax > 3 OR rooms > 1
     if (customerDetails[19] > 1 || pax > 3) {
       const numberOfEntries = pax > 3 ? Math.ceil(pax / 3) : Number(customerDetails[19]);
       acc.isMultiple = true;
@@ -247,6 +251,7 @@ function Accomodation() {
   };
 
   const deleteAccomodation = (acc: UserAccomodation) => {
+    // Multiple indexes for the case of multiple entries
     const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
       .filter(String) as number[];
 
@@ -280,6 +285,7 @@ function Accomodation() {
       localStorage.getItem('New Quote Customer')!,
     ).data[0];
 
+    // Obtain number of nights from input / checkin - checkout dates
     let nightsRequired = 0;
     if (customerDetails[16] === 'Not Specific') {
       nightsRequired = Number(customerDetails[17]) || 0;
@@ -292,6 +298,7 @@ function Accomodation() {
       prev + Number(curr)
     ), 0);
 
+    // Validate that the total number of nights is equal to the number of nights required
     if (nightsRequired !== totalUsedNights) {
       setShowValidationErrorMessage(true);
     } else {
@@ -303,16 +310,18 @@ function Accomodation() {
       let tempCurrDate = new Date(customerDetails[7]);
 
       tempAccomodation.forEach((acc, index) => {
+        // Update this accomodations details based on the selected options
         acc.includeAdditionalBed = selectedAccomodationsAdditionalBed[index];
         acc.roomType = selectedAccomodationsRoomTypes[index];
         acc.pax = selectedAccomodationsPax[index];
         acc.mealPlan = selectedAccomodationsMealPlans[index];
 
+        // Additional bed costing
         const requireAdditionalBed = acc.includeAdditionalBed === 'Yes';
         const additionalBedPrice = requireAdditionalBed ? Number(acc.additionalBedPrice) : 0;
 
         // If there are multiple entries for the same accomodation,
-        // use the first entry's date & nights
+        // use the first entry's date & nights (booking will be the same for these two fields)
         if (acc.additionalEntries || !acc.isMultiple) {
           const thisAccomodationsNights = selectedAccomodationsNights[acc.id];
           const thisAcomodationsCheckin = tempCurrDate.toISOString().substring(0, 10);
@@ -334,7 +343,9 @@ function Accomodation() {
 
         const mealPlanRates = acc.rates.filter((r) => (
           r.newMealPlan === selectedAccomodationsMealPlans[index]
-          && r.newRateType === selectedAccomodationsRoomTypes[index]
+
+          // Unneeded as the rate type is same for the table values
+          // && r.newRateType === selectedAccomodationsRoomTypes[index]
         ));
 
         // Step one - try to obtain a perfect rate (where it lies within the range)
@@ -346,75 +357,7 @@ function Accomodation() {
           && new Date(r.newRateEnd) >= new Date(acc.checkout)
         ));
 
-        if (acc.isSubEntry && Object.keys(acc.categoryValues).includes(acc.roomType)
-        && !mealPlanRates.find((r) => r.newRateType === acc.roomType)) {
-          const supplementCost = Number(acc.categoryValues[acc.roomType]);
-          const mainAcc = tempAccomodation.find((x) => (
-            x.id === acc.id && x.additionalEntries
-          ));
-
-          if (mainAcc?.roomRatesExtra) {
-            // Main accomodation has a range rate
-            const mainAccRangeRates = mainAcc.rangeRates;
-
-            const singleGuestPrices = [
-              Number(mainAccRangeRates[0]?.newSinglePrice.slice(1)),
-              Number(mainAccRangeRates[1]?.newSinglePrice.slice(1)),
-            ];
-            const doubleGuestPrices = [
-              Number(mainAccRangeRates[0]?.newDoublePrice.slice(1)),
-              Number(mainAccRangeRates[1]?.newDoublePrice.slice(1)),
-            ];
-            const tripleGuestPrices = [
-              Number(mainAccRangeRates[0]?.newTriplePrice.slice(1)),
-              Number(mainAccRangeRates[1]?.newTriplePrice.slice(1)),
-            ];
-
-            let roomPrices = singleGuestPrices;
-            if (acc.pax === 'Double') {
-              roomPrices = doubleGuestPrices;
-            } else if (acc.pax === 'Triple') {
-              roomPrices = tripleGuestPrices;
-            }
-
-            const firstRatePrice = roomPrices[0] + additionalBedPrice + supplementCost;
-            const secondRatePrice = roomPrices[1] + additionalBedPrice + supplementCost;
-
-            acc.roomRatesExtra = [
-              {
-                nights: mainAccRangeRates[0].nights,
-                rate: `$${firstRatePrice}`,
-              },
-              {
-                nights: mainAccRangeRates[1].nights,
-                rate: `$${secondRatePrice}`,
-              },
-            ];
-
-            acc.roomRate = `
-              $${firstRatePrice} for ${mainAccRangeRates[0].nights} ${mainAccRangeRates[0].nights === 1 ? 'night' : 'nights'},
-              $${secondRatePrice} for ${mainAccRangeRates[1].nights} ${mainAccRangeRates[1].nights === 1 ? 'night' : 'nights'}
-            `;
-            acc.total = 'N/A';
-          } else {
-            // Main accomodation has a perfect rate
-            const mainAccPerfectRate = mainAcc?.perfectRate!;
-            const singleGuestPrice = Number(mainAccPerfectRate.newSinglePrice.slice(1));
-            const doubleGuestPrice = Number(mainAccPerfectRate.newDoublePrice.slice(1));
-            const tripleGuestPrice = Number(mainAccPerfectRate.newTriplePrice.slice(1));
-
-            let roomPrice = singleGuestPrice;
-            if (acc.pax === 'Double') {
-              roomPrice = doubleGuestPrice;
-            } else if (acc.pax === 'Triple') {
-              roomPrice = tripleGuestPrice;
-            }
-
-            const ratePrice = roomPrice + additionalBedPrice + supplementCost;
-            acc.roomRate = `$${ratePrice}`;
-            acc.total = 'N/A';
-          }
-        } else if (!perfectRate) {
+        if (!perfectRate) {
           // Attempt to find rates that covers the checkin and checkout
           const rangeRates: any = [];
           const firstRate = mealPlanRates.find((r) => (
@@ -433,6 +376,7 @@ function Accomodation() {
             rangeRates.push(secondRate);
           }
 
+          // Failed to obtain a range rate
           if (!rangeRates.length || rangeRates.length === 1) {
             validAndContinue = false;
             const tempSetShowNoRateErrorMessage = [...noRateErr];
@@ -463,8 +407,17 @@ function Accomodation() {
             roomPrices = tripleGuestPrices;
           }
 
-          const firstRatePrice = roomPrices[0] + additionalBedPrice;
-          const secondRatePrice = roomPrices[1] + additionalBedPrice;
+          // Additional fields - outside the table
+          let supplementCost = 0;
+
+          // Rate is not from table (is a supplement)
+          if (!mealPlanRates.find((r) => r.newRateType === selectedAccomodationsRoomTypes[index]
+            && Object.keys(acc.categoryValues).includes(acc.roomType))) {
+            supplementCost = Number(acc.categoryValues[acc.roomType]);
+          }
+
+          const firstRatePrice = roomPrices[0] + additionalBedPrice + supplementCost;
+          const secondRatePrice = roomPrices[1] + additionalBedPrice + supplementCost;
 
           acc.roomRatesExtra = [
             {
@@ -484,8 +437,11 @@ function Accomodation() {
           `;
 
           if (acc.additionalEntries) {
+            // Calculation of total for accomodations with additional entries is done in costing
+            // (Since the additional entry room rates aren't available till the full loop)
             acc.total = 'PENDING';
           } else if (acc.isMultiple) {
+            // Don't contribute to total for sub entries (main accomodation will accumulate)
             acc.total = 'N/A';
           } else {
             acc.total = `$
@@ -494,6 +450,7 @@ function Accomodation() {
             `;
           }
         } else {
+          // Found a perfect rate
           const thisAccomodationsNights = selectedAccomodationsNights[acc.id];
           const singleGuestPrice = Number(perfectRate?.newSinglePrice.slice(1));
           const doubleGuestPrice = Number(perfectRate?.newDoublePrice.slice(1));
@@ -506,7 +463,13 @@ function Accomodation() {
             roomPrice = tripleGuestPrice;
           }
 
-          const ratePrice = roomPrice + additionalBedPrice;
+          let supplementCost = 0;
+          if (!mealPlanRates.find((r) => r.newRateType === selectedAccomodationsRoomTypes[index]
+            && Object.keys(acc.categoryValues).includes(acc.roomType))) {
+            supplementCost = Number(acc.categoryValues[acc.roomType]);
+          }
+
+          const ratePrice = roomPrice + additionalBedPrice + supplementCost;
           acc.perfectRate = perfectRate;
           acc.roomRate = `$${ratePrice}`;
 
