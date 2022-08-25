@@ -16,7 +16,7 @@ import TableRowEditCell from '../../../../../molecules/TableRowEditCell';
 import TableRowIconCell from '../../../../../molecules/TableRowIconCell';
 import TableRowTextCell from '../../../../../molecules/TableRowTextCell';
 import { addBedOptions, paxOptions } from '../../../../../utils/helpers';
-import { AccomodationNight, UserAccomodation } from '../../../../../utils/types';
+import { UserAccomodation } from '../../../../../utils/types';
 
 const useStyles = makeStyles((theme: Theme) => ({
   table: {
@@ -35,11 +35,13 @@ interface AccomodationTableProps {
   selectedAccomodationsNights?: { [k: string]: string };
   selectedAccomodationsAdditionalBed?: string[];
   selectedAccomodationsRoomTypes?: string[];
+  selectedAccomodationsRoomViews?: string[];
   selectedAccomodationsMealPlans?: string[];
   selectedAccomodationsPax?: string[];
   setSelectedAccomodationsAdditionalBed?: any;
   setSelectedAccomodationsNights?: any;
   setSelectedAccomodationsRoomTypes?: any;
+  setSelectedAccomodationsRoomViews?: any;
   setSelectedAccomodationsMealPlans?: any;
   setSelectedAccomodationsPax?: any;
   deleteAccomodation: (row: UserAccomodation) => void;
@@ -52,11 +54,13 @@ function AccomodationTable({
   selectedAccomodationsNights,
   selectedAccomodationsAdditionalBed,
   selectedAccomodationsRoomTypes,
+  selectedAccomodationsRoomViews,
   selectedAccomodationsMealPlans,
   setSelectedAccomodationsNights,
   selectedAccomodationsPax,
   setSelectedAccomodationsAdditionalBed,
   setSelectedAccomodationsRoomTypes,
+  setSelectedAccomodationsRoomViews,
   setSelectedAccomodationsMealPlans,
   setSelectedAccomodationsPax,
   deleteAccomodation,
@@ -95,10 +99,20 @@ function AccomodationTable({
 
               const allRoomTypes = _.uniqBy([...roomTypes, ...roomTypeOptions], 'value');
 
+              const roomViews = row.views.filter((view) => view.checked).map((view) => (
+                { value: view.val, label: view.val }
+              ));
+
               const onRoomTypeChange = (v: string) => {
                 const temp = [...selectedAccomodationsRoomTypes!];
                 temp.splice(index, 1, v);
                 setSelectedAccomodationsRoomTypes(temp);
+              };
+
+              const onRoomViewChange = (v: string) => {
+                const temp = [...selectedAccomodationsRoomViews!];
+                temp.splice(index, 1, v);
+                setSelectedAccomodationsRoomViews(temp);
               };
 
               const onMealPlanChange = (v: string) => {
@@ -214,6 +228,14 @@ function AccomodationTable({
                     value={selectedAccomodationsRoomTypes![index] || ''}
                     onSelectChange={onRoomTypeChange}
                     options={allRoomTypes}
+                    align="center"
+                  />
+                  <TableRowEditCell
+                    select
+                    type="Room View"
+                    value={selectedAccomodationsRoomViews![index] || ''}
+                    onSelectChange={onRoomViewChange}
+                    options={roomViews}
                     align="center"
                   />
                   <TableRowEditCell

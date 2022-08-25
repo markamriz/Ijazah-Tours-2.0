@@ -127,7 +127,7 @@ function VoucherGuestTable({
       className={classes.accomodationPaper}
       component={Paper}
     >
-      <Table className={classes.table} aria-label="approval accomodation table">
+      <Table className={classes.table} aria-label="voucher accomodation table">
         <TableHead>
           <TableRow style={{ borderTop: '1px solid #41E93E' }}>
             {RenderColumns(accColumns)}
@@ -176,9 +176,7 @@ function VoucherGuestTable({
                 key={uuid()}
                 cell={{
                   align: 'center',
-                  title: data.accomodationDetails.views.find((v: { checked: boolean }) => (
-                    v.checked
-                  ))?.val || 'None',
+                  title: [data.accomodationDetails.roomView, data.accomodationDetails.additionalEntries?.map((entry: any) => entry.roomView)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
                   colors: ['#464E5F'],
                   weight: 400,
                 }}

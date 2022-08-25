@@ -65,6 +65,11 @@ function Accomodation() {
   ] = useState<string[]>([]);
 
   const [
+    selectedAccomodationsRoomViews,
+    setSelectedAccomodationsRoomViews,
+  ] = useState<string[]>([]);
+
+  const [
     selectedAccomodationsMealPlans,
     setSelectedAccomodationsMealPlans,
   ] = useState<string[]>([]);
@@ -127,6 +132,7 @@ function Accomodation() {
       setSelectedAccomodationsMealPlans(accDetails.selectedAccomodationsMealPlans);
       setSelectedAccomodationsAdditionalBed(accDetails.selectedAccomodationsAdditionalBed);
       setSelectedAccomodationsRoomTypes(accDetails.selectedAccomodationsRoomTypes);
+      setSelectedAccomodationsRoomViews(accDetails.selectedAccomodationsRoomViews);
       setSelectedAccomodationsNights(accDetails.selectedAccomodationsNights);
       setSelectedAccomodationsPax(accDetails.selectedAccomodationsPax);
 
@@ -140,6 +146,7 @@ function Accomodation() {
         setSelectedAccomodationsAdditionalBed(selectedAcc.selectedAccomodationsAdditionalBed);
         setSelectedAccomodationsPax(selectedAcc.selectedAccomodationsPax);
         setSelectedAccomodationsRoomTypes(selectedAcc.selectedAccomodationsRoomTypes);
+        setSelectedAccomodationsRoomViews(selectedAcc.selectedAccomodationsRoomViews);
         setSelectedAccomodationsNights(selectedAcc.selectedAccomodationsNights);
       }
 
@@ -185,6 +192,10 @@ function Accomodation() {
       .map((rate) => rate.newRateType)
       .map((rate) => ({ value: rate, label: rate }));
 
+    const roomViewOptions = acc.views.filter((view) => view.checked).map((view) => (
+      { value: view.val, label: view.val }
+    ));
+
     const mealPlanOptions = acc.rates
       .map((rate) => rate.newMealPlan)
       .map((rate) => ({ value: rate, label: rate }));
@@ -227,6 +238,7 @@ function Accomodation() {
 
     acc.roomType = roomTypes[0]?.value || roomTypeOptions[0].value;
     acc.mealPlan = mealPlanOptions[0].value;
+    acc.roomView = roomViewOptions[0].value;
 
     const tempAccomodation = [...selectedAccomodations];
     if (customerDetails[19] > 1 || pax > 3) {
@@ -255,6 +267,7 @@ function Accomodation() {
 
     const tempAccomodationNights = { ...selectedAccomodationsNights };
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
+    const tempAccomodationRoomViews = [...selectedAccomodationsRoomViews];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
     const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
     const tempAccomodationPax = [...selectedAccomodationsPax];
@@ -262,6 +275,7 @@ function Accomodation() {
 
     tempAccomodationAdditionalBed.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationRoomViews.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
@@ -269,6 +283,7 @@ function Accomodation() {
 
     setSelectedAccomodationsNights(tempAccomodationNights);
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
+    setSelectedAccomodationsRoomViews(tempAccomodationRoomViews);
     setSelectedAccomodationsAdditionalBed(tempAccomodationAdditionalBed);
     setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
     setSelectedAccomodationsPax(tempAccomodationPax);
@@ -311,6 +326,7 @@ function Accomodation() {
         acc.roomType = selectedAccomodationsRoomTypes[index];
         acc.pax = selectedAccomodationsPax[index];
         acc.mealPlan = selectedAccomodationsMealPlans[index];
+        acc.roomView = selectedAccomodationsRoomViews[index];
 
         const requireAdditionalBed = acc.includeAdditionalBed === 'Yes';
         const additionalBedPrice = requireAdditionalBed ? Number(acc.additionalBedPrice) : 0;
@@ -484,6 +500,7 @@ function Accomodation() {
 
       localStorage.setItem('New Quote Accomodation', JSON.stringify({
         selectedAccomodationsRoomTypes,
+        selectedAccomodationsRoomViews,
         selectedAccomodationsMealPlans,
         selectedAccomodationsNights,
         selectedAccomodationsAdditionalBed,
@@ -554,6 +571,7 @@ function Accomodation() {
     setSelectedAccomodations(setAccomodations);
     setSelectedAccomodationsAdditionalBed(quote.selectedAccomodationsAdditionalBed);
     setSelectedAccomodationsMealPlans(quote.selectedAccomodationsMealPlans);
+    setSelectedAccomodationsRoomViews(quote.selectedAccomodationsRoomViews);
     setSelectedAccomodationsRoomTypes(quote.selectedAccomodationsRoomTypes);
   };
 
@@ -677,17 +695,20 @@ function Accomodation() {
                   'PAX',
                   'EXTRA BED',
                   'ROOM TYPE',
+                  'ROOM VIEWS',
                   'MEAL PLAN',
                   '',
                 ]}
                 selectedAccomodations={selectedAccomodations}
                 selectedAccomodationsNights={selectedAccomodationsNights}
                 selectedAccomodationsRoomTypes={selectedAccomodationsRoomTypes}
+                selectedAccomodationsRoomViews={selectedAccomodationsRoomViews}
                 selectedAccomodationsMealPlans={selectedAccomodationsMealPlans}
                 selectedAccomodationsAdditionalBed={selectedAccomodationsAdditionalBed}
                 selectedAccomodationsPax={selectedAccomodationsPax}
                 setSelectedAccomodationsNights={setSelectedAccomodationsNights}
                 setSelectedAccomodationsRoomTypes={setSelectedAccomodationsRoomTypes}
+                setSelectedAccomodationsRoomViews={setSelectedAccomodationsRoomViews}
                 setSelectedAccomodationsMealPlans={setSelectedAccomodationsMealPlans}
                 setSelectedAccomodationsAdditionalBed={setSelectedAccomodationsAdditionalBed}
                 setSelectedAccomodationsPax={setSelectedAccomodationsPax}

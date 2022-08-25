@@ -65,6 +65,11 @@ function Accomodation() {
   ] = useState<string[]>([]);
 
   const [
+    selectedAccomodationsRoomViews,
+    setSelectedAccomodationsRoomViews,
+  ] = useState<string[]>([]);
+
+  const [
     selectedAccomodationsMealPlans,
     setSelectedAccomodationsMealPlans,
   ] = useState<string[]>([]);
@@ -132,6 +137,7 @@ function Accomodation() {
         setSelectedAccomodationsAdditionalBed(selectedAcc.selectedAccomodationsAdditionalBed);
         setSelectedAccomodationsPax(selectedAcc.selectedAccomodationsPax);
         setSelectedAccomodationsRoomTypes(selectedAcc.selectedAccomodationsRoomTypes);
+        setSelectedAccomodationsRoomViews(selectedAcc.selectedAccomodationsRoomViews);
         setSelectedAccomodationsNights(selectedAcc.selectedAccomodationsNights);
       }
 
@@ -177,6 +183,10 @@ function Accomodation() {
     const roomTypeOptions = acc.rates
       .map((rate) => rate.newRateType)
       .map((rate) => ({ value: rate, label: rate }));
+
+    const roomViewOptions = acc.views.filter((view) => view.checked).map((view) => (
+      { value: view.val, label: view.val }
+    ));
 
     const mealPlanOptions = acc.rates
       .map((rate) => rate.newMealPlan)
@@ -224,6 +234,7 @@ function Accomodation() {
 
     acc.roomType = roomTypes[0]?.value || roomTypeOptions[0].value;
     acc.mealPlan = mealPlanOptions[0].value;
+    acc.roomView = roomViewOptions[0].value;
 
     const tempAccomodation = [...selectedAccomodations];
 
@@ -257,6 +268,7 @@ function Accomodation() {
 
     const tempAccomodationNights = { ...selectedAccomodationsNights };
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
+    const tempAccomodationRoomViews = [...selectedAccomodationsRoomViews];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
     const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
     const tempAccomodationPax = [...selectedAccomodationsPax];
@@ -264,6 +276,7 @@ function Accomodation() {
 
     tempAccomodationAdditionalBed.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationRoomViews.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
@@ -271,6 +284,7 @@ function Accomodation() {
 
     setSelectedAccomodationsNights(tempAccomodationNights);
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
+    setSelectedAccomodationsRoomViews(tempAccomodationRoomViews);
     setSelectedAccomodationsAdditionalBed(tempAccomodationAdditionalBed);
     setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
     setSelectedAccomodationsPax(tempAccomodationPax);
@@ -315,6 +329,7 @@ function Accomodation() {
         acc.roomType = selectedAccomodationsRoomTypes[index];
         acc.pax = selectedAccomodationsPax[index];
         acc.mealPlan = selectedAccomodationsMealPlans[index];
+        acc.roomView = selectedAccomodationsRoomViews[index];
 
         // Additional bed costing
         const requireAdditionalBed = acc.includeAdditionalBed === 'Yes';
@@ -500,6 +515,7 @@ function Accomodation() {
 
       localStorage.setItem('New Quote Accomodation', JSON.stringify({
         selectedAccomodationsRoomTypes,
+        selectedAccomodationsRoomViews,
         selectedAccomodationsMealPlans,
         selectedAccomodationsAdditionalBed,
         selectedAccomodationsNights,
@@ -570,6 +586,7 @@ function Accomodation() {
     setSelectedAccomodations(setAccomodations);
     setSelectedAccomodationsAdditionalBed(quote.selectedAccomodationsAdditionalBed);
     setSelectedAccomodationsMealPlans(quote.selectedAccomodationsMealPlans);
+    setSelectedAccomodationsRoomViews(quote.selectedAccomodationsRoomViews);
     setSelectedAccomodationsRoomTypes(quote.selectedAccomodationsRoomTypes);
   };
 
@@ -693,17 +710,20 @@ function Accomodation() {
                   'PAX',
                   'EXTRA BED',
                   'ROOM TYPE',
+                  'ROOM VIEWS',
                   'MEAL PLAN',
                   '',
                 ]}
                 selectedAccomodations={selectedAccomodations}
                 selectedAccomodationsNights={selectedAccomodationsNights}
                 selectedAccomodationsRoomTypes={selectedAccomodationsRoomTypes}
+                selectedAccomodationsRoomViews={selectedAccomodationsRoomViews}
                 selectedAccomodationsMealPlans={selectedAccomodationsMealPlans}
                 selectedAccomodationsAdditionalBed={selectedAccomodationsAdditionalBed}
                 selectedAccomodationsPax={selectedAccomodationsPax}
                 setSelectedAccomodationsNights={setSelectedAccomodationsNights}
                 setSelectedAccomodationsRoomTypes={setSelectedAccomodationsRoomTypes}
+                setSelectedAccomodationsRoomViews={setSelectedAccomodationsRoomViews}
                 setSelectedAccomodationsMealPlans={setSelectedAccomodationsMealPlans}
                 setSelectedAccomodationsAdditionalBed={setSelectedAccomodationsAdditionalBed}
                 setSelectedAccomodationsPax={setSelectedAccomodationsPax}

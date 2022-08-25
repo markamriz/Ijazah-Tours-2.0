@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   paper: {
     marginTop: theme.spacing(2),
-    width: '60%',
+    width: '70%',
   },
 }));
 
@@ -60,77 +60,73 @@ function ApprovalAccomodationTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => {
-            const roomView = row.views.find((view) => view.checked);
-
-            return ((row.isMultiple && row.additionalEntries) || !row.isMultiple) && (
-              <TableRow key={uuid()}>
-                <TableRowTextCell
-                  key={uuid()}
-                  cell={{
-                    align: 'center',
-                    title: row.nights,
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowTextCell
-                  key={uuid()}
-                  cell={{
-                    align: 'center',
-                    title: row.name,
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowTextCell
-                  key={uuid()}
-                  cell={{
-                    align: 'center',
-                    title: [row.pax, row.additionalEntries?.map((entry) => entry.pax)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowTextCell
-                  key={uuid()}
-                  cell={{
-                    align: 'center',
-                    title: [row.roomType, row.additionalEntries?.map((entry) => entry.roomType)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowTextCell
-                  key={uuid()}
-                  cell={{
-                    align: 'center',
-                    title: [row.mealPlan, row.additionalEntries?.map((entry) => entry.mealPlan)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowTextCell
-                  key={uuid()}
-                  cell={{
-                    align: 'center',
-                    title: [row.roomRate, row.additionalEntries?.map((entry) => entry.roomRate)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-                <TableRowTextCell
-                  key={uuid()}
-                  cell={{
-                    align: 'center',
-                    title: roomView ? roomView.val : 'None',
-                    colors: ['#464E5F'],
-                    weight: 400,
-                  }}
-                />
-              </TableRow>
-            );
-          })}
+          {data.map((row) => ((row.isMultiple && row.additionalEntries) || !row.isMultiple) && (
+            <TableRow key={uuid()}>
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: row.nights,
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: row.name,
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: [row.pax, row.additionalEntries?.map((entry) => entry.pax)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: [row.roomType, row.additionalEntries?.map((entry) => entry.roomType)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: [row.mealPlan, row.additionalEntries?.map((entry) => entry.mealPlan)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: [row.roomRate, row.additionalEntries?.map((entry) => entry.roomRate)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+              <TableRowTextCell
+                key={uuid()}
+                cell={{
+                  align: 'center',
+                  title: [row.roomView, row.additionalEntries?.map((entry) => entry.roomView)].flat().filter((x) => x !== '' && x !== undefined).join(' | '),
+                  colors: ['#464E5F'],
+                  weight: 400,
+                }}
+              />
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>
