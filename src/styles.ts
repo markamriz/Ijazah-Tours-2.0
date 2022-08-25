@@ -292,17 +292,17 @@ export const voucherStyles = {
         padding: '1rem',
       },
       detailContainer: {
-        width: '250px',
         display: 'flex',
-        justifyContent: 'space-between',
         margin: 0,
       },
       label: {
+        width: '172px',
         color: '#1C5BBA',
+        marginRight: '10px',
       },
       detail: {
         fontWeight: 'bold',
-        textAlign: 'right' as const,
+        textAlign: 'left' as const,
       },
     },
     cashReceipt: {

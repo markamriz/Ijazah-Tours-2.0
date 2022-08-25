@@ -46,7 +46,7 @@ function VoucherSummary({ type, vData }: VoucherSummaryProps) {
   };
 
   const getDeparture = () => {
-    let data = vData.guestDetails.arrival;
+    let data = vData.guestDetails.departure;
     if (type === 'accomodation') {
       data = vData.accomodationDetails.checkout;
     }
