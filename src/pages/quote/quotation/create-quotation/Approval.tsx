@@ -343,18 +343,25 @@ function Approval({ setCreated }: ApprovalProps) {
       break;
     }
 
+    const accomodationDetails = JSON.parse(
+      localStorage.getItem('New Quote Accomodation')!,
+    ).selectedAccomodations;
+
+    // Store only main accomodations
+    const toStoreAccomodations = accomodationDetails.filter((acc: any) => (
+      (acc.isMultiple && acc.additionalEntries) || !acc.isMultiple
+    ));
+
     await setDoc(doc(db, 'Vouchers', String(quoteNo), 'Vouchers', `${String(quoteNo)}-${type}-${title}`), {
       vId,
       guestDetails,
       type,
       title,
+      accomodationDetails: toStoreAccomodations,
       quoteNo: String(quoteNo),
       quotationTitle: quoteTitle,
       mainVId: `${quoteTitle.slice(0, 5)} V`,
       driverDetails: driverChoice,
-      accomodationDetails: JSON.parse(
-        localStorage.getItem('New Quote Accomodation')!,
-      ).selectedAccomodations,
       completed: false,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
