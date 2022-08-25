@@ -54,8 +54,11 @@ function TourConfirmationVoucher({
 
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('landscape', 'pt', [elementWidth + 10, elementHeight + 10]);
-    return report.html(document.querySelector('#report') as HTMLElement).then(async () => {
+    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 10]);
+    return report.html(document.querySelector('#report') as HTMLElement, {
+      autoPaging: 'text',
+      margin: [20, 0, 20, 0],
+    }).then(async () => {
       const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
       const pdfURL = await uploadPDF(storage, 'voucher-tour-confirmation-pdfs', report.output('blob'), filename);
       report.save(filename);
