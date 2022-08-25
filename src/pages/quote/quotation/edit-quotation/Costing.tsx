@@ -114,7 +114,7 @@ function Costing() {
 
     setTransport(String(transportTotal));
     setRate(String(costingData.transportRate));
-    setDays(String(transportDays));
+    setDays(String(transportDays + 1));
     setCommission(costingData.commission);
     setDiscount(costingData.discount);
     setSellingPrice(costingData.sellingPrice);
