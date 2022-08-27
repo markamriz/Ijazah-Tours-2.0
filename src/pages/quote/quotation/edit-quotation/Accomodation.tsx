@@ -695,7 +695,7 @@ function Accomodation() {
                   'PAX',
                   'EXTRA BED',
                   'ROOM TYPE',
-                  'ROOM VIEWS',
+                  'ROOM VIEW',
                   'MEAL PLAN',
                   '',
                 ]}

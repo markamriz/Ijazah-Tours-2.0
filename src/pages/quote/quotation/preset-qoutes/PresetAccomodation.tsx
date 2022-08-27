@@ -61,6 +61,11 @@ function PresetAccomodation() {
   ] = useState<string[]>([]);
 
   const [
+    selectedAccomodationsRoomViews,
+    setSelectedAccomodationsRoomViews,
+  ] = useState<string[]>([]);
+
+  const [
     selectedAccomodationsAdditionalBed,
     setSelectedAccomodationsAdditionalBed,
   ] = useState<string[]>([]);
@@ -138,6 +143,10 @@ function PresetAccomodation() {
       .map((rate) => rate.newRatePrice)
       .map((rate) => ({ value: rate, label: rate }));
 
+    const roomViewOptions = acc.views.filter((view) => view.checked).map((view) => (
+      { value: view.val, label: view.val }
+    ));
+
     const mealPlanOptions = acc.rates
       .map((rate) => rate.newMealPlan)
       .map((rate) => ({ value: rate, label: rate }));
@@ -149,6 +158,8 @@ function PresetAccomodation() {
 
     acc.roomType = roomTypes[0]?.value || roomTypeOptions[0].value;
     acc.mealPlan = mealPlanOptions[0].value;
+    acc.roomView = roomViewOptions[0].value;
+
     const tempAccomodation = [...selectedAccomodations];
     tempAccomodation.push(acc);
     setSelectedAccomodations(tempAccomodation);
@@ -173,6 +184,7 @@ function PresetAccomodation() {
       title,
       selectedAccomodationsMealPlans,
       selectedAccomodationsRoomTypes,
+      selectedAccomodationsRoomViews,
       selectedAccomodationsAdditionalBed,
       selectedAccomodations: tempAccomodation,
       createdAt: serverTimestamp(),
@@ -187,15 +199,22 @@ function PresetAccomodation() {
   const deleteAccomodation = (acc: UserAccomodation) => {
     const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
       .filter(String) as number[];
+
     const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
     const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
+    const tempAccomodationRoomViews = [...selectedAccomodationsRoomViews];
     const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
     const tempAccomodation = [...selectedAccomodations];
+
     tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationRoomViews.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodationAdditionalBed.splice(removeIndexes[0], removeIndexes.length);
     tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
+
     setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
+    setSelectedAccomodationsRoomViews(tempAccomodationRoomViews);
+    setSelectedAccomodationsAdditionalBed(tempAccomodationAdditionalBed);
     setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
     setSelectedAccomodations(tempAccomodation);
   };
@@ -262,14 +281,17 @@ function PresetAccomodation() {
                   'ACCOMODATION',
                   'EXTRA BED',
                   'ROOM TYPE',
+                  'ROOM VIEW',
                   'MEAL PLAN',
                   '',
                 ]}
                 selectedAccomodations={selectedAccomodations}
                 selectedAccomodationsRoomTypes={selectedAccomodationsRoomTypes}
+                selectedAccomodationsRoomViews={selectedAccomodationsRoomViews}
                 selectedAccomodationsMealPlans={selectedAccomodationsMealPlans}
                 selectedAccomodationsAdditionalBed={selectedAccomodationsAdditionalBed}
                 setSelectedAccomodationsRoomTypes={setSelectedAccomodationsRoomTypes}
+                setSelectedAccomodationsRoomViews={setSelectedAccomodationsRoomViews}
                 setSelectedAccomodationsMealPlans={setSelectedAccomodationsMealPlans}
                 setSelectedAccomodationsAdditionalBed={setSelectedAccomodationsAdditionalBed}
                 deleteAccomodation={deleteAccomodation}

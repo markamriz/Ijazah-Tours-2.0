@@ -288,6 +288,7 @@ function Approval({ setCreated }: ApprovalProps) {
         selectedAccomodations: selectedAcc.selectedAccomodations as UserAccomodation[],
         selectedAccomodationsMealPlans: selectedAcc.selectedAccomodationsMealPlans,
         selectedAccomodationsRoomTypes: selectedAcc.selectedAccomodationsRoomTypes,
+        selectedAccomodationsRoomViews: selectedAcc.selectedAccomodationsRoomViews,
         selectedAccomodationsNights: selectedAcc.selectedAccomodationsNights,
         selectedAccomodationsAdditionalBed: selectedAcc.selectedAccomodationsAdditionalBed,
         selectedAccomodationsPax: selectedAcc.selectedAccomodationsPax,
