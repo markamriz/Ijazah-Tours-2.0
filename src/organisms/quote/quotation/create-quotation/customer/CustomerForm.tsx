@@ -68,7 +68,8 @@ interface CustomerFormProps {
   setAdditionalBed: any;
   setDateType: any;
   setCheckin: any;
-  setCheckout: any
+  setCheckout: any;
+  isEditQuote?: boolean;
 }
 
 function CustomerForm({
@@ -111,12 +112,12 @@ function CustomerForm({
   setDateType,
   setCheckin,
   setCheckout,
+  isEditQuote,
 }: CustomerFormProps) {
   const countries = Country.getAllCountries();
 
   const changeDateType = (type: string) => {
     setDateType(type);
-    localStorage.removeItem('New Quote Accomodation');
 
     if (type === dateTypeOptions[1].value) {
       setCheckin('2022-01');
@@ -144,7 +145,7 @@ function CustomerForm({
           text="Guest"
         />
         <FormControlInput
-          margin={widthHeightDynamicStyle(width, 600, '0 0 1rem 0', '0 1rem 1rem 0') as string}
+          margin='0 0 1rem 0'
           flex={1}
           label="Title"
           fullWidth
@@ -174,23 +175,27 @@ function CustomerForm({
               ...libraryStyles.textField,
               flex: 1,
               width: widthHeightDynamicStyle(width, 600, '100%', 'auto'),
+              margin: '0 0 1rem 0',
             }}
             disableUnderline={false}
+            disabled={isEditQuote}
             select
           />
-          <Link to={'/library/guest/create'}>
-            <ButtonAtom
-              startIcon={<AddCircleOutlineOutlinedIcon />}
-              text="Add New Guest"
-              style={{
-                ...TableToolbarStyles.addBtn,
-                width: widthHeightDynamicStyle(width, 600, '100%', '11rem'),
-                marginTop: '1rem',
-                marginLeft: widthHeightDynamicStyle(width, 600, 0, '1rem'),
-              }}
-              size="large"
-            />
-          </Link>
+          {!isEditQuote && (
+            <Link to={'/library/guest/create'}>
+              <ButtonAtom
+                startIcon={<AddCircleOutlineOutlinedIcon />}
+                text="Add New Guest"
+                style={{
+                  ...TableToolbarStyles.addBtn,
+                  width: widthHeightDynamicStyle(width, 600, '100%', '11rem'),
+                  marginTop: '1rem',
+                  marginLeft: widthHeightDynamicStyle(width, 600, 0, '1rem'),
+                }}
+                size="large"
+              />
+            </Link>
+          )}
         </DivAtom>
         <DivAtom
           style={{

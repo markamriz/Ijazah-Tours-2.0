@@ -180,7 +180,7 @@ function Costing() {
 
     const netTotal = Number(sellingPrice) - Number(discount);
 
-    setDays(String(transportDays));
+    setDays(String(transportDays + 1));
     setAccomodationTotal(String(accTotal));
     setTransport(String(transportTotal));
     setTotalExpense(String(expenseTotal));

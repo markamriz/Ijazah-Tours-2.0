@@ -416,7 +416,7 @@ function Accomodation() {
           }
 
           let supplementCost = 0;
-          if (!mealPlanRates.find((r) => r.newRateType === selectedAccomodationsRoomTypes[index]
+          if ((!mealPlanRates.find((r) => r.newRateType === selectedAccomodationsRoomTypes[index])
             && Object.keys(acc.categoryValues).includes(acc.roomType))) {
             supplementCost = Number(acc.categoryValues[acc.roomType]);
           }
@@ -465,7 +465,7 @@ function Accomodation() {
           }
 
           let supplementCost = 0;
-          if (!mealPlanRates.find((r) => r.newRateType === selectedAccomodationsRoomTypes[index]
+          if ((!mealPlanRates.find((r) => r.newRateType === selectedAccomodationsRoomTypes[index])
             && Object.keys(acc.categoryValues).includes(acc.roomType))) {
             supplementCost = Number(acc.categoryValues[acc.roomType]);
           }

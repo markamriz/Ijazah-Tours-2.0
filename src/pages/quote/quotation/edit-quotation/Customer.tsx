@@ -278,6 +278,7 @@ function Customer() {
           setDateType={setDateType}
           setCheckin={setCheckin}
           setCheckout={setCheckout}
+          isEditQuote
         />
       ) : (
         <DivAtom style={fetchingDataIndicatorStyles.container}>
