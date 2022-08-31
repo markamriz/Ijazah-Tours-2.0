@@ -128,6 +128,7 @@ function EditGuest({ row, isUpdating, setIsUpdating }: EditGuestProps) {
         setChildrenAges={setChildrenAges}
         setPassport={setPassport}
         onAddEditGuest={onEditGuest}
+        isEdit
       />
     </DivAtom>
   );

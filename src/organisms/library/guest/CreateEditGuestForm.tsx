@@ -58,6 +58,7 @@ interface CreateEditGuestFormProps {
   setChildrenAges: any;
   setPassport: any;
   creatingReminder?: boolean;
+  isEdit?: boolean;
   onAddReminder?: () => void;
 }
 
@@ -96,6 +97,7 @@ function CreateEditGuestForm({
   setChildrenAges,
   setPassport,
   creatingReminder,
+  isEdit,
   onAddReminder,
 }: CreateEditGuestFormProps) {
   const countries = Country.getAllCountries();
@@ -163,6 +165,7 @@ function CreateEditGuestForm({
             value={refNum}
             setValue={setRefNum}
             placeholder="Enter Reference Number"
+            disabled={isEdit}
           />
           <FormControlInput
             margin={widthHeightDynamicStyle(width, 600, '0 0 1rem 0', '0 1rem 1rem 0') as string}

@@ -210,8 +210,8 @@ function Accomodation() {
       // Obtain required number of rooms depending on pax
       // A Single room can hold a max of 3 pax
       const totalGuests = Number(adults) + children.length;
-      const initRooms = customerDetails[19] < Math.ceil(pax / 3)
-        ? Math.ceil(pax / 3) : customerDetails[19];
+      const initRooms = Number(customerDetails[19]) < Math.ceil(pax / 3)
+        ? Math.ceil(pax / 3) : Number(customerDetails[19]);
 
       customerDetails[19] = initRooms;
       customerDetails.push(totalGuests);
@@ -240,8 +240,9 @@ function Accomodation() {
     const tempAccomodation = [...selectedAccomodations];
 
     // There will be multiple entries of the same accomodation due to pax > 3 OR rooms > 1
-    if (customerDetails[19] > 1 || pax > 3) {
-      const numberOfEntries = pax > 3 ? Math.ceil(pax / 3) : Number(customerDetails[19]);
+    if (Number(customerDetails[19]) > 1 || pax > 3) {
+      const numberOfEntries = Number(customerDetails[19]) < Math.ceil(pax / 3)
+        ? Math.ceil(pax / 3) : Number(customerDetails[19]);
       acc.isMultiple = true;
       const additionalEntry = { ...acc, isSubEntry: true };
       acc.additionalEntries = [];
@@ -541,10 +542,10 @@ function Accomodation() {
       }
     });
 
-    if (customerDetails[19] > 1 || pax > 3) {
+    if (Number(customerDetails[19]) > 1 || pax > 3) {
       const totalGuests = Number(adults) + children.length;
-      const initRooms = customerDetails[19] < Math.ceil(pax / 3)
-        ? Math.ceil(pax / 3) : customerDetails[19];
+      const initRooms = Number(customerDetails[19]) < Math.ceil(pax / 3)
+        ? Math.ceil(pax / 3) : Number(customerDetails[19]);
 
       customerDetails[19] = initRooms;
       customerDetails.push(totalGuests);
@@ -561,7 +562,8 @@ function Accomodation() {
 
       const tempPresetAccs = [...presetSelectedAccs];
       presetSelectedAccs.forEach((acc: any) => {
-        const numberOfEntries = pax > 3 ? Math.ceil(pax / 3) : Number(customerDetails[19]);
+        const numberOfEntries = Number(customerDetails[19]) < Math.ceil(pax / 3)
+          ? Math.ceil(pax / 3) : Number(customerDetails[19]);
         acc.isMultiple = true;
         const additionalEntry = { ...acc, isSubEntry: true };
         acc.additionalEntries = [];

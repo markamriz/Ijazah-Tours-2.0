@@ -147,6 +147,7 @@ function Customer() {
 
   const onRefNumChange = (data: LibraryGuest[], rf: string) => {
     setRefNum(rf);
+    localStorage.removeItem('New Quote Accomodation');
     const customer = data.find((cus) => cus.refNum === rf);
     setSelectedCustomer(customer);
     if (customer) {
@@ -156,7 +157,7 @@ function Customer() {
       setEmail(customer.email);
       setCountry(customer.country.value);
       setCity(customer.city.value);
-      setRooms(customer.rooms || 3);
+      setRooms(customer.rooms || 1);
     }
   };
 

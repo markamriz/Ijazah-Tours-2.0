@@ -123,6 +123,8 @@ function Customer() {
       setHolidayType(thisQuote.holidayType);
       setDestinations(thisQuote.toStoreDestinations);
       setToStoreDestinations(thisQuote.toStoreDestinations);
+
+      // Call to update old guest data
       onRefNumChange(rfData as LibraryGuest[], thisQuote.refNum);
 
       setAccomodationLocationData(locData as SettingsLocation[]);
@@ -172,7 +174,7 @@ function Customer() {
       setEmail(customer.email);
       setCountry(customer.country.value);
       setCity(customer.city.value);
-      setRooms(customer.rooms || 3);
+      setRooms(customer.rooms || 1);
     }
   };
 
