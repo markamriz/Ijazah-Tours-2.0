@@ -210,7 +210,8 @@ function Accomodation() {
       // Obtain required number of rooms depending on pax
       // A Single room can hold a max of 3 pax
       const totalGuests = Number(adults) + children.length;
-      const initRooms = Math.ceil(pax / 3);
+      const initRooms = customerDetails[19] < Math.ceil(pax / 3)
+        ? Math.ceil(pax / 3) : customerDetails[19];
 
       customerDetails[19] = initRooms;
       customerDetails.push(totalGuests);
@@ -540,11 +541,13 @@ function Accomodation() {
       }
     });
 
-    if (pax > 3) {
+    if (customerDetails[19] > 1 || pax > 3) {
       const totalGuests = Number(adults) + children.length;
-      const initRooms = Number(customerDetails[19]) + (Math.floor(totalGuests / 3) + 1);
+      const initRooms = customerDetails[19] < Math.ceil(pax / 3)
+        ? Math.ceil(pax / 3) : customerDetails[19];
 
       customerDetails[19] = initRooms;
+      customerDetails.push(totalGuests);
       localStorage.setItem(
         'New Quote Customer',
         JSON.stringify({
@@ -574,8 +577,16 @@ function Accomodation() {
     }
 
     presetSelectedAccs.forEach((acc: any) => {
-      // eslint-disable-next-line no-nested-ternary
-      acc.pax = pax === 1 ? 'Single' : pax === 2 ? 'Double' : 'Triple';
+      if (pax === 1) {
+        acc.pax = 'Single';
+        setSelectedAccomodationsPax((prev) => [...prev, 'Single']);
+      } else if (pax === 2) {
+        acc.pax = 'Double';
+        setSelectedAccomodationsPax((prev) => [...prev, 'Double']);
+      } else {
+        acc.pax = 'Triple';
+        setSelectedAccomodationsPax((prev) => [...prev, 'Triple']);
+      }
     });
 
     return presetSelectedAccs;
