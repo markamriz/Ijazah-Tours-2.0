@@ -50,7 +50,18 @@ function DriverVoucher({ voucherData, setIsVoucherApproved }: DriverVoucherProps
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
     const report = new JSPDF('landscape', 'pt', [elementWidth + 10, elementHeight + 10]);
-    return report.html(document.querySelector('#report') as HTMLElement).then(async () => {
+    return report.html(document.querySelector('#report') as HTMLElement, {
+      image: {
+        type: 'png',
+        quality: 100,
+      },
+      html2canvas: {
+        scale: 1,
+        allowTaint: true,
+        letterRendering: true,
+        svgRendering: true,
+      },
+    }).then(async () => {
       const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
       const pdfURL = await uploadPDF(storage, 'voucher-driver-pdfs', report.output('blob'), filename);
       report.save(filename);

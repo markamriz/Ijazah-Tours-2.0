@@ -20,6 +20,8 @@ const GlobalStyle = createGlobalStyle`
     ::-webkit-scrollbar-thumb:hover {
       background: #0A65FF;
     }
+
+    letter-spacing: 0.01px;
   }
 
   a {

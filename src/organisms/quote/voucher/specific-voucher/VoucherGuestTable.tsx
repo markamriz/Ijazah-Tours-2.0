@@ -25,11 +25,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   accomodationPaper: {
     marginTop: theme.spacing(2),
-    width: '60%',
+    width: '70%',
   },
   guestPaper: {
     marginTop: theme.spacing(2),
-    width: '50%',
+    width: '70%',
   },
 }));
 

@@ -318,7 +318,8 @@ export const voucherStyles = {
       },
       label: {
         color: '#1C5BBA',
-        width: '550px',
+        marginRight: '10px',
+        // width: '550px',
       },
       detail: {
         fontWeight: 'bold',

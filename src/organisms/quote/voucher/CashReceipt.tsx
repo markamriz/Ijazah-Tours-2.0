@@ -55,10 +55,27 @@ function CashReceipt({ voucherData, setIsVoucherApproved }: CashReceiptProps) {
     return `${numberPrice} (${wordPrice})`;
   };
 
+  const createDescText = (vId: string) => {
+    const desc = vId.split(' ');
+    return desc.join('  ');
+  };
+
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('landscape', 'pt', [elementWidth + 10, elementHeight + 10]);
-    return report.html(document.querySelector('#report') as HTMLElement).then(async () => {
+    const report = new JSPDF('landscape', 'pt', [elementWidth + 10, elementHeight]);
+    return report.html(document.querySelector('#report') as HTMLElement, {
+      image: {
+        type: 'png',
+        quality: 100,
+      },
+      html2canvas: {
+        scale: 1,
+        allowTaint: true,
+        letterRendering: true,
+        svgRendering: true,
+      },
+    }).then(async () => {
+      report.deletePage(report.getNumberOfPages());
       const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
       const pdfURL = await uploadPDF(storage, 'voucher-cash-receipt-pdfs', report.output('blob'), filename);
       report.save(filename);
@@ -113,7 +130,7 @@ function CashReceipt({ voucherData, setIsVoucherApproved }: CashReceiptProps) {
             <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
               <SpanAtom
                 text="Date"
-                style={voucherStyles.voucherTemplate.summaryDetails.label}
+                style={{ ...voucherStyles.voucherTemplate.summaryDetails.label, width: 'auto' }}
               />
               <SpanAtom
                 text={new Date().toISOString().substring(0, 10)}
@@ -155,7 +172,7 @@ function CashReceipt({ voucherData, setIsVoucherApproved }: CashReceiptProps) {
                 style={voucherStyles.voucherTemplate.cashReceipt.label}
               />
               <SpanAtom
-                text={vData.vId}
+                text={createDescText(vData.vId)}
                 style={voucherStyles.voucherTemplate.cashReceipt.detail}
               />
             </p>
