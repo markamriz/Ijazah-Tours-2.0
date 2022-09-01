@@ -34,6 +34,7 @@ import { approvalStyles, fetchingDataIndicatorStyles, quoteCreateQuoteStyles } f
 import {
   convertDateToFullMonth,
   getDaysDifference,
+  getElementWidth,
   tourTypeOptions,
   uploadPDF,
   widthHeightDynamicStyle,
@@ -182,7 +183,8 @@ function Approval({ setCreated }: ApprovalProps) {
   };
 
   const generatePDF = async () => {
-    const report = new JSPDF('portrait', 'pt', 'a2');
+    const { elementWidth, elementHeight } = getElementWidth('report');
+    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 10]);
     return report.html(document.querySelector('#report') as HTMLElement).then(async () => {
       const filename = `${uuid()}-${firstName}.pdf`;
       const pdfURL = await uploadPDF(storage, 'customer-quotation-pdfs', report.output('blob'), filename);
@@ -219,7 +221,8 @@ function Approval({ setCreated }: ApprovalProps) {
   };
 
   const saveUserQuotation = async () => {
-    await createQuote(null, 'IN PROGRESS', setIsSavingQuote);
+    const guestDetails = await createQuote(null, 'IN PROGRESS', setIsSavingQuote);
+    await createVoucher(guestDetails, 'Itinerary Voucher', 'Itinerary');
     clearLocalStorage();
     setIsSavingQuote(false);
     setCreated(true);
@@ -317,7 +320,7 @@ function Approval({ setCreated }: ApprovalProps) {
 
   const createVouchers = async (guestDetails: any) => {
     await createVoucher(guestDetails, 'Driver Voucher', 'Driver');
-    await createVoucher(guestDetails, 'Itinerary Voucher', 'Itinerary');
+    // await createVoucher(guestDetails, 'Itinerary Voucher', 'Itinerary');
     await createVoucher(guestDetails, 'Tour Confirmation Voucher', 'Proforma Invoice');
     await createVoucher(guestDetails, 'Cash Receipt', 'Cash Receipt');
 
