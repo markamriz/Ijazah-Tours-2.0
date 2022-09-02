@@ -9,6 +9,8 @@ import {
   Theme,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import _ from 'lodash';
 
 import TableColumnCell from '../../../../../molecules/TableColumnCell';
@@ -45,6 +47,7 @@ interface AccomodationTableProps {
   setSelectedAccomodationsMealPlans?: any;
   setSelectedAccomodationsPax?: any;
   deleteAccomodation: (row: UserAccomodation) => void;
+  shiftAccomodationPosition: (row: UserAccomodation, direction: string) => void;
 }
 
 function AccomodationTable({
@@ -64,6 +67,7 @@ function AccomodationTable({
   setSelectedAccomodationsMealPlans,
   setSelectedAccomodationsPax,
   deleteAccomodation,
+  shiftAccomodationPosition,
 }: AccomodationTableProps) {
   const classes = useStyles();
 
@@ -253,6 +257,22 @@ function AccomodationTable({
                     size="small"
                     padding="8px"
                     children={<CloseIcon style={{ color: 'black' }} />}
+                  />
+                  <TableRowIconCell
+                    align="center"
+                    onClick={() => shiftAccomodationPosition(row, 'up')}
+                    textColor="#B5B5C3"
+                    size="small"
+                    padding="8px"
+                    children={<KeyboardArrowUpIcon style={{ color: 'black' }} />}
+                  />
+                  <TableRowIconCell
+                    align="center"
+                    onClick={() => shiftAccomodationPosition(row, 'down')}
+                    textColor="#B5B5C3"
+                    size="small"
+                    padding="8px"
+                    children={<KeyboardArrowDownIcon style={{ color: 'black' }} />}
                   />
                 </TableRow>
               );

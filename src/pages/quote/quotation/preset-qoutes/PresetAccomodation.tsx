@@ -219,6 +219,66 @@ function PresetAccomodation() {
     setSelectedAccomodations(tempAccomodation);
   };
 
+  const shiftAccomodationPosition = (acc: UserAccomodation, direction: string) => {
+    const accPositions = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
+      .filter(String) as number[];
+
+    if ((accPositions.includes(0) && direction === 'up')
+    || (accPositions.includes(selectedAccomodations.length - 1) && direction === 'down')) {
+      // Last acc cannot move down; first acc cannot move up
+      return;
+    }
+
+    const customerDetails = JSON.parse(
+      localStorage.getItem('New Quote Customer')!,
+    ).data[0];
+
+    const adults = customerDetails[9];
+    const children = customerDetails[10];
+    let pax = Number(adults);
+    children.forEach((child: string) => {
+      if (Number(child) > 14) {
+        pax += 1;
+      }
+    });
+
+    const numberOfEntries = Number(customerDetails[19]) < Math.ceil(pax / 3)
+      ? Math.ceil(pax / 3) : Number(customerDetails[19]);
+
+    const newPositions = accPositions.map((pos) => (direction === 'up' ? pos - numberOfEntries : pos + numberOfEntries));
+
+    const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
+    const tempAccomodationRoomViews = [...selectedAccomodationsRoomViews];
+    const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
+    const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
+    const tempAccomodation = [...selectedAccomodations];
+
+    const removedAccAddBed = tempAccomodationAdditionalBed
+      .splice(accPositions[0], accPositions.length);
+    const removedAccRoomType = tempAccomodationRoomTypes
+      .splice(accPositions[0], accPositions.length);
+    const removedAccRoomView = tempAccomodationRoomViews
+      .splice(accPositions[0], accPositions.length);
+    const removedAccMealPlan = tempAccomodationMealPlans
+      .splice(accPositions[0], accPositions.length);
+    const removedAcc = tempAccomodation
+      .splice(accPositions[0], accPositions.length);
+
+    newPositions.forEach((pos, i) => {
+      tempAccomodationRoomTypes.splice(pos, 0, removedAccRoomType[i]);
+      tempAccomodationRoomViews.splice(pos, 0, removedAccRoomView[i]);
+      tempAccomodationMealPlans.splice(pos, 0, removedAccMealPlan[i]);
+      tempAccomodationAdditionalBed.splice(pos, 0, removedAccAddBed[i]);
+      tempAccomodation.splice(pos, 0, removedAcc[i]);
+    });
+
+    setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
+    setSelectedAccomodationsRoomViews(tempAccomodationRoomViews);
+    setSelectedAccomodationsAdditionalBed(tempAccomodationAdditionalBed);
+    setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
+    setSelectedAccomodations(tempAccomodation);
+  };
+
   return (
     <DivAtom style={{ height: `${height}px` }}>
       <DivAtom style={quoteCreateQuoteStyles.header}>
@@ -295,6 +355,7 @@ function PresetAccomodation() {
                 setSelectedAccomodationsMealPlans={setSelectedAccomodationsMealPlans}
                 setSelectedAccomodationsAdditionalBed={setSelectedAccomodationsAdditionalBed}
                 deleteAccomodation={deleteAccomodation}
+                shiftAccomodationPosition={shiftAccomodationPosition}
                 preset
               />
             </DivAtom>

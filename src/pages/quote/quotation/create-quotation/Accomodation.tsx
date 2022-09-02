@@ -263,36 +263,6 @@ function Accomodation() {
     setSelectedAccomodations(tempAccomodation);
   };
 
-  const deleteAccomodation = (acc: UserAccomodation) => {
-    // Multiple indexes for the case of multiple entries
-    const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
-      .filter(String) as number[];
-
-    const tempAccomodationNights = { ...selectedAccomodationsNights };
-    const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
-    const tempAccomodationRoomViews = [...selectedAccomodationsRoomViews];
-    const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
-    const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
-    const tempAccomodationPax = [...selectedAccomodationsPax];
-    const tempAccomodation = [...selectedAccomodations];
-
-    tempAccomodationAdditionalBed.splice(removeIndexes[0], removeIndexes.length);
-    tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
-    tempAccomodationRoomViews.splice(removeIndexes[0], removeIndexes.length);
-    tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
-    tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
-    tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
-    delete tempAccomodationNights[acc.id];
-
-    setSelectedAccomodationsNights(tempAccomodationNights);
-    setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
-    setSelectedAccomodationsRoomViews(tempAccomodationRoomViews);
-    setSelectedAccomodationsAdditionalBed(tempAccomodationAdditionalBed);
-    setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
-    setSelectedAccomodationsPax(tempAccomodationPax);
-    setSelectedAccomodations(tempAccomodation);
-  };
-
   const continueToCosting = () => {
     setShowValidationErrorMessage(false);
     setShowNoRateErrorMessage([{ '': false }]);
@@ -528,6 +498,104 @@ function Accomodation() {
     }
   };
 
+  const deleteAccomodation = (acc: UserAccomodation) => {
+    // Multiple indexes for the case of multiple entries
+    const removeIndexes = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
+      .filter(String) as number[];
+
+    const tempAccomodationNights = { ...selectedAccomodationsNights };
+    const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
+    const tempAccomodationRoomViews = [...selectedAccomodationsRoomViews];
+    const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
+    const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
+    const tempAccomodationPax = [...selectedAccomodationsPax];
+    const tempAccomodation = [...selectedAccomodations];
+
+    tempAccomodationAdditionalBed.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationRoomTypes.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationRoomViews.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationMealPlans.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodationPax.splice(removeIndexes[0], removeIndexes.length);
+    tempAccomodation.splice(removeIndexes[0], removeIndexes.length);
+    delete tempAccomodationNights[acc.id];
+
+    setSelectedAccomodationsNights(tempAccomodationNights);
+    setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
+    setSelectedAccomodationsRoomViews(tempAccomodationRoomViews);
+    setSelectedAccomodationsAdditionalBed(tempAccomodationAdditionalBed);
+    setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
+    setSelectedAccomodationsPax(tempAccomodationPax);
+    setSelectedAccomodations(tempAccomodation);
+  };
+
+  const shiftAccomodationPosition = (acc: UserAccomodation, direction: string) => {
+    // Position must go an index down/up (current index -/+ 1)
+    // Nights aren;t affected since an object is used for them
+    const accPositions = selectedAccomodations.map((ac, i) => (ac.id === acc.id ? i : ''))
+      .filter(String) as number[];
+
+    if ((accPositions.includes(0) && direction === 'up')
+    || (accPositions.includes(selectedAccomodations.length - 1) && direction === 'down')) {
+      // Last acc cannot move down; first acc cannot move up
+      return;
+    }
+
+    // Number of steps to move depends on number of entries of same accomodation
+    const customerDetails = JSON.parse(
+      localStorage.getItem('New Quote Customer')!,
+    ).data[0];
+
+    const adults = customerDetails[9];
+    const children = customerDetails[10];
+    let pax = Number(adults);
+    children.forEach((child: string) => {
+      if (Number(child) > 14) {
+        pax += 1;
+      }
+    });
+
+    const numberOfEntries = Number(customerDetails[19]) < Math.ceil(pax / 3)
+      ? Math.ceil(pax / 3) : Number(customerDetails[19]);
+
+    const newPositions = accPositions.map((pos) => (direction === 'up' ? pos - numberOfEntries : pos + numberOfEntries));
+
+    const tempAccomodationRoomTypes = [...selectedAccomodationsRoomTypes];
+    const tempAccomodationRoomViews = [...selectedAccomodationsRoomViews];
+    const tempAccomodationMealPlans = [...selectedAccomodationsMealPlans];
+    const tempAccomodationAdditionalBed = [...selectedAccomodationsAdditionalBed];
+    const tempAccomodationPax = [...selectedAccomodationsPax];
+    const tempAccomodation = [...selectedAccomodations];
+
+    const removedAccAddBed = tempAccomodationAdditionalBed
+      .splice(accPositions[0], accPositions.length);
+    const removedAccRoomType = tempAccomodationRoomTypes
+      .splice(accPositions[0], accPositions.length);
+    const removedAccRoomView = tempAccomodationRoomViews
+      .splice(accPositions[0], accPositions.length);
+    const removedAccMealPlan = tempAccomodationMealPlans
+      .splice(accPositions[0], accPositions.length);
+    const removedAccPax = tempAccomodationPax
+      .splice(accPositions[0], accPositions.length);
+    const removedAcc = tempAccomodation
+      .splice(accPositions[0], accPositions.length);
+
+    newPositions.forEach((pos, i) => {
+      tempAccomodationRoomTypes.splice(pos, 0, removedAccRoomType[i]);
+      tempAccomodationRoomViews.splice(pos, 0, removedAccRoomView[i]);
+      tempAccomodationMealPlans.splice(pos, 0, removedAccMealPlan[i]);
+      tempAccomodationAdditionalBed.splice(pos, 0, removedAccAddBed[i]);
+      tempAccomodationPax.splice(pos, 0, removedAccPax[i]);
+      tempAccomodation.splice(pos, 0, removedAcc[i]);
+    });
+
+    setSelectedAccomodationsRoomTypes(tempAccomodationRoomTypes);
+    setSelectedAccomodationsRoomViews(tempAccomodationRoomViews);
+    setSelectedAccomodationsAdditionalBed(tempAccomodationAdditionalBed);
+    setSelectedAccomodationsMealPlans(tempAccomodationMealPlans);
+    setSelectedAccomodationsPax(tempAccomodationPax);
+    setSelectedAccomodations(tempAccomodation);
+  };
+
   const setPresetPax = (presetSelectedAccs: any) => {
     const customerDetails = JSON.parse(
       localStorage.getItem('New Quote Customer')!,
@@ -726,6 +794,8 @@ function Accomodation() {
                   'ROOM VIEW',
                   'MEAL PLAN',
                   '',
+                  '',
+                  '',
                 ]}
                 selectedAccomodations={selectedAccomodations}
                 selectedAccomodationsNights={selectedAccomodationsNights}
@@ -741,6 +811,7 @@ function Accomodation() {
                 setSelectedAccomodationsAdditionalBed={setSelectedAccomodationsAdditionalBed}
                 setSelectedAccomodationsPax={setSelectedAccomodationsPax}
                 deleteAccomodation={deleteAccomodation}
+                shiftAccomodationPosition={shiftAccomodationPosition}
               />
             </DivAtom>
 
