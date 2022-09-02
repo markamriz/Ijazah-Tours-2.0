@@ -106,7 +106,6 @@ function Costing() {
     const transportTotal = Number(rate) * Number(days);
     const expenseTotal = Number(accTotal + transportTotal);
     const priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
-
     const netTotal = Number(sellingPrice) - Number(discount);
 
     setDays(String(transportDays + 1));
@@ -117,6 +116,20 @@ function Costing() {
     setNetPrice(String(netTotal));
     setAccomodationData(accData);
   }, [rate, transport, totalExpense, commission, sellingPrice, discount]);
+
+  useEffect(() => {
+    // Refetch data stored in local for instances of back navigation
+    if (localStorage.getItem('New Quote Costing')) {
+      const savedCostingData = JSON.parse(
+        localStorage.getItem('New Quote Costing')!,
+      );
+
+      setRate(savedCostingData.transportRate);
+      setCommission(savedCostingData.commission);
+      setDiscount(savedCostingData.discount);
+      setSellingPrice(savedCostingData.sellingPrice);
+    }
+  }, []);
 
   const getComparisonRates = async (display: boolean) => {
     if (display) {
@@ -195,6 +208,26 @@ function Costing() {
     history.replace('/quote/quotations/create/approval');
   };
 
+  const navigateBack = () => {
+    localStorage.setItem(
+      'New Quote Costing',
+      JSON.stringify({
+        discount,
+        netPrice,
+        sellingPrice,
+        totalExpense,
+        commission,
+        totalPrice,
+        comparisonData,
+        transportTotal: transport,
+        transportRate: rate,
+        transportDays: days,
+      }),
+    );
+
+    history.replace('/quote/quotations/create/accomodation');
+  };
+
   return (
     <DivAtom style={{ height: `${height}px` }}>
       <DivAtom style={quoteCreateQuoteStyles.header}>
@@ -202,7 +235,7 @@ function Costing() {
           size="small"
           children={<ChevronLeftRoundedIcon />}
           style={quoteCreateQuoteStyles.backBtn}
-          onClick={() => history.replace('/quote/quotations/create/accomodation')}
+          onClick={navigateBack}
         />
         <H2Atom style={quoteCreateQuoteStyles.title} text="Costing" />
       </DivAtom>

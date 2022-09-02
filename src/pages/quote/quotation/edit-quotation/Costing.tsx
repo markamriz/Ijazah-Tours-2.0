@@ -106,23 +106,38 @@ function Costing() {
       }
     });
 
-    const transportTotal = Number(costingData.transportRate) * Number(transportDays);
-    const expenseTotal = Number(accTotal + transportTotal);
-    const priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
+    let transportTotal = Number(costingData.transportRate) * Number(transportDays);
+    let expenseTotal = Number(accTotal + transportTotal);
+    let priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
+    let netTotal = Number(costingData.sellingPrice) - Number(costingData.discount);
 
-    const netTotal = Number(costingData.sellingPrice) - Number(costingData.discount);
+    if (localStorage.getItem('New Quote Costing')) {
+      const savedCostingData = JSON.parse(
+        localStorage.getItem('New Quote Costing')!,
+      );
+
+      transportTotal = Number(savedCostingData.transportRate) * Number(transportDays);
+      expenseTotal = Number(accTotal + transportTotal);
+      priceTotal = ((Number(commission) + 100) / 100) * expenseTotal;
+      netTotal = Number(savedCostingData.sellingPrice) - Number(savedCostingData.discount);
+      setRate(savedCostingData.transportRate);
+      setCommission(savedCostingData.commission);
+      setDiscount(savedCostingData.discount);
+      setSellingPrice(savedCostingData.sellingPrice);
+    } else {
+      setRate(String(costingData.transportRate));
+      setDays(String(transportDays + 1));
+      setCommission(costingData.commission);
+      setDiscount(costingData.discount);
+      setSellingPrice(costingData.sellingPrice);
+    }
 
     setTransport(String(transportTotal));
-    setRate(String(costingData.transportRate));
-    setDays(String(transportDays + 1));
-    setCommission(costingData.commission);
-    setDiscount(costingData.discount);
-    setSellingPrice(costingData.sellingPrice);
-
     setAccomodationTotal(String(accTotal));
     setTotalExpense(String(expenseTotal));
     setTotalPrice(String(priceTotal));
     setNetPrice(String(netTotal));
+
     setAccomodationData(accData);
   }, []);
 
@@ -266,6 +281,26 @@ function Costing() {
     history.replace(`/quote/quotations/edit/${quoteId}/approval`);
   };
 
+  const navigateBack = () => {
+    localStorage.setItem(
+      'New Quote Costing',
+      JSON.stringify({
+        discount,
+        netPrice,
+        sellingPrice,
+        totalExpense,
+        commission,
+        totalPrice,
+        comparisonData,
+        transportTotal: transport,
+        transportRate: rate,
+        transportDays: days,
+      }),
+    );
+
+    history.replace(`/quote/quotations/edit/${quoteId}/accomodation`);
+  };
+
   return (
     <DivAtom style={{ height: `${height}px` }}>
       <DivAtom style={quoteCreateQuoteStyles.header}>
@@ -273,7 +308,7 @@ function Costing() {
           size="small"
           children={<ChevronLeftRoundedIcon />}
           style={quoteCreateQuoteStyles.backBtn}
-          onClick={() => history.replace(`/quote/quotations/edit/${quoteId}/accomodation`)}
+          onClick={navigateBack}
         />
         <H2Atom style={quoteCreateQuoteStyles.title} text="Costing" />
       </DivAtom>
