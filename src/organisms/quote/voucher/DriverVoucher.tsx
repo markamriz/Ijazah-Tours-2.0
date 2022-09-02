@@ -42,6 +42,7 @@ function DriverVoucher({ voucherData, setIsVoucherApproved }: DriverVoucherProps
 
   const [director, setDirector] = useState(vData.director || '');
   const [remarks, setRemarks] = useState(vData.remarks || '');
+  const [driverRate, setDriverRate] = useState(vData.driverRate || vData.driverDetails?.rate || '');
 
   const [isSavingVoucher, setIsSavingVoucher] = useState(false);
 
@@ -77,6 +78,7 @@ function DriverVoucher({ voucherData, setIsVoucherApproved }: DriverVoucherProps
     vDataCopy.pdfURL = pdfURL;
     vDataCopy.director = director;
     vDataCopy.remarks = remarks;
+    vDataCopy.driverRate = driverRate;
     await updateDB(vDataCopy);
     setVData(vDataCopy);
     setIsSavingVoucher(false);
@@ -119,16 +121,43 @@ function DriverVoucher({ voucherData, setIsVoucherApproved }: DriverVoucherProps
               justifyContent: 'flex-end',
             }}
           >
-            <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
-              <SpanAtom
-                text="Payment"
-                style={voucherStyles.voucherTemplate.summaryDetails.label}
-              />
-              <SpanAtom
-                text={`$${vData.guestDetails.costings.transportTotal}`}
-                style={voucherStyles.voucherTemplate.summaryDetails.detail}
-              />
-            </p>
+            <DivAtom>
+              {!isSavingVoucher && (
+                <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
+                  <SpanAtom
+                    text="Transport Total"
+                    style={voucherStyles.voucherTemplate.summaryDetails.label}
+                  />
+                  <SpanAtom
+                    text={`$${vData.guestDetails.costings.transportTotal}`}
+                    style={voucherStyles.voucherTemplate.summaryDetails.detail}
+                  />
+                </p>
+              )}
+              {!isSavingVoucher ? (
+                <FormControlInput
+                  width="100%"
+                  label="Rate"
+                  fullWidth={true}
+                  multiline={false}
+                  rows={1}
+                  value={driverRate}
+                  setValue={setDriverRate}
+                  placeholder=""
+                />
+              ) : (
+                <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
+                  <SpanAtom
+                    text="Rate"
+                    style={voucherStyles.voucherTemplate.summaryDetails.label}
+                  />
+                  <SpanAtom
+                    text={driverRate}
+                    style={voucherStyles.voucherTemplate.summaryDetails.detail}
+                  />
+                </p>
+              )}
+            </DivAtom>
           </DivAtom>
           <DivAtom
             style={{
