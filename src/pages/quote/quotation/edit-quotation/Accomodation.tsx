@@ -327,7 +327,7 @@ function Accomodation() {
 
         const mealPlanRates = acc.rates.filter((r) => (
           r.newMealPlan === selectedAccomodationsMealPlans[index]
-          && r.newRateType === selectedAccomodationsRoomTypes[index]
+          // && r.newRateType === selectedAccomodationsRoomTypes[index]
         ));
 
         // Step one - try to obtain a perfect rate (where it lies within the range)

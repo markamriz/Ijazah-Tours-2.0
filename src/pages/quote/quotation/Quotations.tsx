@@ -216,7 +216,7 @@ function Quotations() {
                         ...quotationsStyles.btn,
                         marginRight: '16px',
                         marginBottom: widthHeightDynamicStyle(width, 768, '1rem', 0),
-                        width: widthHeightDynamicStyle(width, 768, '100%', '11rem'),
+                        width: widthHeightDynamicStyle(width, 768, '100%', '10rem'),
                       }}
                       onClick={() => null}
                       size="large"
@@ -229,7 +229,7 @@ function Quotations() {
                         ...quotationsStyles.btn,
                         marginRight: '16px',
                         marginBottom: widthHeightDynamicStyle(width, 768, '1rem', 0),
-                        width: widthHeightDynamicStyle(width, 768, '100%', '11rem'),
+                        width: widthHeightDynamicStyle(width, 768, '100%', '10rem'),
                       }}
                       onClick={() => null}
                       size="large"
@@ -241,7 +241,7 @@ function Quotations() {
                       style={{
                         ...quotationsStyles.btn,
                         marginBottom: widthHeightDynamicStyle(width, 768, '1rem', 0),
-                        width: widthHeightDynamicStyle(width, 768, '100%', '11rem'),
+                        width: widthHeightDynamicStyle(width, 768, '100%', '10rem'),
                       }}
                       onClick={() => null}
                       size="large"

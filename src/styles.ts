@@ -400,7 +400,7 @@ export const approvalStyles = {
     },
     costContainer: {
       container: {
-        width: '200px',
+        width: '220px',
         display: 'flex',
         justifyContent: 'space-between',
         margin: 0,
