@@ -55,7 +55,7 @@ function Voucher() {
       vouchData.forEach((v) => {
         const quote = quoteData.find((q) => String(q.quoteNo) === String(v.quoteNo));
         if (quote?.status === 'APPROVED' || quote?.status === 'COMPLETE'
-        || (quote?.status === 'IN PROGRESS' && v.type === 'Itinerary')) {
+          || (quote?.status === 'IN PROGRESS' && v.title === 'Itinerary')) {
           aprovedQuoteVouchers.push(v);
         }
       });
@@ -113,7 +113,7 @@ function Voucher() {
           resource: calendarEvent,
         });
 
-        request.execute(() => {});
+        request.execute(() => { });
 
         quotationSnapshot.forEach(async (snap) => {
           await setDoc(doc(db, 'Approval Quotations', snap.id), {
