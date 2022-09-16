@@ -56,7 +56,7 @@ function Voucher() {
         const quote = quoteData.find((q) => String(q.quoteNo) === String(v.quoteNo));
         if (quote?.status === 'APPROVED' || quote?.status === 'COMPLETE'
           || (quote?.status === 'IN PROGRESS' && v.title === 'Itinerary')) {
-          if ((user.role === roleOptions[1].value && quote.creator.id === user.id)
+          if ((user.role === roleOptions[1].value && quote.creator.email === user.email)
             || user.role === roleOptions[0].value) {
             aprovedQuoteVouchers.push(v);
           }

@@ -69,18 +69,18 @@ function Quotations() {
         quotations[i].id = id;
       });
 
-      if (user.role === 'Travel Agent') {
+      if (user.role === roleOptions[1].value) {
         setQuotationsData((quotations as CustomerQuotation[]).filter(
-          (quote) => quote.creator.id === user.id,
+          (quote) => quote.creator.email === user.email,
         ));
         setInitialQuotationCardData((quotations as CustomerQuotation[]).filter(
-          (quote) => quote.creator.id === user.id,
+          (quote) => quote.creator.email === user.email,
         ));
         setInitialQuotationSearchData((quotations as CustomerQuotation[]).filter(
-          (quote) => quote.creator.id === user.id,
+          (quote) => quote.creator.email === user.email,
         ));
         setInitialQuotationFilteredData((quotations as CustomerQuotation[]).filter(
-          (quote) => quote.creator.id === user.id,
+          (quote) => quote.creator.email === user.email,
         ));
       } else {
         setQuotationsData((quotations as CustomerQuotation[]).filter(
