@@ -27,7 +27,7 @@ import VoucherTable from '../../../organisms/quote/voucher/VoucherTable';
 import { selectWithNavbarHeight, selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { selectUser } from '../../../redux/userSlice';
 import { fetchingDataIndicatorStyles, voucherStyles } from '../../../styles';
-import { widthHeightDynamicStyle } from '../../../utils/helpers';
+import { roleOptions, widthHeightDynamicStyle } from '../../../utils/helpers';
 
 function Voucher() {
   const user = useSelector(selectUser);
@@ -56,7 +56,10 @@ function Voucher() {
         const quote = quoteData.find((q) => String(q.quoteNo) === String(v.quoteNo));
         if (quote?.status === 'APPROVED' || quote?.status === 'COMPLETE'
           || (quote?.status === 'IN PROGRESS' && v.title === 'Itinerary')) {
-          aprovedQuoteVouchers.push(v);
+          if ((user.role === roleOptions[1].value && quote.creator.id === user.id)
+            || user.role === roleOptions[0].value) {
+            aprovedQuoteVouchers.push(v);
+          }
         }
       });
 
