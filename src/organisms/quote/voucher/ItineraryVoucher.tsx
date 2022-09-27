@@ -136,7 +136,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
                 />
                 <SpanAtom
                   text={`$${vData.guestDetails.costings.sellingPrice}`}
-                  style={voucherStyles.voucherTemplate.summaryDetails.detail}
+                  style={{ ...voucherStyles.voucherTemplate.summaryDetails.detail, letterSpacing: '2px' }}
                 />
               </p>
               <p style={voucherStyles.voucherTemplate.summaryDetails.detailContainer}>
@@ -146,7 +146,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
                 />
                 <SpanAtom
                   text={`$${Number(vData.guestDetails.costings.sellingPrice) - Number(vData.guestDetails.costings.discount)}`}
-                  style={voucherStyles.voucherTemplate.summaryDetails.detail}
+                  style={{ ...voucherStyles.voucherTemplate.summaryDetails.detail, letterSpacing: '2px' }}
                 />
               </p>
             </DivAtom>

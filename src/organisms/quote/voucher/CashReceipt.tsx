@@ -161,7 +161,7 @@ function CashReceipt({ voucherData, setIsVoucherApproved }: CashReceiptProps) {
               />
               <SpanAtom
                 text={createPriceText(vData.guestDetails.netPrice)}
-                style={voucherStyles.voucherTemplate.cashReceipt.detail}
+                style={{ ...voucherStyles.voucherTemplate.cashReceipt.detail, letterSpacing: '2px' }}
               />
             </p>
             <p

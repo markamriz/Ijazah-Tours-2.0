@@ -163,7 +163,7 @@ function TourConfirmationVoucher({
               />
               <SpanAtom
                 text={vData.guestDetails.netPrice}
-                style={voucherStyles.voucherTemplate.summaryDetails.detail}
+                style={{ ...voucherStyles.voucherTemplate.summaryDetails.detail, letterSpacing: '2px' }}
               />
             </p>
           </DivAtom>

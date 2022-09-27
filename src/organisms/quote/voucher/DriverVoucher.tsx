@@ -130,7 +130,7 @@ function DriverVoucher({ voucherData, setIsVoucherApproved }: DriverVoucherProps
                   />
                   <SpanAtom
                     text={`$${vData.guestDetails.costings.transportTotal}`}
-                    style={voucherStyles.voucherTemplate.summaryDetails.detail}
+                    style={{ ...voucherStyles.voucherTemplate.summaryDetails.detail, letterSpacing: '2px' }}
                   />
                 </p>
               )}
