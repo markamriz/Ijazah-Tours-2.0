@@ -21,7 +21,7 @@ import { logout, selectUser } from '../redux/userSlice';
 import { navbarStyles } from '../styles';
 import { roleOptions } from '../utils/helpers';
 
-const drawerWidth = 200;
+const drawerWidth = 180;
 
 const useStyles = makeStyles((theme: Theme) => ({
   drawer: {
