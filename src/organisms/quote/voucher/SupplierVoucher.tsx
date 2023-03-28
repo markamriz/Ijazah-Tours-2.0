@@ -49,7 +49,7 @@ function SupplierVoucher({ voucherData, setIsVoucherApproved }: SupplierVoucherP
 
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('landscape', 'pt', [elementWidth + 10, elementHeight + 10]);
+    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 10]);
     return report.html(document.querySelector('#report') as HTMLElement, {
       image: {
         type: 'png',
