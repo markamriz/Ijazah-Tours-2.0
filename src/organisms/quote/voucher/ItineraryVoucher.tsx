@@ -48,8 +48,10 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
 
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight]);
+    const report = new JSPDF('portrait', 'pt', [elementWidth + 20, elementHeight + 20]);
     return report.html(document.querySelector('#report') as HTMLElement, {
+      x: 20,
+      y: 20,
       image: {
         type: 'png',
         quality: 100,
