@@ -9,8 +9,8 @@ import {
 } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
 
-import { db } from '../firebase';
 import { Order } from './types';
+import { db } from '../firebase';
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {

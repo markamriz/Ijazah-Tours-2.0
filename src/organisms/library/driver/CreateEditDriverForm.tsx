@@ -2,6 +2,7 @@ import { ChangeEvent } from 'react';
 
 import { CircularProgress } from '@material-ui/core';
 
+import ImageUploader from './ImageUploader';
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
 import ParagraphAtom from '../../../atoms/ParagraphAtom';
@@ -12,7 +13,6 @@ import FormControlInput from '../../../molecules/FormControlInput';
 import { libraryDriverStyles, libraryStyles } from '../../../styles';
 import { statusOptions, vehicleOptions, widthHeightDynamicStyle } from '../../../utils/helpers';
 import { FlexDirection } from '../../../utils/types';
-import ImageUploader from './ImageUploader';
 
 interface CreateEditDriverFormProps {
   width: number;

@@ -6,6 +6,7 @@ import {
   InputLabel,
 } from '@material-ui/core';
 
+import AccomodationRatesContainer from './AccomodationRatesContainer';
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
 import InputAtom from '../../../atoms/InputAtom';
@@ -24,7 +25,6 @@ import {
   FlexDirection,
   SettingsRoomProperties,
 } from '../../../utils/types';
-import AccomodationRatesContainer from './AccomodationRatesContainer';
 
 interface CreateEditAccomodationFormProps {
   accomodationTypeData: DropdownOption[];

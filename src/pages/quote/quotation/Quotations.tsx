@@ -6,6 +6,16 @@ import { collection, getDocs } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { Link, Route } from 'react-router-dom';
 
+import CreateAccomodation from './create-quotation/Accomodation';
+import CreateApproval from './create-quotation/Approval';
+import CreateCosting from './create-quotation/Costing';
+import CreateCustomer from './create-quotation/Customer';
+import EditAccomodation from './edit-quotation/Accomodation';
+import EditApproval from './edit-quotation/Approval';
+import EditCosting from './edit-quotation/Costing';
+import EditCustomer from './edit-quotation/Customer';
+import PresetAccomodation from './preset-qoutes/PresetAccomodation';
+import PresetQuote from './preset-qoutes/PresetQuote';
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
 import InputAtom from '../../../atoms/InputAtom';
@@ -19,16 +29,6 @@ import { selectUser } from '../../../redux/userSlice';
 import { fetchingDataIndicatorStyles, libraryStyles, quotationsStyles } from '../../../styles';
 import { roleOptions, searchData, widthHeightDynamicStyle } from '../../../utils/helpers';
 import { CustomerQuotation, FlexDirection, JustifyContent } from '../../../utils/types';
-import CreateAccomodation from './create-quotation/Accomodation';
-import CreateApproval from './create-quotation/Approval';
-import CreateCosting from './create-quotation/Costing';
-import CreateCustomer from './create-quotation/Customer';
-import EditAccomodation from './edit-quotation/Accomodation';
-import EditApproval from './edit-quotation/Approval';
-import EditCosting from './edit-quotation/Costing';
-import EditCustomer from './edit-quotation/Customer';
-import PresetAccomodation from './preset-qoutes/PresetAccomodation';
-import PresetQuote from './preset-qoutes/PresetQuote';
 
 function Quotations() {
   const user = useSelector(selectUser);

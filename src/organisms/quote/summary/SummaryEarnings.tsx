@@ -2,6 +2,7 @@ import { MouseEventHandler } from 'react';
 
 import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 
+import EarningsTable from './EarningsTable';
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
 import ParagraphAtom from '../../../atoms/ParagraphAtom';
@@ -10,7 +11,6 @@ import FormControlInput from '../../../molecules/FormControlInput';
 import { libraryAccomodationStyles, summaryStyles, TableToolbarStyles } from '../../../styles';
 import { widthHeightDynamicStyle } from '../../../utils/helpers';
 import { FlexDirection } from '../../../utils/types';
-import EarningsTable from './EarningsTable';
 
 interface SummaryEarningsProps {
   width: number;

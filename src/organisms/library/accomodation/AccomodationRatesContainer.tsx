@@ -2,6 +2,7 @@ import { ChangeEvent, MouseEventHandler } from 'react';
 
 import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 
+import AccomodationPriceTable from './AccomodationPriceTable';
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
 import H2Atom from '../../../atoms/H2Atom';
@@ -14,7 +15,6 @@ import {
 } from '../../../styles';
 import { widthHeightDynamicStyle } from '../../../utils/helpers';
 import { AccomodationRate, DropdownOption, FlexDirection } from '../../../utils/types';
-import AccomodationPriceTable from './AccomodationPriceTable';
 
 interface AccomodationRatesContainerProps {
   rateRoomTypes: DropdownOption[];

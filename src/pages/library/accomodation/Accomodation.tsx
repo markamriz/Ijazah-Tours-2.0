@@ -9,6 +9,8 @@ import {
 import { useSelector } from 'react-redux';
 import { Route, useHistory } from 'react-router-dom';
 
+import CreateAccomodation from './CreateAccomodation';
+import EditAccomodation from './EditAccomodation';
 import DivAtom from '../../../atoms/DivAtom';
 import { db } from '../../../firebase';
 import AccomodationTable from '../../../organisms/library/accomodation/AccomodationTable';
@@ -23,8 +25,6 @@ import {
   SettingsLocation,
   SettingsRoomProperties,
 } from '../../../utils/types';
-import CreateAccomodation from './CreateAccomodation';
-import EditAccomodation from './EditAccomodation';
 
 function Accomodation() {
   const height = useSelector(selectWithNavbarHeight);

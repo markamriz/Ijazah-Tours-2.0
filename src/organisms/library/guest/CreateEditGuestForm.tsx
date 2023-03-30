@@ -10,6 +10,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { City, Country } from 'country-state-city';
 import { v4 as uuid } from 'uuid';
 
+import ImageUploader from './ImageUploader';
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
 import H2Atom from '../../../atoms/H2Atom';
@@ -21,7 +22,6 @@ import FormControlInput from '../../../molecules/FormControlInput';
 import { libraryCreateGuestStyles, libraryStyles } from '../../../styles';
 import { MenuProps, statusOptions, widthHeightDynamicStyle } from '../../../utils/helpers';
 import { CityDropdown, FlexDirection, LocationDropdown } from '../../../utils/types';
-import ImageUploader from './ImageUploader';
 
 interface CreateEditGuestFormProps {
   width: number;

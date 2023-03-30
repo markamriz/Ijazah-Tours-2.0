@@ -9,8 +9,8 @@ import {
 } from '@material-ui/core';
 import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 
-import { Order, LibraryHeadCell, QuoteHeadCell } from '../utils/types';
 import TableColumnCell from './TableColumnCell';
+import { Order, LibraryHeadCell, QuoteHeadCell } from '../utils/types';
 
 interface TableHeadProps {
   orderBy: string;

@@ -9,6 +9,8 @@ import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
+import VoucherGuestTable from './specific-voucher/VoucherGuestTable';
+import VoucherSummary from './specific-voucher/VoucherSummary';
 import ButtonAtom from '../../../atoms/ButtonAtom';
 import DivAtom from '../../../atoms/DivAtom';
 import H2Atom from '../../../atoms/H2Atom';
@@ -22,8 +24,6 @@ import { selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
-import VoucherGuestTable from './specific-voucher/VoucherGuestTable';
-import VoucherSummary from './specific-voucher/VoucherSummary';
 
 const storage = getStorage();
 

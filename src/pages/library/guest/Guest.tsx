@@ -9,6 +9,8 @@ import {
 import { useSelector } from 'react-redux';
 import { Route, useHistory } from 'react-router-dom';
 
+import CreateGuest from './CreateGuest';
+import EditGuest from './EditGuest';
 import DivAtom from '../../../atoms/DivAtom';
 import { db } from '../../../firebase';
 import GuestTable from '../../../organisms/library/guest/GuestTable';
@@ -16,8 +18,6 @@ import { selectWithNavbarHeight } from '../../../redux/containerSizeSlice';
 import { libraryStyles } from '../../../styles';
 import { searchData } from '../../../utils/helpers';
 import { LibraryGuest } from '../../../utils/types';
-import CreateGuest from './CreateGuest';
-import EditGuest from './EditGuest';
 
 function Guest() {
   const height = useSelector(selectWithNavbarHeight);

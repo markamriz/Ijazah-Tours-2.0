@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
+import AccomodationCard from './AccomodationCard';
+import Sidebar from './Sidebar';
 import DivAtom from '../../../../../../atoms/DivAtom';
 import { quoteCreateQuoteStyles } from '../../../../../../styles';
 import { SettingsSingleInput, UserAccomodation } from '../../../../../../utils/types';
-import AccomodationCard from './AccomodationCard';
-import Sidebar from './Sidebar';
 
 interface SearchbarProps {
   searchTerm: string;

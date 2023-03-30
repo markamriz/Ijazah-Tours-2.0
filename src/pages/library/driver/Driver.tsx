@@ -9,6 +9,8 @@ import {
 import { useSelector } from 'react-redux';
 import { Route, useHistory } from 'react-router-dom';
 
+import CreateDriver from './CreateDriver';
+import EditDriver from './EditDriver';
 import DivAtom from '../../../atoms/DivAtom';
 import { db } from '../../../firebase';
 import DriverTable from '../../../organisms/library/driver/DriverTable';
@@ -16,8 +18,6 @@ import { selectWithNavbarHeight } from '../../../redux/containerSizeSlice';
 import { libraryStyles } from '../../../styles';
 import { searchData } from '../../../utils/helpers';
 import { LibraryDriver } from '../../../utils/types';
-import CreateDriver from './CreateDriver';
-import EditDriver from './EditDriver';
 
 function Driver() {
   const height = useSelector(selectWithNavbarHeight);

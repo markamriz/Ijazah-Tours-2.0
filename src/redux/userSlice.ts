@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // eslint-disable-next-line import/no-cycle
-import { User } from '../utils/types';
 import { RootState } from './root';
+import { User } from '../utils/types';
 
 interface UserState {
   user: User;

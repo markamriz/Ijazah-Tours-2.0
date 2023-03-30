@@ -3,8 +3,8 @@ import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route } from 'react-router-dom';
 
-import { selectUser } from '../redux/userSlice';
 import { roleOptions } from './helpers';
+import { selectUser } from '../redux/userSlice';
 
 interface ProtectedRouteProps {
   path: string;
