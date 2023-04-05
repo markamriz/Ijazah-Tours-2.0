@@ -192,11 +192,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
           endIcon={isSavingVoucher && <CircularProgress size={20} color="inherit" />}
           disabled={isSavingVoucher || director === ''}
           onClick={saveVoucher}
-          /* style={{
-            ...voucherStyles.addBtn,
-            width: widthHeightDynamicStyle(width, 768, '100%', '15%'),
-            margin: widthHeightDynamicStyle(width, 768, '100%', '18%') ? '0 1rem 1rem 0' : '0 0 1rem 2rem',
-          }} */
+         
         />
       </DivAtom>
     </>
