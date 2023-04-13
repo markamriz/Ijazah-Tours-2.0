@@ -185,7 +185,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
         </DivAtom>
       </div>
 
-      <DivAtom style={{ padding: '2rem' }}>
+      <DivAtom style={{ padding: '0.5rem 0' }}>
         <ButtonAtom
           size="large"
           text="Confirm"
