@@ -59,7 +59,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
         quality: 100,
       },
       html2canvas: {
-        scale: 0.5,
+        scale: 1,
         allowTaint: true,
         letterRendering: true,
         svgRendering: true,
