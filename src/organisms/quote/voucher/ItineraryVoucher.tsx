@@ -56,10 +56,10 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       y: 20,
       image: {
         type: 'png',
-        quality: 80,
+        quality: 100,
       },
       html2canvas: {
-        scale: 1,
+        scale: 0.5,
         allowTaint: true,
         letterRendering: true,
         svgRendering: true,
