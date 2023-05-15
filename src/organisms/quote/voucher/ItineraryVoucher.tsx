@@ -48,7 +48,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
 
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('landscape', 'pt', [elementWidth * 2, elementHeight * 2]);
+    const report = new JSPDF('portrait', 'pt', [elementWidth * 2, elementHeight * 2]);
     report.setFont('Arial');
 
     return report.html(document.querySelector('#report') as HTMLElement, {
