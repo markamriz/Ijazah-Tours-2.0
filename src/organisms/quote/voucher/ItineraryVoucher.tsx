@@ -63,8 +63,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
         const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
         report.save(filename);
         return pdfURL;
-      }
-      );
+      });
   };
     // report.setFont('Arial');
     // return report.html(document.querySelector('#report') as HTMLElement, {
@@ -212,3 +211,4 @@ export default ItineraryVoucher;
 function html2canvas(arg0: HTMLElement) {
   throw new Error('Function not implemented.');
 }
+
