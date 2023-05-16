@@ -49,14 +49,22 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
     const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight]);
-    const canvas = await html2canvas(document.querySelector('report') as HTMLElement);
-    const scaleFactor = elementWidth / canvas.width;
+    const canvas = html2canvas(document.querySelector('#report') as HTMLElement, {
+      scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
+    });
+    if (!canvas) {
+      console.error('Failed to generate HTML content');
+      return null;
+    }
+    const imgData = canvas.toDataURL('image/png');
+    /* const scaleFactor = elementWidth / canvas.width;
     const scaledCanvas = document.createElement('canvas');
     scaledCanvas.width = elementWidth;
     scaledCanvas.height = canvas.height * scaleFactor;
     const scaledContext = scaledCanvas.getContext('2d');
     scaledContext.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
-    return report.addImage(scaledCanvas.toDataURL('image/png'), 'PNG', 20, 20, elementWidth, scaledCanvas.height)
+    */
+    return report.addImage(imgData, 'PNG', 20, 20, elementWidth, canvas.height * (elementWidth / canvas.width));
       .then(async () => {
         report.deletePage(report.getNumberOfPages());
         const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
