@@ -57,14 +57,14 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     const scaledContext = scaledCanvas.getContext('2d');
     scaledContext.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
     return report.addImage(scaledCanvas.toDataURL('image/png'), 'PNG', 20, 20, elementWidth, scaledCanvas.height)
-            .then(async () => {
-              report.deletePage(report.getNumberOfPages());
-              const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
-              const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
-              report.save(filename);
-              return pdfURL;
-            }
-            );
+      .then(async () => {
+        report.deletePage(report.getNumberOfPages());
+        const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
+        const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
+        report.save(filename);
+        return pdfURL;
+      }
+      );
   };
     // report.setFont('Arial');
     // return report.html(document.querySelector('#report') as HTMLElement, {
