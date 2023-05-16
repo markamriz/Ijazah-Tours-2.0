@@ -63,7 +63,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
           if (context && context.width > elementWidth) {
             return 0.5;
           }
-            return 1;
+          return 1;
         },
         allowTaint: true,
         letterRendering: true,
