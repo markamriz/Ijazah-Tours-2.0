@@ -48,28 +48,16 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
 
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('portrait', 'pt', [elementWidth * 2, elementHeight * 2]);
-    report.setFont('Arial');
-
-    return report.html(document.querySelector('#report') as HTMLElement, {
-      x: 20,
-      y: 20,
-      image: {
-        type: 'png',
-        quality: 100,
-      },
-      html2canvas: {
-        scale: (canvas, context) => {
-          if (context && context.width > elementWidth) {
-            return 0.5;
-          }
-          return 1;
-        },
-        allowTaint: true,
-        letterRendering: true,
-        svgRendering: true,
-      },
-    }).then(async () => {
+    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight]);
+    const canvas = await html2canvas(document.querySelector('report') as HTMLElement);
+    const scaleFactor = elementWidth / canvas.width;
+    const scaledCanvas = document.createElement('canvas');
+    scaledCanvas.width = elementWidth
+    scaledCanvas.height = canvas.height * scaleFactor;
+    const scaledContext = scaledCanvas.getContext('2d');
+    scaledContext.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    return report.addImage(scaledCanvas.toDataURL('image/png'), 'PNG', 20, 20, elementWidth, scaledCanvas.height)
+    .then(async () => {
       report.deletePage(report.getNumberOfPages());
       const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
       const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
@@ -78,6 +66,23 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     });
   };
 
+
+    //report.setFont('Arial');
+
+    //return report.html(document.querySelector('#report') as HTMLElement, {
+     //(x: 20,
+      //y: 20,
+      //image: {
+        //type: 'png',
+        //quality: 100,
+      //},
+      //html2canvas: {
+        //scale: 1,
+        //allowTaint: true,
+        //letterRendering: true,
+        //svgRendering: true,
+      //},
+    //})"
   const saveVoucher = async () => {
     setIsSavingVoucher(true);
     setIsVoucherApproved(false);
@@ -206,3 +211,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
 }
 
 export default ItineraryVoucher;
+function html2canvas(arg0: HTMLElement) {
+  throw new Error('Function not implemented.');
+}
+
