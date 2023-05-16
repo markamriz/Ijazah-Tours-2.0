@@ -211,4 +211,3 @@ export default ItineraryVoucher;
 function html2canvas(arg0: HTMLElement) {
   throw new Error('Function not implemented.');
 }
-
