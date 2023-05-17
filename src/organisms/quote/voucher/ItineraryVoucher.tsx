@@ -74,14 +74,17 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     const htmlContent = document.querySelector('#report') as HTMLElement;
     const htmlHeight = htmlContent.offsetHeight;
     const totalPages = Math.ceil(htmlHeight / pdfHeight);
-    for (let i = 0; i < totalPages; i++) {
+    const promises = [];
+    for (let i = 0; i < totalPages; i += 1) {
       if (i > 0) {
         report.addPage();
       }
       const y = -pdfHeight * i + pdfMargins.top;
       options.y = y >= 0 ? y : pdfMargins.top;
-      await report.html(htmlContent, options);
+      promises.push(report.html(htmlContent, options));
     }
+    await Promise.all(promises);
+    
     const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
     const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
     report.save(filename);
@@ -101,7 +104,6 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     scaledCanvas.height = canvas.height * scaleFactor;
     const scaledContext = scaledCanvas.getContext('2d');
     scaledContext.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
-    return report.addImage(imgData, 'PNG', 20, 20, elementWidth, canvas.clientHeight * (elementWidth / canvas.clientWidth));
     return report.html(document.querySelector('#report') as HTMLElement, {
       x: 20,
       y: 20,
