@@ -4,7 +4,7 @@ import { CircularProgress } from '@material-ui/core';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-import JSPDF from 'jspdf';
+import JSPDF, { HTMLOptions } from 'jspdf';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
@@ -23,6 +23,7 @@ import { selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
+import { report } from 'process';
 
 const storage = getStorage();
 
@@ -48,8 +49,46 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
 
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight]);
-    const canvas = html2canvas(document.querySelector('#report') as HTMLElement, {
+    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 20]);
+    const pdfHeight = report.internal.pageSize.getHeight();
+    const pdfWidth = report.internal.pageSize.getWidth();
+    const pdfMargins = {
+      top: 10,
+      bottom: 10,
+      left: 10,
+      right: 10,
+    };
+    const options: HTMLOptions = {
+      x: pdfMargins.left,
+      y: pdfMargins.top,
+      image: {
+        type: 'png',
+        quality: 100,
+      },
+      html2canvas: {
+        scale: 1,
+        allowTaint: true,
+        letterRendering: true,
+        svgRendering: true,
+      },
+    };
+    const htmlContent = document.querySelector('#report') as HTMLElement;
+    const htmlHeight = htmlContent.offsetHeight;
+    const totalPages = Math.ceil(htmlHeight / pdfHeight);
+    for (let i = 0; i < totalPages; i++) {
+      if (i > 0) {
+        report.addPage();
+      }
+      const y = -pdfHeight * i + pdfMargins.top;
+      options.y = y >= 0 ? y : pdfMargins.top;
+      await report.html(htmlContent, options);
+    }
+    const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
+    const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
+    report.save(filename);
+    return pdfURL;
+  };
+    /* {
       scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
     });
     if (!canvas) {
@@ -57,37 +96,28 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       return null;
     }
     const imgData = canvas.toDataURL('image/png');
-    /* const scaleFactor = elementWidth / canvas.width;
+    const scaleFactor = elementWidth / canvas.width;
     const scaledCanvas = document.createElement('canvas');
     scaledCanvas.width = elementWidth;
     scaledCanvas.height = canvas.height * scaleFactor;
     const scaledContext = scaledCanvas.getContext('2d');
     scaledContext.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+        return report.addImage(imgData, 'PNG', 20, 20, elementWidth, canvas.clientHeight * (elementWidth / canvas.clientWidth));
+  return report.html(document.querySelector('#report') as HTMLElement, {
+      x: 20,
+      y: 20,
+      image: {
+        type: 'png',
+        quality: 100,
+      },
+    }).then(async () => {
+      report.deletePage(report.getNumberOfPages());
+      const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
+      const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
+      report.save(filename);
+      return pdfURL;
+    });
     */
-    return report.addImage(imgData, 'PNG', 20, 20, elementWidth, canvas.height * (elementWidth / canvas.width));
-      .then(async () => {
-        report.deletePage(report.getNumberOfPages());
-        const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
-        const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
-        report.save(filename);
-        return pdfURL;
-      });
-  };
-    // report.setFont('Arial');
-    // return report.html(document.querySelector('#report') as HTMLElement, {
-    // (x: 20,
-    // y: 20,
-    // image: {
-    // type: 'png',
-    // quality: 100,
-    // },
-    // html2canvas: {
-    // scale: 1,
-    // allowTaint: true,
-    // letterRendering: true,
-    // svgRendering: true,
-    // },
-    // })"
   const saveVoucher = async () => {
     setIsSavingVoucher(true);
     setIsVoucherApproved(false);
