@@ -84,7 +84,6 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       promises.push(report.html(htmlContent, options));
     }
     await Promise.all(promises);
-    
     const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
     const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
     report.save(filename);
