@@ -110,13 +110,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
         type: 'png',
         quality: 100,
       },
-    }).then(async () => {
-      report.deletePage(report.getNumberOfPages());
-      const filename = `${uuid()}-${vData.guestDetails.name}.pdf`;
-      const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
-      report.save(filename);
-      return pdfURL;
-    });
+    })
     */
   const saveVoucher = async () => {
     setIsSavingVoucher(true);
