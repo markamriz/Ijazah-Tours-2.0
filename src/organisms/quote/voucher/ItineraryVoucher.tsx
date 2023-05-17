@@ -55,7 +55,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       top: 10,
       bottom: 10,
       left: 10,
-      right: 10,
+      right: 20,
     };
     const options: HTMLOptions = {
       x: pdfMargins.left,
@@ -79,7 +79,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       if (i > 0) {
         report.addPage();
       }
-      const y = -pdfHeight * i + pdfMargins.top;
+      const y = -pdfHeight * i + pdfMargins.left;
       options.y = y >= 0 ? y : pdfMargins.top;
       promises.push(report.html(htmlContent, options));
     }
