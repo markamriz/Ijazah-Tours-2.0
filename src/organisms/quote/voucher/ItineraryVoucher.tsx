@@ -23,7 +23,6 @@ import { selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
-import { report } from 'process';
 
 const storage = getStorage();
 
@@ -102,8 +101,8 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     scaledCanvas.height = canvas.height * scaleFactor;
     const scaledContext = scaledCanvas.getContext('2d');
     scaledContext.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
-        return report.addImage(imgData, 'PNG', 20, 20, elementWidth, canvas.clientHeight * (elementWidth / canvas.clientWidth));
-  return report.html(document.querySelector('#report') as HTMLElement, {
+    return report.addImage(imgData, 'PNG', 20, 20, elementWidth, canvas.clientHeight * (elementWidth / canvas.clientWidth));
+    return report.html(document.querySelector('#report') as HTMLElement, {
       x: 20,
       y: 20,
       image: {
