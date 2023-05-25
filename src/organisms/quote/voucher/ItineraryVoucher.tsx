@@ -23,6 +23,9 @@ import { selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+
 
 const storage = getStorage();
 
@@ -46,6 +49,39 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
 
   const history = useHistory();
 
+  pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+  interface DocDefinition {
+    pageSize: string;
+    pageOrientation: string;
+    pageMargins: number[];
+    content: any[];
+  }
+
+/*  const generatePDF = () => {
+    const { elementWidth, elementHeight } = getElementWidth('report');
+    const htmlContent = document.querySelector('#report') as HTMLElement;
+    const canvas = document.createElement('canvas');
+    canvas.width = elementWidth;
+    canvas.height = elementHeight;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(htmlContent, 0, 0, elementWidth, elementHeight);
+
+    }
+    const docDefinition: DocDefinition = {
+      pageSize: 'A4',
+      pageOrientation: 'portrait',
+      pageMargins: [20, 20, 20, 20],
+      content: [
+        {
+          image: htmlContent.toDataURL(),
+
+        }
+      ]
+    }
+  }
+  */
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
     const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 20]);
@@ -78,7 +114,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     for (let i = 0; i < totalPages; i += 1) {
       if (i > 0) {
         report.addPage();
-      }
+      } 
       const y = -pdfHeight * i + pdfMargins.left;
       options.y = y >= 0 ? y : pdfMargins.top;
       promises.push(report.html(htmlContent, options));
@@ -89,7 +125,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     report.save(filename);
     return pdfURL;
   };
-    /* {
+ /*{
       scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
     });
     if (!canvas) {
