@@ -4,7 +4,7 @@ import { CircularProgress } from '@material-ui/core';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-import JSPDF, { HTMLOptions } from 'jspdf';
+import JSPDF, { HTMLOptions, jsPDF } from 'jspdf';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
@@ -23,8 +23,7 @@ import { selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+
 
 
 const storage = getStorage();
@@ -48,8 +47,6 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
   const [isSavingVoucher, setIsSavingVoucher] = useState(false);
 
   const history = useHistory();
-
-  pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
   interface DocDefinition {
     pageSize: string;
@@ -82,48 +79,31 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     }
   }
   */
-  const generatePDF = async () => {
+  
+  const generatePDF = () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 20]);
-    const pdfHeight = report.internal.pageSize.getHeight();
-    const pdfWidth = report.internal.pageSize.getWidth();
-    const pdfMargins = {
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 20,
-    };
-    const options: HTMLOptions = {
-      x: pdfMargins.left,
-      y: pdfMargins.top,
-      image: {
-        type: 'png',
-        quality: 100,
-      },
-      html2canvas: {
-        scale: pdfWidth / elementWidth,
-        allowTaint: true,
-        letterRendering: true,
-        svgRendering: true,
-      },
-    };
+    const report = new JSPDF('p', 'pt', [elementWidth, elementHeight]);
     const htmlContent = document.querySelector('#report') as HTMLElement;
-    const htmlHeight = htmlContent.offsetHeight;
-    const totalPages = Math.ceil(htmlHeight / pdfHeight);
-    const promises = [];
-    for (let i = 0; i < totalPages; i += 1) {
-      if (i > 0) {
-        report.addPage();
-      } 
-      const y = -pdfHeight * i + pdfMargins.left;
-      options.y = y >= 0 ? y : pdfMargins.top;
-      promises.push(report.html(htmlContent, options));
-    }
-    await Promise.all(promises);
-    const filename = `${vData.guestDetails.id}-${vData.guestDetails.name}.pdf`;
-    const pdfURL = await uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
-    report.save(filename);
-    return pdfURL;
+    const options = {
+      pagesplit: true,
+      margin: [20, 20, 20, 20],
+      html2canvas: {
+        scale: 2,
+        letterRendering: true,
+        useCORS: true,
+      },
+      jsPDF: {
+        unit: 'pt',
+        format: 'a4',
+        orientation: 'potrait',
+      },
+    };
+    report.html(htmlContent, options).then(() => {
+      const filename = `${vData.guestDetails.id}-${vData.guestDetails.name}.pdf`;
+      const pdfURL = uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
+      report.save(filename);
+      return pdfURL;
+    });
   };
  /*{
       scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
