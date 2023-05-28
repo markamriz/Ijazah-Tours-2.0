@@ -74,7 +74,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       }
     }
   */
-  
+
   const generatePDF = () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
     const report = new JSPDF('p', 'pt', [elementWidth, elementHeight]);
@@ -101,7 +101,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     });
   };
  /*
- {
+    {
       scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
     });
     if (!canvas) {
