@@ -94,13 +94,13 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       },
     };
     report.html(htmlContent, options).then(() => {
-      const filename = `${vData.guestDetails.id}-${vData.guestDetails.name}.pdf`;
+      const filename = `${vData.guestDetails.quoteNo}-${vData.guestDetails.name}.pdf`;
       const pdfURL = uploadPDF(storage, 'voucher-itnerary-pdfs', report.output('blob'), filename);
       report.save(filename);
       return pdfURL;
     });
   };
- /*
+  /*
     {
       scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
     });
