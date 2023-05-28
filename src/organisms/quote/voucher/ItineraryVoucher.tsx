@@ -23,6 +23,10 @@ import { selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const storage = getStorage();
 
@@ -52,30 +56,27 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     pageMargins: number[];
     content: any[];
   }
-  /*  const generatePDF = () => {
-      const { elementWidth, elementHeight } = getElementWidth('report');
-      const htmlContent = document.querySelector('#report') as HTMLElement;
-      const canvas = document.createElement('canvas');
-      canvas.width = elementWidth;
-      canvas.height = elementHeight;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(htmlContent, 0, 0, elementWidth, elementHeight);
-      }
-      const docDefinition: DocDefinition = {
-        pageSize: 'A4',
-        pageOrientation: 'portrait',
-        pageMargins: [20, 20, 20, 20],
-        content: [
-          {
-            image: htmlContent.toDataURL(),
-          }
-        ]
-      }
-    }
-  */
-
-  const generatePDF = () => {
+  const generatePDF = async () => {
+    const { elementWidth, elementHeight } = getElementWidth('report');
+    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 10]);
+    return report.html(document.querySelector('#report') as HTMLElement, {
+      autoPaging: 'text',
+      margin: [20, 0, 20, 0],
+      html2canvas: {
+        scale: 1,
+        allowTaint: true,
+        letterRendering: true,
+        svgRendering: true,
+      },
+    }).then(async () => {
+      const filename = `${vData.guestDetails.quoteNo}-${vData.guestDetails.name}.pdf`;
+      const pdfURL = await uploadPDF(storage, 'voucher-tour-confirmation-pdfs', report.output('blob'), filename);
+      report.save(filename);
+      return pdfURL;
+    });
+  };
+  /*
+ const generatePDF = () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
     const report = new JSPDF('p', 'pt', [elementWidth, elementHeight]);
     const htmlContent = document.querySelector('#report') as HTMLElement;
@@ -105,30 +106,8 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       return pdfURL;
     });
   };
-  /*
-    {
-      scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
-    });
-    if (!canvas) {
-      console.error('Failed to generate HTML content');
-      return null;
-    }
-    const imgData = canvas.toDataURL('image/png');
-    const scaleFactor = elementWidth / canvas.width;
-    const scaledCanvas = document.createElement('canvas');
-    scaledCanvas.width = elementWidth;
-    scaledCanvas.height = canvas.height * scaleFactor;
-    const scaledContext = scaledCanvas.getContext('2d');
-    scaledContext.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
-    return report.html(document.querySelector('#report') as HTMLElement, {
-      x: 20,
-      y: 20,
-      image: {
-        type: 'png',
-        quality: 100,
-      },
-    })
-    */
+  */
+
   const saveVoucher = async () => {
     setIsSavingVoucher(true);
     setIsVoucherApproved(false);
