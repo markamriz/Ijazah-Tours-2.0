@@ -91,6 +91,11 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
         unit: 'pt',
         format: 'a4',
         orientation: 'potrait',
+        CapJoinStyles: 0,
+        version: '1.5.3',
+        compatAPI: '1.4',
+        advancedAPI: true,
+        isAdvancedAPI: true,
       },
     };
     report.html(htmlContent, options).then(() => {
