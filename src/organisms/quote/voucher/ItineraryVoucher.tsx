@@ -23,10 +23,6 @@ import { selectWithNavbarWidth } from '../../../redux/containerSizeSlice';
 import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const storage = getStorage();
 
