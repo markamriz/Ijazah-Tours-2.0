@@ -24,8 +24,6 @@ import { voucherStyles } from '../../../styles';
 import { getElementWidth, uploadPDF, widthHeightDynamicStyle } from '../../../utils/helpers';
 import Banner from '../quotation/create-quotation/approval/Banner';
 
-
-
 const storage = getStorage();
 
 interface ItineraryVoucherProps {
@@ -54,30 +52,27 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     pageMargins: number[];
     content: any[];
   }
-
-/*  const generatePDF = () => {
-    const { elementWidth, elementHeight } = getElementWidth('report');
-    const htmlContent = document.querySelector('#report') as HTMLElement;
-    const canvas = document.createElement('canvas');
-    canvas.width = elementWidth;
-    canvas.height = elementHeight;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.drawImage(htmlContent, 0, 0, elementWidth, elementHeight);
-
+  /*  const generatePDF = () => {
+      const { elementWidth, elementHeight } = getElementWidth('report');
+      const htmlContent = document.querySelector('#report') as HTMLElement;
+      const canvas = document.createElement('canvas');
+      canvas.width = elementWidth;
+      canvas.height = elementHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(htmlContent, 0, 0, elementWidth, elementHeight);
+      }
+      const docDefinition: DocDefinition = {
+        pageSize: 'A4',
+        pageOrientation: 'portrait',
+        pageMargins: [20, 20, 20, 20],
+        content: [
+          {
+            image: htmlContent.toDataURL(),
+          }
+        ]
+      }
     }
-    const docDefinition: DocDefinition = {
-      pageSize: 'A4',
-      pageOrientation: 'portrait',
-      pageMargins: [20, 20, 20, 20],
-      content: [
-        {
-          image: htmlContent.toDataURL(),
-
-        }
-      ]
-    }
-  }
   */
   
   const generatePDF = () => {
@@ -105,7 +100,8 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       return pdfURL;
     });
   };
- /*{
+ /*
+ {
       scale: elementWidth / (document.querySelector('#report')?.clientWidth || 1),
     });
     if (!canvas) {
