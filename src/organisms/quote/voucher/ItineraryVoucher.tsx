@@ -63,13 +63,11 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
     };
     const contentWidth = elementWidth * 0.5;
     const contentHeight = elementHeight * 0.5;
-    const contentX = (report.internal.pageSize.width - contentWidth) / 2;
-    const contentY = (report.internal.pageSize.height - elementHeight) / 2;
     return report.html(document.querySelector('#report') as HTMLElement, {
       autoPaging: 'text',
       margin: [20, 20, 20, 20],
-      x: contentX,
-      y: contentY,
+      x: contentWidth,
+      y: contentHeight,
       html2canvas: options,
     }).then(async () => {
       const filename = `${vData.guestDetails.quoteNo}-${vData.guestDetails.name}.pdf`;
