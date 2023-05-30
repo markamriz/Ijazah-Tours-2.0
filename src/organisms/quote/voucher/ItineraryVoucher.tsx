@@ -54,7 +54,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
   }
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
-    const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 10]);
+    const report = new JSPDF('portrait', 'pt', [elementWidth, elementHeight]);
     const options = {
       scale: 0.5,
       allowTaint: true,
