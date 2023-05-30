@@ -45,7 +45,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
   const [isSavingVoucher, setIsSavingVoucher] = useState(false);
 
   const history = useHistory();
-
+ 
   interface DocDefinition {
     pageSize: string;
     pageOrientation: string;
@@ -55,15 +55,22 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
   const generatePDF = async () => {
     const { elementWidth, elementHeight } = getElementWidth('report');
     const report = new JSPDF('portrait', 'pt', [elementWidth + 10, elementHeight + 10]);
-    return report.html(document.querySelector('#report') as HTMLElement, {
+    const options = {
+      scale: 0.5,
+      allowTaint: true,
+      letterRendering: true,
+      svgRendering: true,
+     };
+     const contentWidth = elementWidth * 0.5;
+     const contentHeight = elementHeight * 0.5;
+     const contentX = (elementWidth - contentWidth) / 2;
+     const contentY =(elementHeight - elementHeight) / 2;
+     return report.html(document.querySelector('#report') as HTMLElement, {
       autoPaging: 'text',
-      margin: [20, 0, 20, 0],
-      html2canvas: {
-        scale: 1,
-        allowTaint: true,
-        letterRendering: true,
-        svgRendering: true,
-      },
+      margin: [20, 20, 20, 20],
+      x: contentX,
+      y:contentY,
+      html2canvas: options,
     }).then(async () => {
       const filename = `${vData.guestDetails.quoteNo}-${vData.guestDetails.name}.pdf`;
       const pdfURL = await uploadPDF(storage, 'voucher-tour-confirmation-pdfs', report.output('blob'), filename);
