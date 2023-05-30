@@ -45,7 +45,7 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
   const [isSavingVoucher, setIsSavingVoucher] = useState(false);
 
   const history = useHistory();
- 
+
   interface DocDefinition {
     pageSize: string;
     pageOrientation: string;
@@ -60,16 +60,16 @@ function ItineraryVoucher({ voucherData, setIsVoucherApproved }: ItineraryVouche
       allowTaint: true,
       letterRendering: true,
       svgRendering: true,
-     };
-     const contentWidth = elementWidth * 0.5;
-     const contentHeight = elementHeight * 0.5;
-     const contentX = (elementWidth - contentWidth) / 2;
-     const contentY =(elementHeight - elementHeight) / 2;
-     return report.html(document.querySelector('#report') as HTMLElement, {
+    };
+    const contentWidth = elementWidth * 0.5;
+    const contentHeight = elementHeight * 0.5;
+    const contentX = (elementWidth - contentWidth) / 2;
+    const contentY = (elementHeight - elementHeight) / 2;
+    return report.html(document.querySelector('#report') as HTMLElement, {
       autoPaging: 'text',
       margin: [20, 20, 20, 20],
       x: contentX,
-      y:contentY,
+      y: contentY,
       html2canvas: options,
     }).then(async () => {
       const filename = `${vData.guestDetails.quoteNo}-${vData.guestDetails.name}.pdf`;
